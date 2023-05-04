@@ -1,5 +1,6 @@
 https://github.com/irssi/irssi
 
-Pour meson :
-	https://mesonbuild.com/Getting-meson.html
-		(commande : pip3 install --user meson)
+commandes :
+
+brew install ninja
+brew install meson
