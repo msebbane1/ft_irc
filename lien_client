@@ -4,3 +4,4 @@ commandes :
 
 brew install ninja
 brew install meson
+brew install glib
