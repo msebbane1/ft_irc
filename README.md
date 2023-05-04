@@ -21,6 +21,8 @@
 #	https://ircgod.com/
 	*Man Socket
 #	http://manpagesfr.free.fr/man/man2/socket.2.html
+	*Man Socket2
+#	https://www.geeksforgeeks.org/socket-programming-cc/
 
 # Details du Sujet :
 
