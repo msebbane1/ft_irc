@@ -13,6 +13,8 @@
 #	https://www.unrealircd.org/docs/IRCOp_guide/fr#Avant-propos
 	*Doc command IRC
 #	https://irc.dalexhd.dev/
+	*Derniere update doc IRC
+#	https://www.rfc-editor.org/rfc/rfc2812
 	* List command possible
 #	https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands
 	*Tuto IRC(serveur, etc)
