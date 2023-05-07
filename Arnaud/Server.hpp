@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 11:53:58 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/05 13:15:01 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/07 17:40:56 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Server
 		Server(int port);
 		virtual	~Server();
 		
-		void	acceptConnection();
+		size_t				ft_recv(char* buffer, size_t size);
+		void				acceptConnection();
 		struct sockaddr_in	getAddr();
 };
