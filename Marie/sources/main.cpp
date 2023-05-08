@@ -14,7 +14,6 @@ int check_adressIP(char *port)
     if (ip <= 0 || ip > 65535)
         return(INVALID);
     return(VALID);
-
 }
 
 int main(int argc, char **argv)
@@ -25,10 +24,10 @@ int main(int argc, char **argv)
 
     if (check_adressIP(argv[1]) == INVALID)
         irc.Error_msg("Error: port [not valid] range betwen 0 and 65535");
-	//Creer un password () <password> getpassword recuperer password pour l'utiliser plus tard std::string
-	irc.creation_server_irc(atoi(argv[1]));
-    std::cout << "Waiting for connections..." << std::endl;
-    add_client();
-    irc.accept_client();
 
+	irc.set_password(std::string(argv[2]));
+    irc.creation_server_irc(atoi(argv[1]));
+    std::cout << "Waiting for connections..." << std::endl;
+    while (true)
+        irc.add_client();
 }

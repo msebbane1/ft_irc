@@ -4,6 +4,16 @@ Server::Server(){}
 
 Server::~Server(){}
 
+std::string Server::get_password()
+{
+    return (_password);
+}
+
+void Server::set_password(std::string password)
+{
+    this->_password = password;
+}
+
 void Server::Error_msg(std::string msg)
 {
     std::cout << msg << std::endl;
@@ -41,13 +51,19 @@ void Server::creation_server_irc(int port)
         Error_msg("listen");
 }
 
-void Server::accept_client()
+void Server::add_client()
 {
+    fd_set fds;
+    //AJOUTER FD_ZERO FD_SET pour les clients
+    //creation client???
+
+    if (select(client_list.size() + _fd_socket + 1, &fds, NULL, NULL, NULL) < 0)
+		Error_msg("select");
     // accept() : accepte une connexion entrante. Cela bloque l'exécution jusqu'à ce qu'une connexion soit effectuée.
     if ((_new_socket = accept(_fd_socket, (struct sockaddr*)&_address,(socklen_t*)&_addrlen)) < 0)
         Error_msg("accept");
 
-    _valread = read(_new_socket, _buffer, 1024);
+    _valread = read(_new_socket, _buf, 1024);
     printf("%s\n", buffer);
     send(_new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
