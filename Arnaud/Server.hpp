@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 11:53:58 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/07 17:40:56 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/09 12:08:55 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,12 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <string.h>
+#include <string>
+#include <vector>
+#include <cstring>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/select.h>
 
 class Server
 {
@@ -26,11 +31,13 @@ class Server
 		int					opt;
 		struct sockaddr_in	addr;
 		int					addrlen;
+		std::vector<int>	list_cl;
 	public:
 		Server(int port);
 		virtual	~Server();
 		
-		size_t				ft_recv(char* buffer, size_t size);
 		void				acceptConnection();
 		struct sockaddr_in	getAddr();
+		void				selectServ();
+		//void				ft_supp_tab_elem(int **tab, int index, int size);
 };
