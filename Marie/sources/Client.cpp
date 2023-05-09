@@ -1,4 +1,4 @@
-int main(int argc, char const* argv[])
+/*int main(int argc, char const* argv[])
 {
     int status, valread, client_fd;
     struct sockaddr_in serv_addr;
@@ -37,3 +37,4 @@ int main(int argc, char const* argv[])
     close(client_fd);
     return 0;
 }
+*/

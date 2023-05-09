@@ -36,7 +36,7 @@ void Server::creation_server_irc(int port)
     sont utilisées pour permettre la réutilisation rapide de l'adresse et du port 
     par le système.
     */
-    if (setsockopt(_fd_server_fd, SOL_SOCKET,SO_REUSEADDR | SO_REUSEPORT, &opt,sizeof(opt)))
+    if (setsockopt(_fd_socket, SOL_SOCKET, SO_REUSEADDR , &opt, sizeof(opt)) < 0)
         Error_msg("setsockopt");
 
     _address.sin_family = AF_INET;
@@ -44,26 +44,29 @@ void Server::creation_server_irc(int port)
     _address.sin_port = htons(port);
   
     // bind() : lie le socket à l'adresse et au port spécifiés.
-    if (bind(_fd_server_fd, (struct sockaddr*)&_address, sizeof(_address)) < 0)
+    if (bind(_fd_socket, (struct sockaddr*)&_address, sizeof(_address)) < 0)
         Error_msg("bind failed");
     // listen() : met le socket en mode d'écoute, permettant ainsi aux connexions entrantes d'être acceptées
-    if (listen(_fd_server_fd, 3) < 0)
+    if (listen(_fd_socket, 3) < 0)
         Error_msg("listen");
 }
 
 void Server::add_client()
 {
-    fd_set fds;
+   // fd_set fds;
     //AJOUTER FD_ZERO FD_SET pour les clients
     //creation client???
+	char buffer[1024] = { 0 };
+    const char *hello;
+	hello = "Hello from server";
 
-    if (select(client_list.size() + _fd_socket + 1, &fds, NULL, NULL, NULL) < 0)
-		Error_msg("select");
+    //if (select(client_list.size() + _fd_socket + 1, &fds, NULL, NULL, NULL) < 0)
+		//Error_msg("select");
     // accept() : accepte une connexion entrante. Cela bloque l'exécution jusqu'à ce qu'une connexion soit effectuée.
     if ((_new_socket = accept(_fd_socket, (struct sockaddr*)&_address,(socklen_t*)&_addrlen)) < 0)
         Error_msg("accept");
 
-    _valread = read(_new_socket, _buf, 1024);
+    _valread = read(_new_socket, buffer, 1024);
     printf("%s\n", buffer);
     send(_new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
