@@ -19,6 +19,7 @@ int check_adressIP(char *port)
 int main(int argc, char **argv)
 {
 	Server irc;
+	Client *user = new Client();
 	if (argc != 3)
 		irc.Error_msg("Error: Usage : ./ircserv <port> <password> ");
 
@@ -29,5 +30,5 @@ int main(int argc, char **argv)
     irc.creation_server_irc(atoi(argv[1]));
     std::cout << "Waiting for connections..." << std::endl;
     while (true)
-        irc.add_client();
+        irc.add_client(user);
 }
