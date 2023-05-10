@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 11:22:25 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/10 11:04:50 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/10 13:44:58 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,25 +77,6 @@ struct sockaddr_in	Server::getAddr()
 	return (this->addr);
 }
 
-/*void				Server::ft_supp_tab_elem(int **tab, int index, int size)
-{
-	int	*tmp = 0;
-	int	i = 0;
-	
-	while (i < index)
-	{
-		tmp[i] = *tab[i];
-		i++;
-	}
-	i = index + 1;
-	while (i < size)
-	{
-		tmp[i] = *tab[i];
-		i++;
-	}
-	tab = &tmp;
-}*/
-
 void				Server::selectServ()
 {
 	while (true)
@@ -125,7 +106,7 @@ void				Server::selectServ()
 			int			sock;
 			int			fd_client = 0;
 			int			client;
-			int			bytes_recv;
+			int			bytes_recv = 0;
 			int			bytes_send;
 			std::string	msg;
 			
@@ -140,22 +121,15 @@ void				Server::selectServ()
 			else if (FD_ISSET(sock, &read_sockets))
 			{
 				char	buffer[1024] = {0};
-				//bool	bl_n = false;
 				
-				/*while(bl_n == false && (bytes_recv += recv(this->new_socket, buffer + bytes_recv, 1024 - bytes_recv - 1, 0)) > 0)
-					if (buffer[bytes_recv - 1] == '\n')
-						bl_n = true;*/
 				bytes_recv = recv(sock, buffer, 1024, 0);
-				//printf("from %d: %s", sock, buffer);
 				if (bytes_recv <= 0)
 				{
 					close(sock);
 					this->list_cl.erase(this->list_cl.begin() + i);
-					continue ;
 				}
 
 				msg = std::to_string(sock) + ": " + buffer;
-				//std::cout << msg << std::endl;
 				for (unsigned long j = 0; j < this->list_cl.size(); j++)
 				{
 					client = this->list_cl[j];
@@ -166,7 +140,6 @@ void				Server::selectServ()
 						{
 							close(client);
 							this->list_cl.erase(this->list_cl.begin() + j);
-							continue ;
 						}
 					}
 				}
