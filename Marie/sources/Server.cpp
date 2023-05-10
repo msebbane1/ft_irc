@@ -1,6 +1,8 @@
 #include "Server.hpp"
 
-Server::Server(){}
+Server::Server()
+{
+}
 
 Server::~Server(){}
 
@@ -83,46 +85,67 @@ void Server::add_client(Client *user)
 	FD_ZERO(&fds);
 	FD_SET(_fd_socket, &fds);
 
+/*
+	std::vector<int>::iterator it = _clients_fds.begin();
+	std::vector<int>::iterator ite = _clients_fds.end();
+	std::map<int, Client *>::iterator client_it;
+
+	for (; it != ite; it++) {
+		client_it = list_client.find(*it);
+		delete client_it->second;
+		close(client_it->first);
+		list_client.erase(client_it->first);
+	}
+	_clients_fds.clear();
+*/
 
 	for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
 	{
 		_user_fd = it->first;
 		FD_SET(_user_fd, &fds);
 	}
+
     if (select(list_client.size() + _fd_socket + 1, &fds, NULL, NULL, NULL) < 0)
 		Error_msg("select");
 	if (FD_ISSET(_fd_socket, &fds))
 	{
+		std::cout << "pass" << std::endl;
 		// accept() : accepte une connexion entrante. Cela bloque l'exécution jusqu'à ce qu'une connexion soit effectuée.
 		if ((_new_socket = accept(_fd_socket, (struct sockaddr*)&_address,(socklen_t*)&_addrlen)) < 0)
 			Error_msg("accept");
-		fcntl(_new_socket, F_SETFL, O_NONBLOCK); // POUR LA PARTIE NON BLOCANTE
+		//fcntl(_new_socket, F_SETFL, O_NONBLOCK); // POUR LA PARTIE NON BLOCANTE
 		list_client.insert(std::pair<int, Client *>(_new_socket, user));
 		//list_client[_new_socket]->set_fd(_new_socket);
-		//for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
-			//std::cout << "Client: " << it->first << std::endl;
 		std::cout << "[New client connected]" << std::endl;
 	}
-    
 	for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
 	{
 		_user_fd = it->first;
-	}
-	if (FD_ISSET(_user_fd, &fds))
-	{
-		_valread = recv(_new_socket, buffer, 1024, 0);
-		if(_valread)
+		if (FD_ISSET(_user_fd, &fds))
 		{
-			display_buff(buffer);
-			user_send_msg(buffer);
+			_valread = recv(_user_fd, buffer, 1024, 0);
+			std::cout << "user fd :" << _user_fd << "soket: " << _fd_socket << " buffer ="<<buffer << std::endl;
+		
+			if(_valread)
+			{
+				std::cout << "pass2" << std::endl;
+				display_buff(buffer);
+				user_send_msg(buffer);
+			}
+			else
+			{
+				std::cout << "pass3" << std::endl;
+				return ;
+			}
+
 		}
 		/*
 		else
 		{
     		// closing the connected socket
-    		close(_new_socket);
+    		//close(_new_socket);
     		// closing the listening socket
-    		shutdown(_fd_socket, SHUT_RDWR);
+    		//shutdown(_fd_socket, SHUT_RDWR);
 		}
 		*/
 	}

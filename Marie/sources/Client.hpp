@@ -25,8 +25,9 @@ class Client
 
 		Client * get_user();
 		void	set_user(Client *user);
+		void set_fd(int const &fd);
 
     private :
 		Client *user;
-
+		int _fd;
 };

@@ -46,5 +46,6 @@ class Server
         int _valread;//le nombre de caractères lus ou écrits
        // char _buf[1024];// Une chaîne de caractères pour stocker les données lues à partir de la connexion entrante. 
 	   int	_user_fd;
+	   std::vector<int>	_clients_fds;
         std::string _password;
 };
