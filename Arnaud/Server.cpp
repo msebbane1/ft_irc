@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 11:22:25 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/09 13:34:43 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/10 11:04:50 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,10 +124,10 @@ void				Server::selectServ()
 		{
 			int			sock;
 			int			fd_client = 0;
-			//int			client;
+			int			client;
 			int			bytes_recv;
-			//int			bytes_send;
-			//std::string	msg;
+			int			bytes_send;
+			std::string	msg;
 			
 			sock = this->list_cl[i];
 			
@@ -137,30 +137,16 @@ void				Server::selectServ()
 				this->list_cl.push_back(fd_client);
 				std::cout << "New client connected: " << fd_client << std::endl;
 			}
-			char	buffer[1024] = {0};
-			
-			bytes_recv = recv(this->new_socket, buffer, 1024, 0);
-			printf("from %d: %s", fd_client, buffer);
-			if (bytes_recv > 0)
-				close(fd_client);
-			std::string o = "Message received\n";
-			send(fd_client, o.c_str(), o.size(), 0);
-			/*for (unsigned long j = 0; j < this->list_cl.size(); j++)
-			{
-				printf("\nid sock: %d\n", this->list_cl[j]);
-			}
-			printf("-------------------");*/
-
-			/*else if (FD_ISSET(sock, &read_sockets))
+			else if (FD_ISSET(sock, &read_sockets))
 			{
 				char	buffer[1024] = {0};
 				//bool	bl_n = false;
 				
-				while(bl_n == false && (bytes_recv += recv(this->new_socket, buffer + bytes_recv, 1024 - bytes_recv - 1, 0)) > 0)
+				/*while(bl_n == false && (bytes_recv += recv(this->new_socket, buffer + bytes_recv, 1024 - bytes_recv - 1, 0)) > 0)
 					if (buffer[bytes_recv - 1] == '\n')
-						bl_n = true;
-				bytes_recv = recv(this->new_socket, buffer, 1024, 0);
-				printf("from %d: %s", sock, buffer);
+						bl_n = true;*/
+				bytes_recv = recv(sock, buffer, 1024, 0);
+				//printf("from %d: %s", sock, buffer);
 				if (bytes_recv <= 0)
 				{
 					close(sock);
@@ -169,10 +155,11 @@ void				Server::selectServ()
 				}
 
 				msg = std::to_string(sock) + ": " + buffer;
+				//std::cout << msg << std::endl;
 				for (unsigned long j = 0; j < this->list_cl.size(); j++)
 				{
-					client = this->list_cl[i];
-					if (client != this->fd_server && client != sock)
+					client = this->list_cl[j];
+					if (client != sock)
 					{
 						bytes_send = send(client, msg.c_str(), msg.size(), 0);
 						if (bytes_send < 0)
@@ -183,69 +170,7 @@ void				Server::selectServ()
 						}
 					}
 				}
-			}*/
+			}
 		}
 	}
 }
-            
-/*
-// list of connected clients
-    vector<int> client_list;
-    client_list.push_back(server_socket);
-
-    while (true) {
-        // use select() to monitor the sockets for any incoming data
-        fd_set read_sockets;
-        FD_ZERO(&read_sockets);
-        int max_fd = server_socket;
-        for (int i = 0; i < client_list.size(); i++) {
-            int fd = client_list[i];
-            FD_SET(fd, &read_sockets);
-            max_fd = max(max_fd, fd);
-        }
-
-        int ready = select(max_fd + 1, &read_sockets, NULL, NULL, NULL);
-        if (ready < 0) {
-            perror("select failed");
-            exit(EXIT_FAILURE);
-        }
-
-        for (int i = 0; i < client_list.size(); i++) {
-            int sock = client_list[i];
-
-            // new connection
-            if (sock == server_socket && FD_ISSET(sock, &read_sockets)) {
-                int client_socket = accept(server_socket, NULL, NULL);
-                client_list.push_back(client_socket);
-                cout << "New client connected: " << client_socket << endl;
-            }
-			
-			// incoming data from a client
-            else if (FD_ISSET(sock, &read_sockets)) {
-                char buffer[1024] = {0};
-                int bytes_read = read(sock, buffer, 1024);
-                if (bytes_read <= 0) {
-                    close(sock);
-                    client_list.erase(client_list.begin() + i);
-                    continue;
-                }
-
-                // process the incoming data and send it back to all clients
-                string message = to_string(sock) + ": " + buffer;
-                for (int j = 0; j < client_list.size(); j++) {
-                    int client = client_list[j];
-                    if (client != server_socket && client != sock) {
-                        int bytes_sent = send(client, message.c_str(), message.size(), 0);
-                        if (bytes_sent == -1) {
-                            close(client);
-                            client_list.erase(client_list.begin() + j);
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return 0;
-}*/

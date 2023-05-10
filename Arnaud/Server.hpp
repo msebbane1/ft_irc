@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 11:53:58 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/09 12:08:55 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/10 10:55:56 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class Server
 {
 	private:
 		int					fd_server;
-		int					new_socket;
+		//int					new_socket;
 		int					opt;
 		struct sockaddr_in	addr;
 		int					addrlen;
