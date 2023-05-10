@@ -63,17 +63,20 @@ void Server::display_buff(std::string const &buffer)
     std::cout << "Message send :" << buffer ;
 }
 
-void Server::user_send_msg(std::string buf)
+void Server::user_send_msg(std::string buf, Client *user)
 {
-	std::string hello;
+	std::string msg;
+	msg = "Message of [ID: " + std::to_string(_user_fd) + "] : " + buf;
 	//Verifier taille du buffer
 	if (buf[0] == '\n')
 		return ;
-	if (send(_new_socket, hello.c_str(), hello.length(), 0) == -1)
+	std::cout << "user fd ====== " << _user_fd << std::endl;
+	std::cout << "get fd ====== " << user->get_fd() << std::endl;
+	if (send(user->get_fd(), msg.c_str(), msg.length(), 0) == -1)
 		std::cout << "Send failed" << std::endl;
 	//std::cout << "| SEND TO CLIENT " << _user_fd << "|" << std::endl;
 	//std::cout << hello.substr(0, hello.length()) << std::endl;
-	//send(_new_socket, hello.c_str(), hello.length(), 0);
+	//send(_user_fd, msg.c_str(), msg.length(), 0);
 }
 
 void Server::add_client(Client *user)
@@ -115,22 +118,28 @@ void Server::add_client(Client *user)
 			Error_msg("accept");
 		//fcntl(_new_socket, F_SETFL, O_NONBLOCK); // POUR LA PARTIE NON BLOCANTE
 		list_client.insert(std::pair<int, Client *>(_new_socket, user));
-		//list_client[_new_socket]->set_fd(_new_socket);
-		std::cout << "[New client connected]" << std::endl;
+		list_client[_new_socket]->set_fd(_new_socket);
+		//<< "[41m"<<
+		std::cout << std::endl;
+		std::cout <<"===================================" << std::endl;
+		std::cout <<" [~New client connected~] [ID: "<< user->get_fd() << "]" << std::endl;
+		std::cout << "===================================" << std::endl;
+		std::string msg;
+		msg = "User [ID: " + std::to_string(user->get_fd()) + "]: " + "CONNECTED\n";
+		send(user->get_fd(), msg.c_str(), msg.length(), 0);
 	}
+
 	for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
 	{
 		_user_fd = it->first;
 		if (FD_ISSET(_user_fd, &fds))
 		{
 			_valread = recv(_user_fd, buffer, 1024, 0);
-			std::cout << "user fd :" << _user_fd << "soket: " << _fd_socket << " buffer ="<<buffer << std::endl;
-		
 			if(_valread)
 			{
-				std::cout << "pass2" << std::endl;
+				std::cout << "=============================" << std::endl;
 				display_buff(buffer);
-				user_send_msg(buffer);
+				user_send_msg(buffer, list_client[_user_fd]);
 			}
 			else
 			{

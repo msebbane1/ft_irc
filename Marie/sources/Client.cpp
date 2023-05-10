@@ -13,7 +13,9 @@ Client *Client::get_user()
 {
 	return(user);
 }
-
+int const & Client::get_fd() const {
+	return (_fd);
+}
 void	Client::set_user(Client *userr)
 {
 	user = userr;
