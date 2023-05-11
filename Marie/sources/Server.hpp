@@ -28,11 +28,12 @@ class Server
         Server();
         virtual ~Server();
 
-        void creation_server_irc(int port);
         void Error_msg(std::string msg);
-        void add_client(Client *user);
-		void display_buff(std::string const &buffer);
-		void user_send_msg(std::string buf, Client *user);
+        void Creation_server_irc(int port);
+        void Connection_users(Client *user);
+		void display_buff(std::string const &buf);
+		void user_send_msg(std::string const &buf);
+		void Accept_users(Client *user);
 
         std::string get_password();
         void        set_password(std::string password);
@@ -44,10 +45,9 @@ class Server
 		int	_addrlen; //taille
         int _fd_socket;//pour stocker le descripteur de fichier du socket du serveur
         int _new_socket;//le nouveau socket pour la connexion entrante
-        //int _valread;//le nombre de caractères lus ou écrits
-       // char _buf[1024];// Une chaîne de caractères pour stocker les données lues à partir de la connexion entrante. 
-	   int	_user_fd;
-	   int _user_fd2;
-	   std::vector<int>	_clients_fds;
-        std::string _password;
+        int _valread;//le nombre de caractères lus ou écrits
+		int	_user_fd_talk; // fd de celui qui envoie
+		int _fd_received; // fd de ceux qui recoivent
+		fd_set _fds;
+		std::string _password;
 };

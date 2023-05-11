@@ -29,8 +29,8 @@ int main(int argc, char **argv)
         irc.Error_msg("Error: port [not valid] range betwen 0 and 65535");
 
 	irc.set_password(std::string(argv[2]));
-    irc.creation_server_irc(atoi(argv[1]));
-    std::cout << Yellow << "Waiting for connections..." << Color << std::endl;
+    irc.Creation_server_irc(atoi(argv[1]));
+    std::cout << Blue << "Waiting for connections..." << Color << std::endl;
     while (true)
-        irc.add_client(user);
+        irc.Connection_users(user);
 }
