@@ -44,10 +44,10 @@ class Server
 		int	_addrlen; //taille
         int _fd_socket;//pour stocker le descripteur de fichier du socket du serveur
         int _new_socket;//le nouveau socket pour la connexion entrante
-        int _valread;//le nombre de caractères lus ou écrits
+        //int _valread;//le nombre de caractères lus ou écrits
        // char _buf[1024];// Une chaîne de caractères pour stocker les données lues à partir de la connexion entrante. 
 	   int	_user_fd;
-	   //int _user_fd2;
+	   int _user_fd2;
 	   std::vector<int>	_clients_fds;
         std::string _password;
 };

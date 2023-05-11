@@ -55,7 +55,6 @@ void Server::creation_server_irc(int port)
 
 void Server::display_buff(std::string const &buffer)
 {
-	// afficher client : FD
 	// verifier plusieurs cas 
 	if(buffer == "\n")
 		return;
@@ -72,8 +71,12 @@ void Server::user_send_msg(std::string buf, Client *user)
 		return ;
 	std::cout << "user fd ====== " << _user_fd << std::endl;
 	std::cout << "get fd ====== " << user->get_fd() << std::endl;
-	if (send(user->get_fd(), msg.c_str(), msg.length(), 0) == -1)
-		std::cout << "Send failed" << std::endl;
+	for(std::map<int, Client *>::iterator ite = list_client.begin(); ite != list_client.end(); ite++)
+	{
+		_user_fd2 = ite->first;
+		if (send(_user_fd2, msg.c_str(), msg.length(), 0) == -1)
+			std::cout << "Send failed" << std::endl;
+	}
 	//std::cout << "| SEND TO CLIENT " << _user_fd << "|" << std::endl;
 	//std::cout << hello.substr(0, hello.length()) << std::endl;
 	//send(_user_fd, msg.c_str(), msg.length(), 0);
@@ -133,8 +136,7 @@ void Server::add_client(Client *user)
 		_user_fd = it->first;
 		if (FD_ISSET(_user_fd, &fds))
 		{
-			_valread = recv(_user_fd, buffer, 1024, 0);
-			if(_valread)
+			if(recv(_user_fd, buffer, 1024, 0))
 			{
 				std::cout << "=============================" << std::endl;
 				display_buff(buffer);
