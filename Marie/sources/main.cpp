@@ -1,5 +1,7 @@
 #include "Server.hpp"
 #include "Client.hpp"
+#include "Color.hpp"
+
 
 /*Verifie port valid : digit et compris entre 0 à 65535*/
 int check_adressIP(char *port)
@@ -28,7 +30,7 @@ int main(int argc, char **argv)
 
 	irc.set_password(std::string(argv[2]));
     irc.creation_server_irc(atoi(argv[1]));
-    std::cout << "Waiting for connections..." << std::endl;
+    std::cout << Yellow << "Waiting for connections..." << Color << std::endl;
     while (true)
         irc.add_client(user);
 }

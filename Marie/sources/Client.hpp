@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include "Color.hpp"
 
 ///////DEFINES//////
 #define VALID 1

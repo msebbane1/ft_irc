@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <vector>
+#include "Color.hpp"
 
 ///////DEFINES//////
 #define VALID 1

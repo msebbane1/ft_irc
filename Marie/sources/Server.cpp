@@ -18,7 +18,7 @@ void Server::set_password(std::string password)
 
 void Server::Error_msg(std::string msg)
 {
-    std::cout << msg << std::endl;
+    std::cout << Red << msg << Color << std::endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -119,13 +119,12 @@ void Server::add_client(Client *user)
 		//fcntl(_new_socket, F_SETFL, O_NONBLOCK); // POUR LA PARTIE NON BLOCANTE
 		list_client.insert(std::pair<int, Client *>(_new_socket, user));
 		list_client[_new_socket]->set_fd(_new_socket);
-		//<< "[41m"<<
 		std::cout << std::endl;
 		std::cout <<"===================================" << std::endl;
-		std::cout <<" [~New client connected~] [ID: "<< user->get_fd() << "]" << std::endl;
+		std::cout << Colored <<" [~New client connected~] [ID: "<< user->get_fd() << "]" << Color << std::endl;
 		std::cout << "===================================" << std::endl;
 		std::string msg;
-		msg = "User [ID: " + std::to_string(user->get_fd()) + "]: " + "CONNECTED\n";
+		msg = "\033[3;44;30mUser [ID: " + std::to_string(user->get_fd()) + "]: " + "CONNECTED" + Color + "\n";
 		send(user->get_fd(), msg.c_str(), msg.length(), 0);
 	}
 
