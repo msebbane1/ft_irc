@@ -31,8 +31,8 @@ class Server
         void Error_msg(std::string msg);
         void Creation_server_irc(int port);
         void Connection_users(Client *user);
-		void display_buff(std::string const &buf);
-		void user_send_msg(std::string const &buf);
+		void Display_msg_on_server(std::string const &buf);
+		void User_send_msg(std::string const &buf);
 		void Accept_users(Client *user);
 
         std::string get_password();

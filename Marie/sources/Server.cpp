@@ -54,7 +54,7 @@ void Server::Creation_server_irc(int port)
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
 
-void Server::display_buff(std::string const &buf)
+void Server::Display_msg_on_server(std::string const &buf)
 {
 	// verifier plusieurs cas 
 	if(buf == "\n")
@@ -63,16 +63,23 @@ void Server::display_buff(std::string const &buf)
     std::cout << "Message send :" << buf ;
 }
 
-void Server::user_send_msg(std::string const &buf)
+void Server::User_send_msg(std::string const &buf)
 {
 	std::string msg;
 	msg = "Message of [ID: " + std::to_string(_user_fd_talk) + "] : " + buf;
 	//Verifier taille du buffer
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	
+	//std::cout << "user fd ========" << _user_fd_talk << std::endl; // fd de celui quui parle
+	for(std::map<int, Client *>::iterator ite = list_client.begin(); ite != list_client.end(); ite++)
+	{
+		_fd_received = ite->first;
 		if (send(_fd_received, msg.c_str(), msg.length(), 0) == -1)
 			std::cout << "Send failed" << std::endl;
+		//std::cout << "user fd2 ========" << _fd_received << std::endl; // ceux qui recoivent
+		//std::cout << "getfd ========" << list_client[_fd_received]->get_user() << std::endl; // dernier utilisateur
+	}
+	
 }
 
 void Server::Accept_users(Client *user)
@@ -134,23 +141,14 @@ void Server::Connection_users(Client *user)
 			if(_valread)
 			{
 				std::cout << "=============================" << std::endl;
-				display_buff(buffer);
-				//std::cout << "user fd ========" << _user_fd_talk << std::endl; // fd de celui quui parle
-				for(std::map<int, Client *>::iterator ite = list_client.begin(); ite != list_client.end(); ite++)
-				{
-					_fd_received = ite->first;
-					user_send_msg(buffer);
-					//std::cout << "user fd2 ========" << _fd_received << std::endl; // ceux qui recoivent
-					//std::cout << "getfd ========" << list_client[_fd_received]->get_user() << std::endl; // dernier utilisateur
-
-				}
+				Display_msg_on_server(buffer);
+				User_send_msg(buffer);
 			}
 			else
 			{
 				close(_fd_received);
 				//Error_msg("error");
 			}
-
 		}
 		else
 		{
