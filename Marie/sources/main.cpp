@@ -31,6 +31,5 @@ int main(int argc, char **argv)
 	irc.set_password(std::string(argv[2]));
     irc.Creation_server_irc(atoi(argv[1]));
     std::cout << Blue << "Waiting for connections..." << Color << std::endl;
-    while (true)
-        irc.Connection_users(user);
+	irc.Connection_users(user);
 }

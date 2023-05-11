@@ -84,6 +84,9 @@ void Server::User_send_msg(std::string const &buf)
 
 void Server::Accept_users(Client *user)
 {
+	FD_ZERO(&_fds);
+	FD_SET(_fd_socket, &_fds);
+
 	for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
 	{
 		_user_fd_talk = it->first;
@@ -114,49 +117,38 @@ void Server::Accept_users(Client *user)
 
 void Server::Connection_users(Client *user)
 {
-	char buffer[1024] = { 0 }; // pour stocker les données lues à partir de la connexion entrante.
-
-	FD_ZERO(&_fds);
-	FD_SET(_fd_socket, &_fds);
-	Accept_users(user);
-/*
-	std::vector<int>::iterator it = _clients_fds.begin();
-	std::vector<int>::iterator ite = _clients_fds.end();
-	std::map<int, Client *>::iterator client_it;
-
-	for (; it != ite; it++) {
-		client_it = list_client.find(*it);
-		delete client_it->second;
-		close(client_it->first);
-		list_client.erase(client_it->first);
-	}
-	_clients_fds.clear();
-*/
-	for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
+	while(true)
 	{
-		_user_fd_talk = it->first;
-		if (FD_ISSET(_user_fd_talk, &_fds))
+		char buffer[1024] = { 0 }; // pour stocker les données lues à partir de la connexion entrante.
+
+		Accept_users(user);
+
+		for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
 		{
-			_valread = recv(_user_fd_talk, buffer, 1024, 0);
-			if(_valread)
+			_user_fd_talk = it->first;
+			if (FD_ISSET(_user_fd_talk, &_fds))
 			{
-				std::cout << "=============================" << std::endl;
-				Display_msg_on_server(buffer);
-				User_send_msg(buffer);
+				_valread = recv(_user_fd_talk, buffer, 1024, 0);
+				if(_valread)
+				{
+					std::cout << "=============================" << std::endl;
+					Display_msg_on_server(buffer);
+					User_send_msg(buffer);
+				}
+				else
+				{
+					close(_fd_received);
+					//Error_msg("error");
+				}
 			}
 			else
 			{
-				close(_fd_received);
-				//Error_msg("error");
+				//std::cout << "pass3" << std::endl;
+    			//closing the connected socket
+    			//close(_new_socket);
+    			//closing the listening socket
+    			//shutdown(_fd_socket, SHUT_RDWR);
 			}
-		}
-		else
-		{
-			//std::cout << "pass3" << std::endl;
-    		//closing the connected socket
-    		//close(_new_socket);
-    		//closing the listening socket
-    		//shutdown(_fd_socket, SHUT_RDWR);
 		}
 	}
 }
