@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 11:22:25 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/10 13:44:58 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/11 14:14:47 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void				Server::selectServ()
 		{
 			fd = this->list_cl[i];
 			FD_SET(fd, &read_sockets);
+			fcntl(fd, O_NONBLOCK);
 			max_fd = std::max(max_fd, fd);
 		}
 
@@ -103,11 +104,11 @@ void				Server::selectServ()
 
 		for (unsigned long i = 0; i < this->list_cl.size(); i++)
 		{
-			int			sock;
+			int			sock = 0;
 			int			fd_client = 0;
-			int			client;
+			int			client = 0;
 			int			bytes_recv = 0;
-			int			bytes_send;
+			int			bytes_send = 0;
 			std::string	msg;
 			
 			sock = this->list_cl[i];
@@ -121,25 +122,39 @@ void				Server::selectServ()
 			else if (FD_ISSET(sock, &read_sockets))
 			{
 				char	buffer[1024] = {0};
+				int		n = 0;
+				bool	bl_n = false;
 				
-				bytes_recv = recv(sock, buffer, 1024, 0);
+				while (bl_n == false && (n = recv(sock, buffer + bytes_recv, 1024 - bytes_recv - 1, 0)) > 0)
+				{
+					bytes_recv += n;
+					if (buffer[bytes_recv - 1] == '\n')
+						bl_n = true;
+				}
+				buffer[bytes_recv] = 0;
 				if (bytes_recv <= 0)
 				{
 					close(sock);
 					this->list_cl.erase(this->list_cl.begin() + i);
+					std::cout << "Client " << sock << " has been disconnected." << std::endl;
 				}
-
-				msg = std::to_string(sock) + ": " + buffer;
-				for (unsigned long j = 0; j < this->list_cl.size(); j++)
+				if (strncmp(buffer, "", 1) != 0)
+					msg = std::to_string(sock) + ": " + buffer;
+				else
+					msg = "(null)";
+				if (msg != "(null)")
 				{
-					client = this->list_cl[j];
-					if (client != sock)
+					for (unsigned long j = 0; j < this->list_cl.size(); j++)
 					{
-						bytes_send = send(client, msg.c_str(), msg.size(), 0);
-						if (bytes_send < 0)
+						client = this->list_cl[j];
+						if (client != sock && client != this->fd_server)
 						{
-							close(client);
-							this->list_cl.erase(this->list_cl.begin() + j);
+							bytes_send = send(client, msg.c_str(), msg.size(), 0);
+							if (bytes_send < 0)
+							{
+								close(client);
+								this->list_cl.erase(this->list_cl.begin() + j);
+							}
 						}
 					}
 				}

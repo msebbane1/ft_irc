@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/04 11:53:58 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/10 10:55:56 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/11 11:34:17 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/select.h>
+#include <fcntl.h>
 
 class Server
 {
