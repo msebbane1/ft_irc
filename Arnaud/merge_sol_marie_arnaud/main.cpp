@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/11 18:57:08 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/12 10:02:56 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ int main(int argc, char **argv)
 	Server *irc = new Server(atoi(argv[1]));
 	Client *user = new Client();
 	if (argc != 3)
-		irc.Error_msg("Error: Usage : ./ircserv <port> <password> ");
+		irc->errorMsg("Error: Usage : ./ircserv <port> <password> ");
     if (check_adressIP(argv[1]) == INVALID)
-        irc.Error_msg("Error: port [not valid] range betwen 0 and 65535");
+        irc->errorMsg("Error: port [not valid] range betwen 0 and 65535");
 
-	irc->set_password(std::string(argv[2]));
+	irc->setPassword(std::string(argv[2]));
     std::cout << Blue << "Waiting for connections..." << Color << std::endl;
 	irc->serverIrc(user);
 }
