@@ -63,22 +63,71 @@ void Server::Display_msg_on_server(std::string const &buf)
     std::cout << "Message send :" << buf ;
 }
 
-void Server::User_send_msg(std::string const &buf)
+std::vector<std::string>  Server::customSplit(std::string str, char separator) 
+{
+    unsigned long startIndex = 0;
+	unsigned long endIndex = 0;
+	std::vector<std::string> tmpsplit;
+    for (unsigned long i = 0; i <= str.size(); i++)
+	{
+        if (str[i] == separator || i == str.size()) 
+		{
+            endIndex = i;
+            std::string temp;
+            temp.append(str, startIndex, endIndex - startIndex);
+            tmpsplit.push_back(temp);
+            startIndex = endIndex + 1;
+        }
+    }
+	return (tmpsplit);
+}
+
+void Server::connectToNetcat(std::string buf, int fd_received)
+{
+	buf.erase(buf.length() - 1);
+	std::vector<std::string> splitbuf;
+	splitbuf = customSplit(buf, ' ');
+	//for(std::vector<std::string>::iterator it = splitbuf.begin(); it != splitbuf.end(); it++)
+		//std::cout << *it << std::endl;
+	if(splitbuf[0] == "PASS")
+	{
+		std::cout << splitbuf[1];
+		std::cout << get_password();
+		if(splitbuf[1] == _password)
+		{
+			std::cout << "password" << std::endl;
+		}
+		if(splitbuf[1] != _password)
+		{
+			list_client[fd_received]->increment_pass_try();
+			if(list_client[fd_received]->get_pass_try() == 3)
+			{
+				close(fd_received);
+				list_client.erase(fd_received);
+			}
+			//exit(1);
+		}
+	}
+}
+
+void Server::User_send_msg(std::string buf, int fd_received)
 {
 	std::string msg;
+	std::string msg_error;
 	msg = "Message of [ID: " + std::to_string(_user_fd_talk) + "] : " + buf;
-	//Verifier taille du buffer
+	msg_error = "Error : limit char\n";
+	
+	connectToNetcat(buf, fd_received);
+	std::cout << "buf ===== " << buf << std::endl;
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	//std::cout << "user fd ========" << _user_fd_talk << std::endl; // fd de celui quui parle
-	for(std::map<int, Client *>::iterator ite = list_client.begin(); ite != list_client.end(); ite++)
+	if(buf.length() > 50)
 	{
-		_fd_received = ite->first;
-		if (send(_fd_received, msg.c_str(), msg.length(), 0) == -1)
-			std::cout << "Send failed" << std::endl;
-		//std::cout << "user fd2 ========" << _fd_received << std::endl; // ceux qui recoivent
-		//std::cout << "getfd ========" << list_client[_fd_received]->get_user() << std::endl; // dernier utilisateur
+		send(_user_fd_talk, msg_error.c_str(), msg_error.length(), 0);
+		return ;
 	}
+	send(fd_received, msg.c_str(), msg.length(), 0);
+		//std::cout << "user fd2 ========" << _fd_received << std::endl; // ceux qui recoivent
 	
 }
 
@@ -120,7 +169,7 @@ void Server::Connection_users(Client *user)
 	while(true)
 	{
 		char buffer[1024] = { 0 }; // pour stocker les données lues à partir de la connexion entrante.
-
+		int fd_received;
 		Accept_users(user);
 
 		for (std::map<int, Client *>::iterator it = list_client.begin(); it != list_client.end(); it++)
@@ -133,7 +182,11 @@ void Server::Connection_users(Client *user)
 				{
 					std::cout << "=============================" << std::endl;
 					Display_msg_on_server(buffer);
-					User_send_msg(buffer);
+					for(std::map<int, Client *>::iterator ite = list_client.begin(); ite != list_client.end(); ite++)
+					{
+						fd_received = ite->first;
+						User_send_msg(buffer, fd_received);
+					}
 				}
 				else
 				{

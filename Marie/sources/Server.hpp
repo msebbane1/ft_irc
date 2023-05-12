@@ -32,8 +32,10 @@ class Server
         void Creation_server_irc(int port);
         void Connection_users(Client *user);
 		void Display_msg_on_server(std::string const &buf);
-		void User_send_msg(std::string const &buf);
+		void User_send_msg(std::string buf, int fd_received);
 		void Accept_users(Client *user);
+		void connectToNetcat(std::string buf, int fd_received);
+		std::vector<std::string> customSplit(std::string str, char separator);
 
         std::string get_password();
         void        set_password(std::string password);
