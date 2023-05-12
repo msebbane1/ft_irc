@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/12 12:32:49 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/12 13:38:31 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,37 @@ void		Server::displayMsgOnServer(std::string const &buf)
     std::cout << "Message send :" << buf ;
 }
 
+std::string	Server::splitCustom(std::string buf, char charset)
+{
+	std::stringstream	ss(buf);
+	std::string			sub_str;
+
+	for (int i = 0; i < 2; i++)
+		std::getline(ss, sub_str, charset);
+	return (sub_str);
+}
+
+bool		Server::connectToNc(std::string buf, int cl)
+{
+	std::string	pw;
+
+	pw = splitCustom(buf, ' ');
+	if (buf.find("PASS") == 0)
+	{
+		if (pw.find("\n") > 0)
+			pw.erase(pw.length() - 1);
+		if (pw == this->_password)
+			return (true);
+		this->_list_client[cl]->increment_pass_try();
+		if (this->_list_client[cl]->get_pass_try() == 3)
+		{
+			close(cl);
+			this->_list_client.erase(cl);
+		}
+	}
+	return (false);
+}
+
 void		Server::userSendMsg(std::string const &buf)
 {
 	std::string	msg;
@@ -70,6 +101,12 @@ void		Server::userSendMsg(std::string const &buf)
 	msg = "Message of [ID: " + std::to_string(this->_user_fd_talk) + "] : " + buf;
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
+	if (this->_list_client[this->_user_fd_talk]->getConnected() == false && connectToNc(buf, this->_user_fd_talk) == false)
+	{
+		msg = "You need to enter the good password";
+		send(this->_user_fd_talk, msg.c_str(), msg.size(), 0);
+		return ;
+	}
 	for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
 	{
 		fd_received = ite->first;

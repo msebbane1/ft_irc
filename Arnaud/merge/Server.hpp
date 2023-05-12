@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/12 11:47:33 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/12 13:18:49 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ class Server
 		int							_addr_len;
 		int							_fd_server;
 		int							_user_fd_talk;
-		int							_fd_received;
 		fd_set						_fds;
 		std::string					_password;
 		std::map<int, Client*>		_list_client;
@@ -53,6 +52,8 @@ class Server
 		void		acceptUser(Client *user);
 		void		serverIrc(Client *user);
 		void		sendHistoric(int client_fd);
+		bool		connectToNc(std::string buf, int cl);
+		std::string	splitCustom(std::string bug, char charset);
 
 		std::string	getPassword();
 		void		setPassword(std::string pwd);
