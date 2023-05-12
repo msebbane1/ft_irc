@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/12 11:30:27 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/12 12:32:49 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,33 @@ void		Server::displayMsgOnServer(std::string const &buf)
 void		Server::userSendMsg(std::string const &buf)
 {
 	std::string	msg;
+	int			fd_received;
 	
 	msg = "Message of [ID: " + std::to_string(this->_user_fd_talk) + "] : " + buf;
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
 	for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
 	{
-		this->_fd_received = ite->first;
-		if (this->_fd_received != this->_user_fd_talk)
-			if (send(this->_fd_received, msg.c_str(), msg.length(), 0) < 0)
+		fd_received = ite->first;
+		if (fd_received != this->_user_fd_talk)
+		{
+			if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
+			{
 				std::cout << "Send failed" << std::endl;
+				close(this->_user_fd_talk);
+				this->_list_client.erase(this->_user_fd_talk);
+				std::cout << "Client " << this->_user_fd_talk << " has been disconnected." << std::endl;
+			}
+		}
 	}
+	if (this->_list_client[this->_user_fd_talk])
+		this->_historic.push_back(msg);
+}
+
+void		Server::sendHistoric(int client_fd)
+{
+	for (unsigned int i = 0; i < this->_historic.size(); i++)
+		send(client_fd, this->_historic[i].c_str() , this->_historic[i].size(), 0);
 }
 
 void		Server::acceptUser(Client *user)
@@ -103,6 +119,8 @@ void		Server::acceptUser(Client *user)
 			errorMsg("accept");
 		this->_list_client.insert(std::pair<int, Client*>(new_user, user));
 		this->_list_client[new_user]->set_fd(new_user);
+		if (this->_historic.size() > 1)
+			sendHistoric(new_user);
 		std::cout << std::endl;
 		std::cout <<"===================================" << std::endl;
 		std::cout << Colored <<" [~New client connected~] [ID: "<< user->get_fd() << "]" << Color << std::endl;
@@ -137,7 +155,7 @@ void		Server::serverIrc(Client *user)
 				if(bytes_recv <= 0)
 				{
 					close(this->_user_fd_talk);
-					// suppr l'element de map
+					this->_list_client.erase(this->_user_fd_talk);
 					std::cout << "Client " << this->_user_fd_talk << " has been disconnected." << std::endl;
 				}
 				if (strncmp(buffer, "", 1) != 0)
