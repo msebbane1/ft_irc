@@ -5,39 +5,56 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/04 11:53:58 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/11 14:39:35 by asahonet         ###   ########.fr       */
+/*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
+/*   Updated: 2023/05/16 11:39:50 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+#include <iostream>
 #include <string>
-#include <vector>
-#include <cstring>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <sys/select.h>
+#include <map>
+#include "Client.hpp"
+#include <unistd.h>
 #include <fcntl.h>
+#include <vector>
+#include "Color.hpp"
+class Client;
+
+#define VALID 1
+#define INVALID 0
 
 class Server
 {
 	private:
-		int					fd_server;
-		int					opt;
-		struct sockaddr_in	addr;
-		int					addrlen;
-		std::vector<int>	list_cl;
+		struct sockaddr_in			_addr;
+		int							_addr_len;
+		int							_fd_server;
+		fd_set						_fds;
+		std::string					_password;
+		std::map<int, Client*>		_list_client;
+		std::vector<std::string>	_historic;
 	public:
-		Server(int port);
+		Server();
 		virtual	~Server();
-		
-		void				acceptConnection();
-		struct sockaddr_in	getAddr();
-		void				selectServ();
-		//void				ft_supp_tab_elem(int **tab, int index, int size);
+
+		void						createServ(int port);
+		void						errorMsg(std::string msg);
+		void						displayMsgOnServer(std::string const &buf, int user_talk);
+		void						userSendMsg(std::string const &buf, int user_talk);
+		void						acceptUser();
+		void						serverIrc();
+		void						sendHistoric(int client_fd);
+		bool						connectToNc(std::string buf, int cl);
+		std::vector<std::string>	splitCustom(std::string bug, char charset);
+
+		std::string	getPassword();
+		void		setPassword(std::string pwd);
 };

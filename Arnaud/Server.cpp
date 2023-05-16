@@ -5,158 +5,249 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/05 11:22:25 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/11 14:14:47 by asahonet         ###   ########.fr       */
+/*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
+/*   Updated: 2023/05/16 11:47:08 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(int port)
+Server::Server()
 {
-	this->opt = 1;
-	if ((this->fd_server = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-	{
-		perror("socket failed");
-		exit(EXIT_FAILURE);
-	}
-	
-	if (setsockopt(this->fd_server, SOL_SOCKET, SO_REUSEADDR, &this->opt, sizeof(this->opt)) == -1)
-	{
-		perror("setsockopt");
-		exit(EXIT_FAILURE);
-	}
-	this->addr.sin_family = AF_INET;
-	this->addr.sin_addr.s_addr = INADDR_ANY;
-	this->addr.sin_port = htons(port);
-
-	if (bind(this->fd_server, (struct sockaddr*) &this->addr, sizeof(this->addr)) < 0)
-	{
-		perror("bind failed");
-		exit(EXIT_FAILURE);
-	}
-	this->addrlen = sizeof(this->addr);
-	
-	if (listen(this->fd_server, 500) < 0)
-	{
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
-
-	this->list_cl.push_back(this->fd_server);
 }
 
 Server::~Server()
 {
 }
 
-/*void	Server::acceptConnection()
-{
-	if ((this->new_socket = accept(this->fd_server, (struct sockaddr*) &this->addr, (socklen_t*) &this->addrlen)) < 0)
-	{
-		perror("accept");
-		exit(EXIT_FAILURE);
-	}
-	char	buffer[1024] = {0};
-	int		tot_c = 0;
-	bool	bl_n = false;
-	
-    while(bl_n == false && (tot_c += recv(this->new_socket, buffer + tot_c, 1024 - tot_c - 1, 0)) > 0)
-		if (buffer[tot_c - 1] == '\n')
-			bl_n = true;
-	buffer[tot_c] = 0;
-	std::cout << buffer << std::endl;
-	const char *hello = "Hello from server";
-	send(this->new_socket, hello, strlen(hello), 0);
-	std::cout << "Hello message sent" << std::endl;
-	close(this->new_socket);
-}*/
+/*--------------------------------------------------------*/
 
-struct sockaddr_in	Server::getAddr()
+std::string	Server::getPassword()
 {
-	return (this->addr);
+    return (this->_password);
 }
 
-void				Server::selectServ()
+void		Server::setPassword(std::string pwd)
+{
+    this->_password = pwd;
+}
+
+/*--------------------------------------------------------*/
+
+void		Server::createServ(int port)
+{
+	int	opt = 1;
+	
+	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+		errorMsg("socket failed");
+	
+	if (setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+		errorMsg("setsockopt");
+	this->_addr.sin_family = AF_INET;
+	this->_addr.sin_addr.s_addr = INADDR_ANY;
+	this->_addr.sin_port = htons(port);
+	
+	if (bind(this->_fd_server, (struct sockaddr*) &this->_addr, sizeof(this->_addr)) < 0)
+		errorMsg("bind failed");
+	this->_addr_len = sizeof(this->_addr);
+	
+	if (listen(this->_fd_server, 500) < 0)
+		errorMsg("listen");
+	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
+}
+
+void		Server::errorMsg(std::string msg)
+{
+    std::cout << Red << msg << Color << std::endl;
+	exit(EXIT_FAILURE);
+}
+
+void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
+{
+	if(buf == "\n")
+		return;
+    std::cout << "| USER : client " << user_talk << " |" << std::endl;
+    std::cout << "Message send :" << buf ;
+}
+
+/*--------------------------------------------------------*/
+
+std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
+{
+	std::string					tmp;
+	std::vector<std::string>	split;
+	unsigned long				e_i = 0;
+	unsigned long				s_i = 0;
+
+	for (unsigned long i = 0; i <= buf.size(); i++)
+	{
+		if (buf[i] == charset || i == buf.size())
+		{
+			e_i = i;
+			tmp.clear();
+			tmp.append(buf, s_i, e_i - s_i);
+			split.push_back(tmp);
+			s_i = e_i + 1;
+		}
+	}
+	return (split);
+}
+
+bool	Server::connectToNc(std::string buf, int cl)
+{
+	std::vector<std::string>	line;
+
+	line = splitCustom(buf, ' ');
+	if (line[0] == "PASS")
+	{
+		if (line[1].find("\n") > 0)
+			line[1].erase(line[1].size() - 1);
+		if (line[1] == this->_password)
+		{
+			this->_list_client[cl]->setConnected();
+			if (this->_historic.size() > 1)
+				sendHistoric(cl);
+			return (true);
+		}
+		this->_list_client[cl]->increment_pass_try();
+		if (this->_list_client[cl]->get_pass_try() == 3)
+		{
+			close(cl);
+			delete this->_list_client[cl]->get_user();
+			this->_list_client.erase(cl);
+		}
+		else
+		{
+			std::string	msg;
+			
+			msg = "It left you " + std::to_string(3 - this->_list_client[cl]->get_pass_try()) + " try.\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+		}
+	}
+	return (false);
+}
+
+/*--------------------------------------------------------*/
+
+void	Server::userSendMsg(std::string const &buf, int user_talk)
+{
+	std::string	msg;
+	int			fd_received;
+	
+	msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + buf;
+	if (buf[0] == '\n' || buf[0] == '\t')
+		return ;
+	if (this->_list_client[user_talk]->getConnected() == false && connectToNc(buf, user_talk) == false)
+	{
+		if (buf.find("PASS") == std::string::npos)
+			msg = "You need to enter the password first\n";
+		else
+			msg = "You entered a wrong password.\n";
+		send(user_talk, msg.c_str(), msg.size(), 0);
+		return ;
+	}
+	if (this->_list_client[user_talk]->getConnected() == true)
+	{
+		for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
+		{
+			fd_received = ite->first;
+			if (fd_received != user_talk && this->_list_client[fd_received]->getConnected() == true)
+			{
+				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
+				{
+					std::cout << "Send failed" << std::endl;
+					close(user_talk);
+					delete this->_list_client[user_talk]->get_user();
+					this->_list_client.erase(user_talk);
+					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+				}
+			}
+		}
+		if (this->_list_client[user_talk])
+			this->_historic.push_back(msg);
+	}
+}
+
+void	Server::sendHistoric(int client_fd)
+{
+	for (unsigned int i = 0; i < this->_historic.size(); i++)
+		send(client_fd, this->_historic[i].c_str() , this->_historic[i].size(), 0);
+}
+
+/*--------------------------------------------------------*/
+
+void	Server::acceptUser()
+{
+	int	max_fd;
+	int	new_user;
+	int	fd_user;
+	
+	FD_ZERO(&this->_fds);
+	FD_SET(this->_fd_server, &this->_fds);
+	
+	max_fd = this->_fd_server;
+	for (std::map<int, Client *>::iterator it = this->_list_client.begin(); it != this->_list_client.end(); it++)
+	{
+		fd_user = it->first;
+		FD_SET(fd_user, &this->_fds);
+		fcntl(fd_user, O_NONBLOCK);
+		max_fd = std::max(max_fd, fd_user);
+	}
+	
+	if (select(max_fd + 1, &this->_fds, NULL, NULL, NULL) < 0)
+		errorMsg("select");
+	if (FD_ISSET(this->_fd_server, &this->_fds))
+	{
+		if ((new_user = accept(this->_fd_server, (struct sockaddr*) &this->_addr,(socklen_t*) &this->_addr_len)) < 0)
+			errorMsg("accept");
+		Client *cl = new Client();
+		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
+		this->_list_client[new_user]->set_fd(new_user);
+		std::cout << std::endl;
+		std::cout <<"===================================" << std::endl;
+		std::cout << Colored <<" [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
+		std::cout << "===================================" << std::endl;
+	}
+}
+
+/*--------------------------------------------------------*/
+
+void	Server::serverIrc()
 {
 	while (true)
 	{
-		fd_set	read_sockets;
-		int		max_fd;
-		int 	fd;
+		char	buffer[1024] = { 0 };
+		int		user_talk;
+		 
+		acceptUser();
 		
-		max_fd = this->fd_server;
-		FD_ZERO(&read_sockets);
-		for (unsigned long i = 0; i < this->list_cl.size(); i++)
+		for (std::map<int, Client *>::iterator it = this->_list_client.begin(); it != this->_list_client.end(); it++)
 		{
-			fd = this->list_cl[i];
-			FD_SET(fd, &read_sockets);
-			fcntl(fd, O_NONBLOCK);
-			max_fd = std::max(max_fd, fd);
-		}
-
-		int	slct = select(max_fd + 1, &read_sockets, NULL, NULL, NULL);
-		if (slct < 0)
-		{
-			perror("select failed");
-			exit(EXIT_FAILURE);
-		}
-
-		for (unsigned long i = 0; i < this->list_cl.size(); i++)
-		{
-			int			sock = 0;
-			int			fd_client = 0;
-			int			client = 0;
-			int			bytes_recv = 0;
-			int			bytes_send = 0;
-			std::string	msg;
-			
-			sock = this->list_cl[i];
-			
-			if (sock == this->fd_server && FD_ISSET(sock, &read_sockets))
+			user_talk = it->first;
+			if (FD_ISSET(user_talk, &this->_fds))
 			{
-				fd_client = accept(this->fd_server, NULL, NULL);
-				this->list_cl.push_back(fd_client);
-				std::cout << "New client connected: " << fd_client << std::endl;
-			}
-			else if (FD_ISSET(sock, &read_sockets))
-			{
-				char	buffer[1024] = {0};
 				int		n = 0;
+				int		bytes_recv = 0;
 				bool	bl_n = false;
 				
-				while (bl_n == false && (n = recv(sock, buffer + bytes_recv, 1024 - bytes_recv - 1, 0)) > 0)
+				while (bl_n == false && (n = recv(user_talk, buffer + bytes_recv, 1024 - bytes_recv - 1, 0)) > 0)
 				{
 					bytes_recv += n;
 					if (buffer[bytes_recv - 1] == '\n')
 						bl_n = true;
 				}
 				buffer[bytes_recv] = 0;
-				if (bytes_recv <= 0)
+				if(bytes_recv <= 0)
 				{
-					close(sock);
-					this->list_cl.erase(this->list_cl.begin() + i);
-					std::cout << "Client " << sock << " has been disconnected." << std::endl;
+					close(user_talk);
+					delete this->_list_client[user_talk]->get_user();
+					this->_list_client.erase(user_talk);
+					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
 				}
 				if (strncmp(buffer, "", 1) != 0)
-					msg = std::to_string(sock) + ": " + buffer;
-				else
-					msg = "(null)";
-				if (msg != "(null)")
 				{
-					for (unsigned long j = 0; j < this->list_cl.size(); j++)
-					{
-						client = this->list_cl[j];
-						if (client != sock && client != this->fd_server)
-						{
-							bytes_send = send(client, msg.c_str(), msg.size(), 0);
-							if (bytes_send < 0)
-							{
-								close(client);
-								this->list_cl.erase(this->list_cl.begin() + j);
-							}
-						}
-					}
+					displayMsgOnServer(buffer, user_talk);
+					userSendMsg(buffer, user_talk);
 				}
 			}
 		}

@@ -40,3 +40,11 @@ bool		Client::getConnected()
 {
 	return (this->_connected);
 }
+
+void		Client::setConnected()
+{
+	if (this->_connected == false)
+		this->_connected = true;
+	else
+		this->_connected = false;
+}

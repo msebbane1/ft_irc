@@ -31,6 +31,7 @@ class Client
 		int			get_pass_try();
 		void		increment_pass_try();
 		bool		getConnected();
+		void		setConnected();
 
     private :
 		Client	*user;
