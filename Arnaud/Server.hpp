@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 11:39:50 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/16 12:56:43 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,9 @@ class Server
 		void						acceptUser();
 		void						serverIrc();
 		void						sendHistoric(int client_fd);
-		bool						connectToNc(std::string buf, int cl);
-		std::vector<std::string>	splitCustom(std::string bug, char charset);
+		bool						connectToNc(std::vector<std::string> line, int cl);
+		std::vector<std::string>	splitCustom(std::string buf, char charset);
+		void						analyseCommandIrc(std::string buf, int cl);
 
 		std::string	getPassword();
 		void		setPassword(std::string pwd);

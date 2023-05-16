@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 11:51:42 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/16 13:00:27 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,38 +93,54 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 	return (split);
 }
 
-bool	Server::connectToNc(std::string buf, int cl)
+/*--------------------------------------------------------*/
+
+bool	Server::connectToNc(std::vector<std::string> line, int cl)
+{
+	if (line[1].find("\n") > 0)
+		line[1].erase(line[1].size() - 1);
+	if (line[1] == this->_password)
+	{
+		this->_list_client[cl]->setConnected();
+		if (this->_historic.size() > 1)
+			sendHistoric(cl);
+		return (true);
+	}
+	this->_list_client[cl]->increment_pass_try();
+	if (this->_list_client[cl]->get_pass_try() == 3)
+	{
+		close(cl);
+		delete this->_list_client[cl];
+		this->_list_client.erase(cl);
+	}
+	else
+	{
+		std::string	msg;
+		
+		msg = "It left you " + std::to_string(3 - this->_list_client[cl]->get_pass_try()) + " try.\n";
+		send(cl, msg.c_str(), msg.size(), 0);
+	}
+	return (false);
+}
+
+void	Server::analyseCommandIrc(std::string buf, int cl)
 {
 	std::vector<std::string>	line;
 
 	line = splitCustom(buf, ' ');
 	if (line[0] == "PASS")
 	{
-		if (line[1].find("\n") > 0)
-			line[1].erase(line[1].size() - 1);
-		if (line[1] == this->_password)
-		{
-			this->_list_client[cl]->setConnected();
-			if (this->_historic.size() > 1)
-				sendHistoric(cl);
-			return (true);
-		}
-		this->_list_client[cl]->increment_pass_try();
-		if (this->_list_client[cl]->get_pass_try() == 3)
-		{
-			close(cl);
-			delete this->_list_client[cl];
-			this->_list_client.erase(cl);
-		}
-		else
+		if (this->_list_client[cl]->getConnected() == false && connectToNc(line, cl) == false)
 		{
 			std::string	msg;
 			
-			msg = "It left you " + std::to_string(3 - this->_list_client[cl]->get_pass_try()) + " try.\n";
+			msg = "You entered a wrong password.\n";
 			send(cl, msg.c_str(), msg.size(), 0);
+			return ;
 		}
 	}
-	return (false);
+	else
+		userSendMsg(buf, cl);
 }
 
 /*--------------------------------------------------------*/
@@ -137,15 +153,6 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 	msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + buf;
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	if (this->_list_client[user_talk]->getConnected() == false && connectToNc(buf, user_talk) == false)
-	{
-		if (buf.find("PASS") == std::string::npos)
-			msg = "You need to enter the password first\n";
-		else
-			msg = "You entered a wrong password.\n";
-		send(user_talk, msg.c_str(), msg.size(), 0);
-		return ;
-	}
 	if (this->_list_client[user_talk]->getConnected() == true)
 	{
 		for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
@@ -165,6 +172,11 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 		}
 		if (this->_list_client[user_talk])
 			this->_historic.push_back(msg);
+	}
+	else
+	{
+		msg = "You need to enter the password first\n";
+		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
 }
 
@@ -246,7 +258,7 @@ void	Server::serverIrc()
 				if (strncmp(buffer, "", 1) != 0)
 				{
 					displayMsgOnServer(buffer, user_talk);
-					userSendMsg(buffer, user_talk);
+					analyseCommandIrc(buffer, user_talk);
 				}
 			}
 		}

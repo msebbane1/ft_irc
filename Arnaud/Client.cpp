@@ -6,7 +6,6 @@ Client::Client(): _pass_try(0), _connected(false)
 
 Client::~Client()
 {
-	delete this->user;
 }
 
 int			Client::get_pass_try()

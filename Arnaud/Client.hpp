@@ -30,7 +30,6 @@ class Client
 		void		setConnected();
 
     private :
-		Client	*user;
 		int		_pass_try;
 		bool	_connected;
 };
