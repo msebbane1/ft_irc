@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/15 15:23:04 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/16 11:52:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ std::vector<std::string>  Server::customSplit(std::string str, char separator)
 	return (tmpsplit);
 }
 
-void Server::connectToNetcat(std::string buf, int fd_received)
+void Server::connectToNetcat(std::string buf, Client *client)
 {
 	buf.erase(buf.length() - 1);
 	std::vector<std::string> splitbuf;
@@ -105,31 +105,31 @@ void Server::connectToNetcat(std::string buf, int fd_received)
 	{
 		if(splitbuf[0] == "PASS")
 		{
-			if(splitbuf[1] != _password && _list_client[fd_received]->getConnected() == false)
+			if(splitbuf[1] != _password)
 			{
-				msg = "Wrong password : try = " + std::to_string(_list_client[fd_received]->get_pass_try()) + "\n";
+				msg = "Wrong password : try = " + std::to_string(_list_client[client->get_fd()]->get_pass_try()) + "\n";
 				send(this->_user_fd_talk, msg.c_str(), msg.size(), 0);
-				_list_client[fd_received]->increment_pass_try();
-				if(_list_client[fd_received]->get_pass_try() == 3)
+				_list_client[client->get_fd()]->increment_pass_try();
+				if(_list_client[client->get_fd()]->get_pass_try() == 3)
 				{
-					close(fd_received);
-					_list_client.erase(fd_received);
+					close(client->get_fd());
+					_list_client.erase(client->get_fd());
 				}
 			}
 			if(splitbuf[1] == _password)
 			{
 				std::cout << "password pass" << std::endl;
-				_list_client[fd_received]->setConnected(true);
+				//_list_client[client->get_fd()]->setConnected(true);
+				client->set_pass(splitbuf[1]);
 			}
 		}	
 	}
-	else if(splitbuf.size() >= 2 || _list_client[fd_received]->getConnected() == false)
+	else if(splitbuf.size() >= 2)
 	{
 		msg = "\x1B[31mYou need to enter : PASS - NICK - USER\033[0m\n";
 		send(this->_user_fd_talk, msg.c_str(), msg.size(), 0);
 	}
 	
-
 }
 
 void		Server::userSendMsg(std::string const &buf)
@@ -144,14 +144,20 @@ void		Server::userSendMsg(std::string const &buf)
 		fd_received = ite->first;
 		if (buf[0] == '\n' || buf[0] == '\t')
 			return ;
-		connectToNetcat(buf, _user_fd_talk);
-		if(_list_client[_user_fd_talk]->getConnected() == true && _connected == false)
+		if(!_list_client[fd_received]->is_connected(_password))
+		{
+			std::cout << "salut ============" << std::endl;
+			connectToNetcat(buf, _list_client[fd_received]);
+		}
+		/*
+		if(_list_client[fd_received]->getConnected() == true && _connected == false)
 		{
 			msg = "\033[3;44;30mUser [ID: " + std::to_string(this->_user_fd_talk) + "]: " + "CONNECTED" + Color + "\n";
 			send(this->_user_fd_talk, msg.c_str(), msg.length(), 0);
 			_connected = true;
 		}
-		else if(_list_client[_user_fd_talk]->getConnected() == true)
+		*/
+		else if(_list_client[fd_received]->is_connected(_password))
 		{
 			msg = "Message of [ID: " + std::to_string(this->_user_fd_talk) + "] : " + buf;
 			if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/15 15:08:18 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/16 11:50:35 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Server
 		void		acceptUser(Client *user);
 		void		serverIrc(Client *user);
 		void		sendHistoric(int client_fd);
-		void		connectToNetcat(std::string buf, int fd_received);
+		void		connectToNetcat(std::string buf, Client *client);
 		std::vector<std::string> customSplit(std::string str, char separator);
 		void		received(char *buffer);
 

@@ -1,8 +1,6 @@
 #include "Server.hpp"
 
-Server::Server()
-{
-}
+Server::Server(){}
 
 Server::~Server(){}
 
@@ -22,37 +20,6 @@ void Server::Error_msg(std::string msg)
 	exit(EXIT_FAILURE);
 }
 
-void Server::Creation_server_irc(int port)
-{
-    int opt = 1; // indicateur d'option
-    /* Creation socket file descriptor :
-    AF_INET = protocoles IPv4, 
-    SOCK_STREAM [type de socket] = TCP
-    protocole à 0, permet au système d'utiliser le protocole par défaut.
-    */
-    if ((_fd_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        Error_msg("socket failed");
-  
-    /*
-    Configuration du socket. Ici, les options SO_REUSEADDR et SO_REUSEPORT 
-    sont utilisées pour permettre la réutilisation rapide de l'adresse et du port 
-    par le système.
-    */
-    if (setsockopt(_fd_socket, SOL_SOCKET, SO_REUSEADDR , &opt, sizeof(opt)) < 0)
-        Error_msg("setsockopt");
-
-    _address.sin_family = AF_INET;
-    _address.sin_addr.s_addr = INADDR_ANY;
-    _address.sin_port = htons(port);
-  
-    // bind() : lie le socket à l'adresse et au port spécifiés.
-    if (bind(_fd_socket, (struct sockaddr*)&_address, sizeof(_address)) < 0)
-        Error_msg("bind failed");
-    // listen() : met le socket en mode d'écoute, permettant ainsi aux connexions entrantes d'être acceptées
-    if (listen(_fd_socket, 2) < 0)
-        Error_msg("listen");
-	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
-}
 
 void Server::Display_msg_on_server(std::string const &buf)
 {

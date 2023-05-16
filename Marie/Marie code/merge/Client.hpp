@@ -31,11 +31,15 @@ class Client
 		int			get_pass_try();
 		void		increment_pass_try();
 		bool		getConnected();
+		bool		is_connected(std::string const &pass);
 		void		setConnected(bool connected);
+		bool password_is_set(std::string const & pass);
+		void set_pass(std::string const & pass);
 
     private :
 		Client	*user;
 		int		_fd;
+		std::string		_pass;
 		int		_pass_try;
 		bool	_connected;
 };

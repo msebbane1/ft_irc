@@ -10,6 +10,17 @@ Client::~Client()
 	delete this->user;
 }
 
+bool Client::is_connected(std::string const & pass) {
+	return (password_is_set(pass));
+}
+void Client::set_pass(std::string const &pass) {
+	_pass = pass;
+}
+
+bool Client::password_is_set(std::string const & pass) {
+	return (!(_pass.empty()) && _pass == pass);
+}
+
 void		Client::setConnected(bool connected)
 {
 	this->_connected = connected;
