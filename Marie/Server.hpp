@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 15:07:38 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/16 16:20:37 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ class Server
 		void						acceptUser();
 		void						serverIrc();
 		void						sendHistoric(int client_fd);
-		bool						connectToNc(std::vector<std::string> line, int cl);
+		bool						passTry(std::vector<std::string> line, int cl);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 		void						analyseCommandIrc(std::string buf, int cl);
-		int						received(char *buffer, int user_talk);
+		int							received(char *buffer, int user_talk);
 
 		void						clientDisconnected();
 

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 15:25:15 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/16 17:52:16 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,13 +91,14 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-bool	Server::connectToNc(std::vector<std::string> line, int cl)
+bool	Server::passTry(std::vector<std::string> line, int cl)
 {
 	if (line[1].find("\n") > 0)
 		line[1].erase(line[1].size() - 1);
 	if (line[1] == this->_password)
 	{
 		this->_list_client[cl]->setConnected();
+		std::cout << "======password is set=====" << std::endl;
 		if (this->_historic.size() > 1)
 			sendHistoric(cl);
 		return (true);
@@ -106,6 +107,10 @@ bool	Server::connectToNc(std::vector<std::string> line, int cl)
 	if (this->_list_client[cl]->get_pass_try() == 3)
 	{
 		_fd_users.push_back(cl);
+		std::string	msg;
+		
+		msg = "no try left: User is disconnected.\n";
+		send(cl, msg.c_str(), msg.size(), 0);
 		std::cout << "Client " << cl << " has been disconnected." << std::endl;
 	}
 	else
@@ -121,18 +126,37 @@ bool	Server::connectToNc(std::vector<std::string> line, int cl)
 void	Server::analyseCommandIrc(std::string buf, int cl)
 {
 	std::vector<std::string>	line;
+	std::string	msg;
 
 	line = splitCustom(buf, ' ');
+
 	if (line[0] == "PASS")
-	{
-		if (this->_list_client[cl]->getConnected() == false && connectToNc(line, cl) == false)
 		{
-			std::string	msg;
+			if (this->_list_client[cl]->getConnected() == false && passTry(line, cl) == false)
+			{
 			
-			msg = "You entered a wrong password.\n";
-			send(cl, msg.c_str(), msg.size(), 0);
-			return ;
+				msg = "You entered a wrong password.\n";
+				send(cl, msg.c_str(), msg.size(), 0);
+				return ;
+			}
 		}
+		
+	else if(line[0] == "NICK")
+	{
+		//verifier bon nickname
+		_list_client[cl]->setNickname(line[1]);
+		msg = "======nickname is set=====\n";
+		send(cl, msg.c_str(), msg.size(), 0);
+		std::cout << "======nickname is set=====" << std::endl;
+		return ;
+	}
+	else if(line[0] == "USER")
+	{
+		_list_client[cl]->setUser(line[1]);
+		msg = "======USER is set=====\n";
+		send(cl, msg.c_str(), msg.size(), 0);
+		std::cout << "=====user is set====" << std::endl;
+		return ;
 	}
 	else
 		userSendMsg(buf, cl);
@@ -148,11 +172,12 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 	msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + buf;
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	if (this->_list_client[user_talk]->getConnected() == true)
+	if (this->_list_client[user_talk]->getConnected() == true && this->_list_client[user_talk]->isConnected() == true)
 	{
 		
 		//msg = "\033[3;44;30mUser [ID: " + std::to_string(user_talk) + "]: " + "CONNECTED" + Color + "\n";
 		//send(user_talk, msg.c_str(), msg.length(), 0);
+		std::cout << "==== client registered ====" << std::endl;
 		for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
 		{
 			fd_received = ite->first;
@@ -172,6 +197,7 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 		msg = "\x1B[31mYou need to enter : PASS - NICK - USER\033[0m\n";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
+
 }
 
 void	Server::sendHistoric(int client_fd)
@@ -209,6 +235,7 @@ void	Server::acceptUser()
 			errorMsg("accept");
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
+		
 		std::cout << std::endl;
 		std::cout <<"===================================" << std::endl;
 		std::cout << Colored <<" [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
@@ -234,8 +261,8 @@ int		Server::received(char *buffer, int user_talk)
 void Server::clientDisconnected() 
 {
 	for (std::vector<int>::iterator it = _fd_users.begin(); it != _fd_users.end(); it++) {
-		delete _list_client.find(*it)->second;
 		close(_list_client.find(*it)->first);
+		delete _list_client.find(*it)->second;
 		_list_client.erase(_list_client.find(*it)->first);
 	}
 	_fd_users.clear();
