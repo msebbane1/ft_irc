@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 11:47:08 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/16 11:51:42 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ bool	Server::connectToNc(std::string buf, int cl)
 		if (this->_list_client[cl]->get_pass_try() == 3)
 		{
 			close(cl);
-			delete this->_list_client[cl]->get_user();
+			delete this->_list_client[cl];
 			this->_list_client.erase(cl);
 		}
 		else
@@ -157,7 +157,7 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 				{
 					std::cout << "Send failed" << std::endl;
 					close(user_talk);
-					delete this->_list_client[user_talk]->get_user();
+					delete this->_list_client[user_talk];
 					this->_list_client.erase(user_talk);
 					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
 				}
@@ -202,7 +202,6 @@ void	Server::acceptUser()
 			errorMsg("accept");
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
-		this->_list_client[new_user]->set_fd(new_user);
 		std::cout << std::endl;
 		std::cout <<"===================================" << std::endl;
 		std::cout << Colored <<" [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
@@ -240,7 +239,7 @@ void	Server::serverIrc()
 				if(bytes_recv <= 0)
 				{
 					close(user_talk);
-					delete this->_list_client[user_talk]->get_user();
+					delete this->_list_client[user_talk];
 					this->_list_client.erase(user_talk);
 					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
 				}

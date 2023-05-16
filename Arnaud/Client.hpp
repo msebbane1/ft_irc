@@ -24,10 +24,6 @@ class Client
         Client();
         ~Client();
 
-		Client		*get_user();
-		void		set_user(Client *user);
-		void		set_fd(int const &fd);
-		int const &	get_fd() const;
 		int			get_pass_try();
 		void		increment_pass_try();
 		bool		getConnected();
@@ -35,7 +31,6 @@ class Client
 
     private :
 		Client	*user;
-		int		_fd;
 		int		_pass_try;
 		bool	_connected;
 };
