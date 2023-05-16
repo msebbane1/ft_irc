@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 17:52:16 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/16 18:18:31 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ void		Server::errorMsg(std::string msg)
 	exit(EXIT_FAILURE);
 }
 
+/*--------------------------------------------------------*/
+
 void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
 {
 	if(buf == "\n")
@@ -93,21 +95,23 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 bool	Server::passTry(std::vector<std::string> line, int cl)
 {
+	std::string msg;
 	if (line[1].find("\n") > 0)
 		line[1].erase(line[1].size() - 1);
 	if (line[1] == this->_password)
 	{
 		this->_list_client[cl]->setConnected();
 		std::cout << "======password is set=====" << std::endl;
-		if (this->_historic.size() > 1)
-			sendHistoric(cl);
+		msg = "======password is set=====\n";
+		send(cl, msg.c_str(), msg.size(), 0);
+		//if (this->_historic.size() > 1)
+			//sendHistoric(cl);
 		return (true);
 	}
 	this->_list_client[cl]->increment_pass_try();
 	if (this->_list_client[cl]->get_pass_try() == 3)
 	{
 		_fd_users.push_back(cl);
-		std::string	msg;
 		
 		msg = "no try left: User is disconnected.\n";
 		send(cl, msg.c_str(), msg.size(), 0);
@@ -115,7 +119,6 @@ bool	Server::passTry(std::vector<std::string> line, int cl)
 	}
 	else
 	{
-		std::string	msg;
 		
 		msg = "It left you " + std::to_string(3 - this->_list_client[cl]->get_pass_try()) + " try.\n";
 		send(cl, msg.c_str(), msg.size(), 0);
@@ -123,34 +126,35 @@ bool	Server::passTry(std::vector<std::string> line, int cl)
 	return (false);
 }
 
+/*--------------------------------------------------------*/
+
 void	Server::analyseCommandIrc(std::string buf, int cl)
 {
 	std::vector<std::string>	line;
-	std::string	msg;
+	std::string					msg;
 
 	line = splitCustom(buf, ' ');
 
 	if (line[0] == "PASS")
-		{
-			if (this->_list_client[cl]->getConnected() == false && passTry(line, cl) == false)
-			{
-			
-				msg = "You entered a wrong password.\n";
-				send(cl, msg.c_str(), msg.size(), 0);
-				return ;
-			}
-		}
-		
-	else if(line[0] == "NICK")
 	{
-		//verifier bon nickname
+		if (this->_list_client[cl]->getConnected() == false && passTry(line, cl) == false)
+		{
+			
+			msg = "You entered a wrong password.\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+			return ;
+		}
+	}
+	else if (line[0] == "NICK")
+	{
+		//verifier nickname valide
 		_list_client[cl]->setNickname(line[1]);
 		msg = "======nickname is set=====\n";
 		send(cl, msg.c_str(), msg.size(), 0);
 		std::cout << "======nickname is set=====" << std::endl;
 		return ;
 	}
-	else if(line[0] == "USER")
+	else if (line[0] == "USER")
 	{
 		_list_client[cl]->setUser(line[1]);
 		msg = "======USER is set=====\n";
@@ -158,8 +162,6 @@ void	Server::analyseCommandIrc(std::string buf, int cl)
 		std::cout << "=====user is set====" << std::endl;
 		return ;
 	}
-	else
-		userSendMsg(buf, cl);
 }
 
 /*--------------------------------------------------------*/
@@ -184,9 +186,9 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 			if (fd_received != user_talk && this->_list_client[fd_received]->getConnected() == true)
 			{
 				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
-				{
 					std::cout << "Send failed" << std::endl;
-				}
+				if (this->_historic.size() > 1)
+					sendHistoric(user_talk);
 			}
 		}
 		if (this->_list_client[user_talk])
@@ -197,8 +199,9 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 		msg = "\x1B[31mYou need to enter : PASS - NICK - USER\033[0m\n";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
-
 }
+
+/*--------------------------------------------------------*/
 
 void	Server::sendHistoric(int client_fd)
 {
@@ -242,7 +245,9 @@ void	Server::acceptUser()
 		std::cout << "===================================" << std::endl;
 	}
 }
+
 /*--------------------------------------------------------*/
+
 int		Server::received(char *buffer, int user_talk)
 {
 	int		n = 0;
@@ -258,6 +263,8 @@ int		Server::received(char *buffer, int user_talk)
 	return (n);
 }
 
+/*--------------------------------------------------------*/
+
 void Server::clientDisconnected() 
 {
 	for (std::vector<int>::iterator it = _fd_users.begin(); it != _fd_users.end(); it++) {
@@ -267,6 +274,8 @@ void Server::clientDisconnected()
 	}
 	_fd_users.clear();
 }
+
+/*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {
@@ -289,6 +298,7 @@ void	Server::serverIrc()
 					{	
 						displayMsgOnServer(buffer, user_talk);
 						analyseCommandIrc(buffer, user_talk);
+						userSendMsg(buffer, user_talk);
 					}
 				}
 				else
