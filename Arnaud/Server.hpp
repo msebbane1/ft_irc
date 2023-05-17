@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 12:56:43 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/17 13:35:14 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include <string>
 #include <map>
 #include "Client.hpp"
-#include <unistd.h>
 #include <fcntl.h>
 #include <vector>
 #include "Color.hpp"
@@ -41,6 +40,8 @@ class Server
 		std::string					_password;
 		std::map<int, Client*>		_list_client;
 		std::vector<std::string>	_historic;
+		std::vector<int>			_fd_users_dc;
+		std::vector<std::string>	_command_list;
 	public:
 		Server();
 		virtual	~Server();
@@ -55,6 +56,9 @@ class Server
 		bool						connectToNc(std::vector<std::string> line, int cl);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 		void						analyseCommandIrc(std::string buf, int cl);
+		int							received(char *buffer, int user_talk);
+		void						clientDisconnected();
+		bool						isCommandIrc(std::string str);
 
 		std::string	getPassword();
 		void		setPassword(std::string pwd);

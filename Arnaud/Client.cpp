@@ -30,3 +30,39 @@ void		Client::setConnected()
 	else
 		this->_connected = false;
 }
+
+void	Client::setNickname(std::string nickname)
+{
+	this->_nickname = nickname;
+}
+
+void	Client::setUser(std::string user)
+{
+	this->_user = user;
+}
+
+bool	Client::userIsSet()
+{
+	if(this->_user.empty())
+		return false;
+	else
+		return true;
+}
+
+bool	Client::nicknameIsSet()
+{
+	if(this->_nickname.empty())
+		return false;
+	else
+		return true;
+}
+
+bool	Client::isConnected()
+{
+	if(nicknameIsSet() == true && userIsSet() == true)
+	{
+		return(this->_connected);
+	}
+	else
+		return(false);
+}
