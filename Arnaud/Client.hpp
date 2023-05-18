@@ -24,6 +24,8 @@ class Client
         Client();
         ~Client();
 
+		std::string	getUser();
+		std::string	getNickname();
 		int			get_pass_try();
 		void		increment_pass_try();
 		bool		getConnected();

@@ -8,6 +8,16 @@ Client::~Client()
 {
 }
 
+std::string	Client::getUser()
+{
+	return (this->_user);
+}
+
+std::string	Client::getNickname()
+{
+	return (this->_nickname);
+}
+
 int			Client::get_pass_try()
 {
 	return(this->_pass_try);

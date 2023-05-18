@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/18 10:53:28 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/18 11:54:54 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,31 +165,38 @@ void	Server::analyseCommandIrc(std::string buf, int cl)
 	line = splitCustom(buf, ' ');
 	if (isCommandIrc(line[0]) == false)
 		return ;
-	if (line[0] == "PASS")
+	if (this->_list_client[cl]->getConnected() == false)
 	{
-		if (this->_list_client[cl]->getConnected() == false && connectToNc(line, cl) == false)
+		if (line[0] == "PASS" && connectToNc(line, cl) == false)
 		{
 			msg = "You entered a wrong password.\n";
 			send(cl, msg.c_str(), msg.size(), 0);
 			return ;
 		}
 	}
-	else if (line[0] == "NICK")
+	else
 	{
-		//verifier nickname valide
-		_list_client[cl]->setNickname(line[1]);
-		msg = "======nickname is set=====\n";
-		send(cl, msg.c_str(), msg.size(), 0);
-		std::cout << "======nickname is set=====" << std::endl;
-		return ;
-	}
-	else if (line[0] == "USER")
-	{
-		_list_client[cl]->setUser(line[1]);
-		msg = "======USER is set=====\n";
-		send(cl, msg.c_str(), msg.size(), 0);
-		std::cout << "=====user is set====" << std::endl;
-		return ;
+		if (line[0] == "PASS")
+		{
+			// already connect
+		}
+		else if (line[0] == "NICK")
+		{
+			//verifier nickname valide
+			_list_client[cl]->setNickname(line[1]);
+			msg = "======nickname is set=====\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+			std::cout << "======nickname is set=====" << std::endl;
+			return ;
+		}
+		else if (line[0] == "USER")
+		{
+			_list_client[cl]->setUser(line[1]);
+			msg = "======USER is set=====\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+			std::cout << "=====user is set====" << std::endl;
+			return ;
+		}
 	}
 }
 
