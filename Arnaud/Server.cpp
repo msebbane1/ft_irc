@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/17 13:52:35 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/18 10:53:28 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,15 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 		}
 	}
 	return (split);
+}
+
+int						Server::countCharInString(std::string buf, char c)
+{
+	int	count = 0;
+
+	for (unsigned long i = 0; (i = buf.find(c, i)) != std::string::npos; i++)
+        count++;
+	return (count);
 }
 
 /*--------------------------------------------------------*/
@@ -292,18 +301,13 @@ void	Server::clientDisconnected()
 
 /*--------------------------------------------------------*/
 
-/**
- * A faire:
- * Gerer l'envoie de plusieurs lignes de commandes en meme temps (plusieurs \n)
-*/
-
 void	Server::serverIrc()
 {
 	while (true)
 	{
 		char	buffer[1024] = { 0 };
 		int		user_talk;
-		 
+
 		acceptUser();
 		
 		for (std::map<int, Client *>::iterator it = this->_list_client.begin(); it != this->_list_client.end(); it++)
@@ -321,8 +325,24 @@ void	Server::serverIrc()
 				}
 				if (strncmp(buffer, "", 1) != 0)
 				{
+					int	nb;
+					 
 					displayMsgOnServer(buffer, user_talk);
-					analyseCommandIrc(buffer, user_talk);
+					nb = countCharInString(buffer, '\n');
+					if (nb > 1)
+					{
+						std::vector<std::string>	line;
+						int							i = 0;
+
+						line = splitCustom(buffer, '\n');
+						while (i < nb)
+						{
+							analyseCommandIrc(line[i], user_talk);
+							i++;
+						}
+					}
+					else
+						analyseCommandIrc(buffer, user_talk);
 					userSendMsg(buffer, user_talk);
 				}
 			}

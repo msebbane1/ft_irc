@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/17 13:35:14 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/18 10:49:01 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <iostream>
 #include <string>
 #include <map>
+#include <algorithm>
 #include "Client.hpp"
 #include <fcntl.h>
 #include <vector>
@@ -59,6 +59,7 @@ class Server
 		int							received(char *buffer, int user_talk);
 		void						clientDisconnected();
 		bool						isCommandIrc(std::string str);
+		int							countCharInString(std::string buf, char c);
 
 		std::string	getPassword();
 		void		setPassword(std::string pwd);

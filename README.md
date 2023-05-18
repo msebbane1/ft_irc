@@ -15,6 +15,8 @@
 #	https://irc.dalexhd.dev/
 	*Derniere update doc IRC
 #	https://www.rfc-editor.org/rfc/rfc2812
+	*Meilleur doc pour IRC
+#	https://modern.ircdocs.horse/
 	* List command possible
 #	https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands
 	*Tuto IRC(serveur, etc)
