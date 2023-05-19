@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/18 11:54:54 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/19 13:45:05 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,14 +147,51 @@ bool	Server::connectToNc(std::vector<std::string> line, int cl)
 	{
 		this->_fd_users_dc.push_back(cl);
 		msg = "No try left: User is disconnected.\n";
-		send(cl, msg.c_str(), msg.size(), 0);
 	}
 	else
-	{
 		msg = "It left you " + std::to_string(3 - this->_list_client[cl]->get_pass_try()) + " try.\n";
-		send(cl, msg.c_str(), msg.size(), 0);
+	send(cl, msg.c_str(), msg.size(), 0);
+	return (false);
+}
+
+bool	Server::chanExist(std::string name)
+{
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name + '\n'))
+			return (true);
 	}
 	return (false);
+}
+
+bool	Server::userIsInChan(std::string name_chan, int fd_user)
+{
+	int	j = 0;
+	
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name_chan + '\n'))
+		{
+			j = i;
+			break ;
+		}
+	}
+	for (std::map<int, Client*>::iterator it = this->_list_chan[j]->getListUserCo().begin(); it != this->_list_chan[j]->getListUserCo().end(); it++)
+	{
+		if (it->first == fd_user)
+			return (true);
+	}
+	return (false);
+}
+
+Channel*	Server::takeServ(std::string name)
+{
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name + '\n'))
+			return (this->_list_chan[i]);
+	}
+	return (0);
 }
 
 void	Server::analyseCommandIrc(std::string buf, int cl)
@@ -179,11 +216,12 @@ void	Server::analyseCommandIrc(std::string buf, int cl)
 		if (line[0] == "PASS")
 		{
 			// already connect
+			std::cout << "Already connected." << std::endl;
 		}
 		else if (line[0] == "NICK")
 		{
 			//verifier nickname valide
-			_list_client[cl]->setNickname(line[1]);
+			this->_list_client[cl]->setNickname(line[1]);
 			msg = "======nickname is set=====\n";
 			send(cl, msg.c_str(), msg.size(), 0);
 			std::cout << "======nickname is set=====" << std::endl;
@@ -191,18 +229,36 @@ void	Server::analyseCommandIrc(std::string buf, int cl)
 		}
 		else if (line[0] == "USER")
 		{
-			_list_client[cl]->setUser(line[1]);
+			this->_list_client[cl]->setUser(line[1]);
 			msg = "======USER is set=====\n";
 			send(cl, msg.c_str(), msg.size(), 0);
 			std::cout << "=====user is set====" << std::endl;
 			return ;
+		}
+		else if (line[0] == "JOIN")
+		{
+			if (chanExist(line[1]) == false)
+			{
+				Channel	*chan = new Channel(line[1]);
+				this->_list_chan.push_back(chan);
+				chan->addUser(this->_list_client[cl], cl);
+			}
+			else
+				takeServ(line[1])->addUser(this->_list_client[cl], cl);
+		}
+		else if (line[0] == "PRIVMSG")
+		{
+			if (chanExist(line[1]) == false)
+				return ;
+			std::cout << "User " << cl << " passed & try to send" << std::endl;
+			userSendMsg(buf, cl, line[1]);
 		}
 	}
 }
 
 /*--------------------------------------------------------*/
 
-void	Server::userSendMsg(std::string const &buf, int user_talk)
+void	Server::userSendMsg(std::string const &buf, int user_talk, std::string name_chan)
 {
 	std::string	msg;
 	int			fd_received;
@@ -215,7 +271,9 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 		for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
 		{
 			fd_received = ite->first;
-			if (fd_received != user_talk && this->_list_client[fd_received]->getConnected() == true)
+			if (this->_list_client[fd_received]->getConnected() == true 
+				&& userIsInChan(name_chan, fd_received) == true 
+				&& fd_received != user_talk)
 			{
 				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
 				{
@@ -225,20 +283,12 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 				}
 			}
 		}
-		if (this->_list_client[user_talk])
-			this->_historic.push_back(msg);
 	}
 	else
 	{
 		msg = "You need to enter the password first\n";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
-}
-
-void	Server::sendHistoric(int client_fd)
-{
-	for (unsigned int i = 0; i < this->_historic.size(); i++)
-		send(client_fd, this->_historic[i].c_str() , this->_historic[i].size(), 0);
 }
 
 /*--------------------------------------------------------*/
@@ -350,7 +400,6 @@ void	Server::serverIrc()
 					}
 					else
 						analyseCommandIrc(buffer, user_talk);
-					userSendMsg(buffer, user_talk);
 				}
 			}
 		}
