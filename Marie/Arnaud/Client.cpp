@@ -1,12 +1,12 @@
 #include "Client.hpp"
 
-Client::Client(): _pass_try(0), _connected(false){}
+Client::Client(): _pass_try(0), _password(false){}
 
 Client::~Client(){}
 
 int			Client::get_pass_try()
 {
-	return(this->_pass_try);
+	return (this->_pass_try);
 }
 
 void		Client::increment_pass_try()
@@ -14,17 +14,17 @@ void		Client::increment_pass_try()
 	this->_pass_try++;
 }
 
-bool		Client::getConnected()
+bool		Client::passwordIsSet()
 {
-	return (this->_connected);
+	return (this->_password);
 }
 
-void		Client::setConnected()
+void		Client::setPassword()
 {
-	if (this->_connected == false)
-		this->_connected = true;
+	if (this->_password == false)
+		this->_password = true;
 	else
-		this->_connected = false;
+		this->_password = false;
 }
 
 void	Client::setNickname(std::string nickname)
@@ -39,7 +39,7 @@ void	Client::setUser(std::string user)
 
 bool	Client::userIsSet()
 {
-	if(this->_user.empty())
+	if (this->_user.empty())
 		return false;
 	else
 		return true;
@@ -47,7 +47,7 @@ bool	Client::userIsSet()
 
 bool	Client::nicknameIsSet()
 {
-	if(this->_nickname.empty())
+	if (this->_nickname.empty())
 		return false;
 	else
 		return true;
@@ -55,10 +55,8 @@ bool	Client::nicknameIsSet()
 
 bool	Client::isConnected()
 {
-	if(userIsSet() == true)
-	{
-		return(this->_connected);
-	}
+	if (userIsSet() == true && passwordIsSet() == true)
+		return true;
 	else
-		return(false);
+		return false;
 }

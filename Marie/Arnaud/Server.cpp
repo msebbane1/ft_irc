@@ -6,12 +6,11 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/18 15:44:50 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/19 15:22:57 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include "Commands.hpp"
 
 Server::Server(){}
 
@@ -19,6 +18,10 @@ Server::~Server(){}
 
 /*--------------------------------------------------------*/
 
+std::vector<int>	Server::getFdUsersDc()
+{
+	return (this->_fd_users_dc);
+}
 std::string	Server::getPassword()
 {
     return (this->_password);
@@ -66,15 +69,19 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("PRIVMSG");
 }
 
+/*--------------------------------------------------------*/
+
 void		Server::errorMsg(std::string msg)
 {
     std::cout << Red << msg << Color << std::endl;
 	exit(EXIT_FAILURE);
 }
 
+/*--------------------------------------------------------*/
+
 void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
 {
-	if(buf == "\n")
+	if (buf == "\n")
 		return;
     std::cout << "| USER : client " << user_talk << " |" << std::endl;
     std::cout << "Message send :" << buf ;
@@ -85,8 +92,10 @@ void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
 bool	Server::isCommandIrc(std::string str)
 {
 	for (unsigned int i = 0; i < this->_command_list.size(); i++)
-		if (this->_command_list[i] == str)
+	{
+		if (this->_command_list[i] + '\n' == str || this->_command_list[i] == str)
 			return (true);
+	}
 	return (false);
 }
 
@@ -138,18 +147,13 @@ void	Server::connectToClients(int user_talk, std::string buf)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	if (buf.find("\r\n") != std::string::npos)
+	cmd.exec_cmd(this, buf, _list_client[user_talk], user_talk);
+	if (this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false)
 	{
-		std::cout << "hello" << std::endl;
-		if (this->_list_client[user_talk]->getConnected() == false && this->_list_client[user_talk]->isConnected() == false)
-			cmd.exec_cmd(this, buf, _list_client[user_talk], user_talk);
-		/*
-		else 
-		{
-			cmd->exec_cmd(server, buf, _list_client[user_talk], user_talk);
-		}
-		*/
+		msg = "You need to enter the password first then your user name.\n";
+		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
+	//if (buf.find("\r\n") != std::string::npos)
 }
 
 /*--------------------------------------------------------*/
@@ -160,12 +164,13 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 	int			fd_received;
 	
 	msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + buf;
-	if (this->_list_client[user_talk]->getConnected() == true && this->_list_client[user_talk]->isConnected() == true)
+	if (this->_list_client[user_talk]->isConnected() == true)
 	{
+		std::cout << "je suis renteeee====" << std::endl;
 		for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
 		{
 			fd_received = ite->first;
-			if (fd_received != user_talk && this->_list_client[fd_received]->getConnected() == true)
+			if (fd_received != user_talk && this->_list_client[fd_received]->passwordIsSet() == true)
 			{
 				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
 				{
@@ -178,12 +183,14 @@ void	Server::userSendMsg(std::string const &buf, int user_talk)
 		if (this->_list_client[user_talk])
 			this->_historic.push_back(msg);
 	}
-	else
+	else if(this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false)
 	{
-		msg = "You need to enter the password first\n";
+		msg = "You need to enter the password first then your user name.\n";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
 }
+
+/*--------------------------------------------------------*/
 
 void	Server::sendHistoric(int client_fd)
 {
@@ -295,13 +302,12 @@ void	Server::serverIrc()
 						while (i < nb)
 						{
 							connectToClients(user_talk, line[i]);
-							//analyseCommandIrc(line[i], user_talk);
 							i++;
 						}
 					}
 					else
 						connectToClients(user_talk, buffer);
-					userSendMsg(buffer, user_talk);
+					//userSendMsg(buffer, user_talk); // ajout privatemsg
 				}
 			}
 		}

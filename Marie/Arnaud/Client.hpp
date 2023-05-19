@@ -30,17 +30,17 @@ class Client
 
 		int			get_pass_try();
 		void		increment_pass_try();
-		bool		getConnected();
-		void		setConnected();
 		void		setNickname(std::string nickname);
 		void		setUser(std::string user);
 		bool		isConnected();
 		bool		nicknameIsSet();
 		bool		userIsSet();
+		bool		passwordIsSet();
+		void		setPassword();
 
     private :
 		int		_pass_try;
-		bool	_connected;
+		bool	_password;
 		std::string _nickname;
 		std::string	_user;
 };

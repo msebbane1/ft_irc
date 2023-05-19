@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/18 15:46:49 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/19 15:07:44 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,5 @@ class Commands
 		void						exec_cmd(Server *server, std::string buf, Client *user, int user_talk);
 		bool						passCmd(std::vector<std::string> line, int cl, Client *user, Server *server);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
-		//bool						cmdForRegister(std::string buf, int cl, Server *server);
+		void						privMsgCmd(std::string const &buf, int user_talk, Client *user, Server *server);
 };
