@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 16:20:37 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 12:06:24 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,19 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <iostream>
 #include <string>
 #include <map>
+#include <algorithm>
 #include "Client.hpp"
-#include <unistd.h>
 #include <fcntl.h>
 #include <vector>
+#include "Commands.hpp"
 #include "Color.hpp"
+
+class Commands;
 class Client;
 
 #define VALID 1
@@ -39,9 +41,9 @@ class Server
 		int							_fd_server;
 		fd_set						_fds;
 		std::string					_password;
-		std::map<int, Client*>		_list_client;
-		std::vector<std::string>	_historic;
-		std::vector<int>			_fd_users;
+		std::vector<std::string>	_command_list;
+		std::vector<int>			_fd_users_dc;
+		
 	public:
 		Server();
 		virtual	~Server();
@@ -53,13 +55,16 @@ class Server
 		void						acceptUser();
 		void						serverIrc();
 		void						sendHistoric(int client_fd);
-		bool						passTry(std::vector<std::string> line, int cl);
-		std::vector<std::string>	splitCustom(std::string buf, char charset);
-		void						analyseCommandIrc(std::string buf, int cl);
+		std::vector<std::string>	splitCustom2(std::string buf, char charset);
 		int							received(char *buffer, int user_talk);
-
 		void						clientDisconnected();
+		bool						isCommandIrc(std::string str);
+		int							countCharInString(std::string buf, char c);
+		void						connectToNetCat(int user_talk, std::string buf);
 
+		std::vector<std::string>	_historic;
+		std::map<int, Client*>		_list_client;
+		std::vector<int>	getFdUsersDc();
 		std::string	getPassword();
 		void		setPassword(std::string pwd);
 };

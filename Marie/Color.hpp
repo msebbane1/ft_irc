@@ -2,6 +2,7 @@
 
 # define Yellow "\x1B[93m"
 # define Red "\x1B[31m"
+# define Grey "\x1B[37m"
 
 # define Green "\x1B[32m"
 # define BlueP "\x1B[34"

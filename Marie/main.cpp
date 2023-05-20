@@ -6,12 +6,14 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/16 16:07:24 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/18 15:40:56 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Client.hpp"
+#include "Commands.hpp"
+
 #include "Color.hpp"
 
 
