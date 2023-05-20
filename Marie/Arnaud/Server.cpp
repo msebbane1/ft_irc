@@ -3,30 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 16:38:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/19 13:45:05 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(){}
+Server::Server()
+{
+}
 
-Server::~Server(){}
+Server::~Server()
+{
+}
 
 /*--------------------------------------------------------*/
-
-void				Server::setFdUsersDc(std::vector<int> fdUsersDc)
-{
-	this->_fd_users_dc = fdUsersDc;
-}
-
-std::vector<int>	Server::getFdUsersDc()
-{
-	return (this->_fd_users_dc);
-}
 
 std::string	Server::getPassword()
 {
@@ -60,35 +54,10 @@ void		Server::createServ(int port)
 	if (listen(this->_fd_server, 500) < 0)
 		errorMsg("listen");
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
-}
 
-/*--------------------------------------------------------*/
-
-void		Server::errorMsg(std::string msg)
-{
-    std::cout << Red << msg << Color << std::endl;
-	exit(EXIT_FAILURE);
-}
-
-/*--------------------------------------------------------*/
-
-void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
-{
-	if (buf == "\n")
-		return;
-    std::cout << "| USER : client " << user_talk << " |" << std::endl;
-    std::cout << "Message send :" << buf ;
-}
-
-/*--------------------------------------------------------*/
-
-bool	Server::isCommandIrc(std::string str)
-{
-	this->_command_list.push_back("AUTHENTICATE");
 	this->_command_list.push_back("PASS");
 	this->_command_list.push_back("NICK");
 	this->_command_list.push_back("USER");
-	
 	this->_command_list.push_back("KICK");
 	this->_command_list.push_back("INVITE");
 	this->_command_list.push_back("TOPIC");
@@ -98,18 +67,35 @@ bool	Server::isCommandIrc(std::string str)
 	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
 	this->_command_list.push_back("PRIVMSG");
-	
+}
+
+void		Server::errorMsg(std::string msg)
+{
+    std::cout << Red << msg << Color << std::endl;
+	exit(EXIT_FAILURE);
+}
+
+void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
+{
+	if(buf == "\n")
+		return;
+    std::cout << "| USER : client " << user_talk << " |" << std::endl;
+    std::cout << "Message send :" << buf ;
+}
+
+/*--------------------------------------------------------*/
+
+bool	Server::isCommandIrc(std::string str)
+{
 	for (unsigned int i = 0; i < this->_command_list.size(); i++)
-	{
-		if (this->_command_list[i] + '\n' == str || this->_command_list[i] == str)
+		if (this->_command_list[i] == str)
 			return (true);
-	}
 	return (false);
 }
 
 /*--------------------------------------------------------*/
 
-std::vector<std::string>	Server::splitCustom2(std::string buf, char charset)
+std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 {
 	std::string					tmp;
 	std::vector<std::string>	split;
@@ -130,8 +116,6 @@ std::vector<std::string>	Server::splitCustom2(std::string buf, char charset)
 	return (split);
 }
 
-/*--------------------------------------------------------*/
-
 int						Server::countCharInString(std::string buf, char c)
 {
 	int	count = 0;
@@ -143,33 +127,168 @@ int						Server::countCharInString(std::string buf, char c)
 
 /*--------------------------------------------------------*/
 
-void	Server::connectToNetCat(int user_talk, std::string buf)
+bool	Server::connectToNc(std::vector<std::string> line, int cl)
 {
-	Commands cmd;
-	std::string msg;
-	msg = "Error: limit char";
+	std::string		msg;
 	
-	if (buf.length() > 1000) {
-		send(user_talk, msg.c_str(), msg.size(), 0);
-		return ;
-	}
-	if (buf[0] == '\n' || buf[0] == '\t')
-		return ;
-	cmd.exec_cmd(this, buf, _list_client[user_talk], user_talk);
-	if (this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false)
+	if (line[1].find("\n") > 0)
+		line[1].erase(line[1].size() - 1);
+	if (line[1] == this->_password)
 	{
-		msg = "You need to enter the password first then your user name.\n";
-		send(user_talk, msg.c_str(), msg.size(), 0);
+		this->_list_client[cl]->setConnected();
+		msg = "You are connected!\n";
+		send(cl, msg.c_str(), msg.size(), 0);
+		//if (this->_historic.size() > 1)
+			//sendHistoric(cl);
+		return (true);
 	}
-	//if (buf.find("\r\n") != std::string::npos)
+	this->_list_client[cl]->increment_pass_try();
+	if (this->_list_client[cl]->get_pass_try() == 3)
+	{
+		this->_fd_users_dc.push_back(cl);
+		msg = "No try left: User is disconnected.\n";
+	}
+	else
+		msg = "It left you " + std::to_string(3 - this->_list_client[cl]->get_pass_try()) + " try.\n";
+	send(cl, msg.c_str(), msg.size(), 0);
+	return (false);
+}
+
+bool	Server::chanExist(std::string name)
+{
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name + '\n'))
+			return (true);
+	}
+	return (false);
+}
+
+bool	Server::userIsInChan(std::string name_chan, int fd_user)
+{
+	int	j = 0;
+	
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name_chan + '\n'))
+		{
+			j = i;
+			break ;
+		}
+	}
+	for (std::map<int, Client*>::iterator it = this->_list_chan[j]->getListUserCo().begin(); it != this->_list_chan[j]->getListUserCo().end(); it++)
+	{
+		if (it->first == fd_user)
+			return (true);
+	}
+	return (false);
+}
+
+Channel*	Server::takeServ(std::string name)
+{
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name + '\n'))
+			return (this->_list_chan[i]);
+	}
+	return (0);
+}
+
+void	Server::analyseCommandIrc(std::string buf, int cl)
+{
+	std::vector<std::string>	line;
+	std::string					msg;
+
+	line = splitCustom(buf, ' ');
+	if (isCommandIrc(line[0]) == false)
+		return ;
+	if (this->_list_client[cl]->getConnected() == false)
+	{
+		if (line[0] == "PASS" && connectToNc(line, cl) == false)
+		{
+			msg = "You entered a wrong password.\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+			return ;
+		}
+	}
+	else
+	{
+		if (line[0] == "PASS")
+		{
+			// already connect
+			std::cout << "Already connected." << std::endl;
+		}
+		else if (line[0] == "NICK")
+		{
+			//verifier nickname valide
+			this->_list_client[cl]->setNickname(line[1]);
+			msg = "======nickname is set=====\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+			std::cout << "======nickname is set=====" << std::endl;
+			return ;
+		}
+		else if (line[0] == "USER")
+		{
+			this->_list_client[cl]->setUser(line[1]);
+			msg = "======USER is set=====\n";
+			send(cl, msg.c_str(), msg.size(), 0);
+			std::cout << "=====user is set====" << std::endl;
+			return ;
+		}
+		else if (line[0] == "JOIN")
+		{
+			if (chanExist(line[1]) == false)
+			{
+				Channel	*chan = new Channel(line[1]);
+				this->_list_chan.push_back(chan);
+				chan->addUser(this->_list_client[cl], cl);
+			}
+			else
+				takeServ(line[1])->addUser(this->_list_client[cl], cl);
+		}
+		else if (line[0] == "PRIVMSG")
+		{
+			if (chanExist(line[1]) == false)
+				return ;
+			std::cout << "User " << cl << " passed & try to send" << std::endl;
+			userSendMsg(buf, cl, line[1]);
+		}
+	}
 }
 
 /*--------------------------------------------------------*/
 
-void	Server::sendHistoric(int client_fd)
+void	Server::userSendMsg(std::string const &buf, int user_talk, std::string name_chan)
 {
-	for (unsigned int i = 0; i < this->_historic.size(); i++)
-		send(client_fd, this->_historic[i].c_str() , this->_historic[i].size(), 0);
+	std::string	msg;
+	int			fd_received;
+	
+	msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + buf;
+	if (buf[0] == '\n' || buf[0] == '\t')
+		return ;
+	if (this->_list_client[user_talk]->getConnected() == true)
+	{
+		for(std::map<int, Client *>::iterator ite = this->_list_client.begin(); ite != this->_list_client.end(); ite++)
+		{
+			fd_received = ite->first;
+			if (this->_list_client[fd_received]->getConnected() == true 
+				&& userIsInChan(name_chan, fd_received) == true 
+				&& fd_received != user_talk)
+			{
+				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
+				{
+					std::cout << "Send failed" << std::endl;
+					this->_fd_users_dc.push_back(user_talk);
+					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+				}
+			}
+		}
+	}
+	else
+	{
+		msg = "You need to enter the password first\n";
+		send(user_talk, msg.c_str(), msg.size(), 0);
+	}
 }
 
 /*--------------------------------------------------------*/
@@ -229,7 +348,6 @@ int		Server::received(char *buffer, int user_talk)
 
 void	Server::clientDisconnected() 
 {
-
 	for (std::vector<int>::iterator it = this->_fd_users_dc.begin(); it != this->_fd_users_dc.end(); it++) {
 		close(this->_list_client.find(*it)->first);
 		delete this->_list_client.find(*it)->second;
@@ -273,16 +391,15 @@ void	Server::serverIrc()
 						std::vector<std::string>	line;
 						int							i = 0;
 
-						line = splitCustom2(buffer, '\n');
+						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{
-							connectToNetCat(user_talk, line[i]);
+							analyseCommandIrc(line[i], user_talk);
 							i++;
 						}
 					}
 					else
-						connectToNetCat(user_talk, buffer);
-						// faire connectToISSRI
+						analyseCommandIrc(buffer, user_talk);
 				}
 			}
 		}

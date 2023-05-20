@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/20 15:40:50 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:32:24 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,15 @@ void	Commands::exec_cmd(Server *server, std::string buf, Client *user, int user_
 	//================================CMD CONNECTION REGISTER==============================//
 	if (user->isConnected() == false)
 	{
-		if (cmd[0] == "PASS" && passCmd(cmd, user_talk, user, server) == false)
+		if (cmd[0] == "PASS" && !user->passwordIsSet())
 		{
-			std::cout << "[CMD : PASS]" << std::endl;
-			msg = "You entered a wrong password.\n";
-			send(user_talk, msg.c_str(), msg.size(), 0);
+			if (passCmd(cmd, user_talk, user, server) == false)
+			{
+				std::cout << "[CMD : PASS]" << std::endl;
+				msg = "You entered a wrong password.\n";
+				send(user_talk, msg.c_str(), msg.size(), 0);
+				return ;
+			}
 		}
 		else if (cmd[0] == "USER" && user->passwordIsSet() == true)
 		{
@@ -95,16 +99,18 @@ bool	Commands::passCmd(std::vector<std::string> line, int cl, Client *user, Serv
 	user->increment_pass_try();
 	if (user->get_pass_try() == 3)
 	{
-		server->getFdUsersDc().push_back(cl);
+		server->_fd_users_dc.push_back(cl);
+		
 		msg = "No try left: User is disconnected.\n";
 		send(cl, msg.c_str(), msg.size(), 0);
 		std::cout << "Client " << cl << " has been disconnected." << std::endl;
-		server->clientDisconnected();
+		return (false);
 	}
 	else
 	{
 		msg = "It left you " + std::to_string(3 - user->get_pass_try()) + " try.\n";
 		send(cl, msg.c_str(), msg.size(), 0);
+		return (false);
 	}
 	return (false);
 }
