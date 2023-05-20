@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 16:41:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 17:03:44 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Client.hpp"
 #include "Commands.hpp"
 #include "Color.hpp"
+#include "Channel.hpp"
 
 /*Verifie Password valid*/
 
@@ -26,12 +27,12 @@ bool check_adressIP(char *port)
     for(int i = 0; port[i]; i++)
     {
         if(!isdigit(port[i]))
-            return(false);
+            return(true);
     }
     ip = atoi(port);
     if (ip <= 0 || ip > 65535)
-        return(false);
-    return(true);
+        return(true);
+    return(false);
 }
 
 int main(int argc, char **argv)

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/20 15:58:56 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:54:19 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <map>
 #include <algorithm>
 #include "Client.hpp"
+#include "Channel.hpp"
 #include "Server.hpp"
 #include <fcntl.h>
 #include <vector>
@@ -30,15 +31,23 @@
 
 class Server;
 class Client;
+class Channel;
 
 class Commands
 {
+	private :
+		std::vector<Channel*>		_list_chan;
+		
 	public :
 		Commands();
 		~Commands();
 
 		void						exec_cmd(Server *server, std::string buf, Client *user, int user_talk);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
+
+		bool						chanExist(std::string name);
+		Channel						*takeServ(std::string name);
+		bool						userIsInChan(std::string name_chan, int fd_user);
 		//=========================COMMANDS======================//
 		bool						passCmd(std::vector<std::string> line, int cl, Client *user, Server *server);
 		void						privMsgCmd(int user_talk, Client *user, Server *server, std::vector<std::string> cmd);

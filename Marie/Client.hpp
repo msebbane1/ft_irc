@@ -13,6 +13,7 @@
 #include "Client.hpp"
 #include <fcntl.h>
 #include <vector>
+#include "Channel.hpp"
 #include "Commands.hpp"
 #include "Color.hpp"
 

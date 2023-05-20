@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 16:41:02 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 16:53:31 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include "Client.hpp"
 #include <fcntl.h>
 #include <vector>
+#include "Channel.hpp"
 #include "Commands.hpp"
 #include "Color.hpp"
 
@@ -57,7 +58,7 @@ class Server
 		bool						isCommandIrc(std::string str);
 		int							countCharInString(std::string buf, char c);
 		void						connectToNetCat(int user_talk, std::string buf);
-
+		void						chanExist(std::string name);
 		std::vector<int>			_fd_users_dc; // a mettre em prive 
 		std::vector<std::string>	_historic;
 		std::map<int, Client*>		_list_client;

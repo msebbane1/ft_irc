@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 16:38:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 17:37:03 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,7 @@ void	Server::connectToNetCat(int user_talk, std::string buf)
 	}
 	//if (buf.find("\r\n") != std::string::npos)
 }
+
 
 /*--------------------------------------------------------*/
 

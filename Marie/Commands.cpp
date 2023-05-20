@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/20 16:32:24 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/20 17:57:03 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,10 @@ void	Commands::exec_cmd(Server *server, std::string buf, Client *user, int user_
 				return ;
 			}
 		}
+		else if(cmd[0] == "PASS" && user->passwordIsSet())
+		{
+			std::cout << "Already connected." << std::endl;
+		}
 		else if (cmd[0] == "USER" && user->passwordIsSet() == true)
 		{
 			//verifier user valide PARSE USER
@@ -67,16 +71,29 @@ void	Commands::exec_cmd(Server *server, std::string buf, Client *user, int user_
 			send(user_talk, msg.c_str(), msg.size(), 0);
 			std::cout << "======nickname is set=====" << std::endl;
 		}
+	//================================CMD CHANNEL OPERATION==============================//
 		else if (cmd[0] == "PRIVMSG")
 		{
+			//if (chanExist(cmd[1]) == false)
+				//return ;
 			privMsgCmd(user_talk, user, server, cmd);	
 			return ;
 		}
-	//================================CMD CHANNEL OPERATION==============================//
-		/*
     	else if (cmd[0] == "JOIN")
-        //join_cmd(cmd, user, server);
-		*/
+		{
+			if (chanExist(cmd[1]) == false)
+			{
+				std::cout << "join====" << std::endl;
+				Channel	*chan = new Channel(cmd[1]);
+				this->_list_chan.push_back(chan);
+				chan->addUser(server->_list_client[user_talk], user_talk);
+			}
+			else
+			{
+				std::cout << "join====2222222" << std::endl;
+				takeServ(cmd[1])->addUser(server->_list_client[user_talk], user_talk);
+			}
+		}
 	}
 
 }
@@ -117,7 +134,7 @@ bool	Commands::passCmd(std::vector<std::string> line, int cl, Client *user, Serv
 
 /*--------------------------------------------------------*/
 
-void	Commands::privMsgCmd(int user_talk, Client *user, Server *server, std::vector<std::string> cmd)
+void	Commands::privMsgCmd(int user_talk, Client *user, Server *server, std::vector<std::string> cmd) // std::string name_chan
 {
 	std::string	msg;
 	int			fd_received;
@@ -130,7 +147,7 @@ void	Commands::privMsgCmd(int user_talk, Client *user, Server *server, std::vect
 	//std::cout << "[CMD : PRIVMSG]" << server->_list_client[fd_received]->getUser() << "/" << cmd[1] << "/";
 	if(cmd[1] == server->_list_client[fd_received]->getNickname() && !cmd[2].empty()) // ou name of channel 
 	{
-		if (fd_received != user_talk && server->_list_client[fd_received]->passwordIsSet() == true)
+		if (fd_received != user_talk && server->_list_client[fd_received]->passwordIsSet() == true) // && userIsInChan(name_chan, fd_received) == true 
 		{
 			msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
 			if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
@@ -176,4 +193,48 @@ std::vector<std::string>	Commands::splitCustom(std::string buf, char charset)
 		}
 	}
 	return (split);
+}
+
+/*--------------------------------------------------------*/
+bool	Commands::chanExist(std::string name)
+{
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		std::cout << "==========" << this->_list_chan[i]->getName() << name << std::endl;
+		if (this->_list_chan[i]->getName() == (name))
+		{
+			return (true);
+		}
+	}
+	return (false);
+}
+
+bool	Commands::userIsInChan(std::string name_chan, int fd_user)
+{
+	int	j = 0;
+	
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name_chan + '\n'))
+		{
+			j = i;
+			break ;
+		}
+	}
+	for (std::map<int, Client*>::iterator it = this->_list_chan[j]->getListUserCo().begin(); it != this->_list_chan[j]->getListUserCo().end(); it++)
+	{
+		if (it->first == fd_user)
+			return (true);
+	}
+	return (false);
+}
+
+Channel*	Commands::takeServ(std::string name)
+{
+	for (unsigned long i = 0; i < this->_list_chan.size(); i++)
+	{
+		if (this->_list_chan[i]->getName() == (name + '\n'))
+			return (this->_list_chan[i]);
+	}
+	return (0);
 }
