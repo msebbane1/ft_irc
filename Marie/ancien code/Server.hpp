@@ -1,55 +1,71 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
+/*   Updated: 2023/05/22 10:22:58 by msebbane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
-///////INCLUDES//////
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <iostream>
 #include <string>
 #include <map>
+#include <algorithm>
 #include "Client.hpp"
-#include <unistd.h>
 #include <fcntl.h>
 #include <vector>
+#include "Channel.hpp"
+#include "Commands.hpp"
 #include "Color.hpp"
 
-///////DEFINES//////
-#define VALID 1
-#define INVALID 0
-
+class Commands;
 class Client;
 
 class Server
 {
-    public :
-        Server();
-        virtual ~Server();
+	protected:
+		struct sockaddr_in			_addr;
+		int							_addr_len;
+		int							_fd_server;
+		fd_set						_fds;
+		std::string					_password;
+		std::vector<std::string>	_command_list;
+		
+	public:
+		Server();
+		virtual	~Server();
 
-        void Error_msg(std::string msg);
-        void Creation_server_irc(int port);
-        void Connection_users(Client *user);
-		void Display_msg_on_server(std::string const &buf);
-		void User_send_msg(std::string buf, int fd_received);
-		void Accept_users(Client *user);
-		void connectToNetcat(std::string buf, int fd_received);
-		std::vector<std::string> customSplit(std::string str, char separator);
-
-        std::string get_password();
-        void        set_password(std::string password);
-
-        std::map<int, Client * > list_client;
-
-    private :
-		struct sockaddr_in	_address;//la structure d'adresse pour le socket
-		int	_addrlen; //taille
-        int _fd_socket;//pour stocker le descripteur de fichier du socket du serveur
-        int _new_socket;//le nouveau socket pour la connexion entrante
-        int _valread;//le nombre de caractères lus ou écrits
-		int	_user_fd_talk; // fd de celui qui envoie
-		int _fd_received; // fd de ceux qui recoivent
-		fd_set _fds;
-		std::string _password;
+		void						createServ(int port);
+		void						errorMsg(std::string msg);
+		void						displayMsgOnServer(std::string const &buf, int user_talk);
+		void						userSendMsg(std::string const &buf, int user_talk);
+		void						acceptUser();
+		void						serverIrc();
+		void						sendHistoric(int client_fd);
+		std::vector<std::string>	splitCustom2(std::string buf, char charset);
+		int							received(char *buffer, int user_talk);
+		void						clientDisconnected();
+		bool						isCommandIrc(std::string str);
+		int							countCharInString(std::string buf, char c);
+		void						connectToNetCat(int user_talk, std::string buf);
+		void						chanExist(std::string name);
+		std::vector<int>			_fd_users_dc; // a mettre em prive 
+		std::vector<std::string>	_historic;
+		std::map<int, Client*>		_list_client;
+		
+		std::vector<int>			getFdUsersDc();
+		void						setFdUsersDc(std::vector<int> fdUsersDc);
+		
+		std::string					getPassword();
+		void						setPassword(std::string pwd);
 };

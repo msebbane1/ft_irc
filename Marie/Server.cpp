@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/22 10:57:12 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/22 14:09:54 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ Server::~Server(){}
 
 /*--------------------------------------------------------*/
 
-void				Server::setFdUsersDc(std::vector<int> fdUsersDc)
+void				Server::setFdUsersDc(int fdUsersDc)
 {
-	this->_fd_users_dc = fdUsersDc;
+	this->_fd_users_dc.push_back(fdUsersDc);
 }
 
 std::vector<int>	Server::getFdUsersDc()
@@ -36,6 +36,21 @@ std::string	Server::getPassword()
 void		Server::setPassword(std::string pwd)
 {
     this->_password = pwd;
+}
+
+std::map<int, Client*>	Server::getListClient()
+{
+	return (this->_list_client);
+}
+
+std::vector<Channel*>	Server::getListChan()
+{
+	return (this->_list_chan);
+}
+
+void	Server::addListChan(Channel *c)
+{
+	this->_list_chan.push_back(c);
 }
 
 /*--------------------------------------------------------*/
@@ -109,7 +124,7 @@ bool	Server::isCommandIrc(std::string str)
 
 /*--------------------------------------------------------*/
 
-std::vector<std::string>	Server::splitCustom2(std::string buf, char charset)
+std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 {
 	std::string					tmp;
 	std::vector<std::string>	split;
@@ -145,7 +160,6 @@ int						Server::countCharInString(std::string buf, char c)
 
 void	Server::connectToNetCat(int user_talk, std::string buf)
 {
-	Commands cmd;
 	std::string msg;
 	msg = "Error: limit char";
 	
@@ -156,8 +170,10 @@ void	Server::connectToNetCat(int user_talk, std::string buf)
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
 	buf.erase(buf.length() - 1);
-	std::vector<std::string>	line = splitCustom2(buf, ' ');
-	cmd.exec_cmd(this, line, _list_client[user_talk], user_talk);
+	std::vector<std::string>	line = splitCustom(buf, ' ');
+	
+	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line);
+	cmd->exec_cmd();
 	if (this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false || this->_list_client[user_talk]->nicknameIsSet() == false)
 	{
 		msg = "You need to enter the password first then your user name.\n";
@@ -168,12 +184,13 @@ void	Server::connectToNetCat(int user_talk, std::string buf)
 
 
 /*--------------------------------------------------------*/
-
+/*
 void	Server::sendHistoric(int client_fd)
 {
 	for (unsigned int i = 0; i < this->_historic.size(); i++)
 		send(client_fd, this->_historic[i].c_str() , this->_historic[i].size(), 0);
 }
+*/
 
 /*--------------------------------------------------------*/
 
@@ -276,7 +293,7 @@ void	Server::serverIrc()
 						std::vector<std::string>	line;
 						int							i = 0;
 
-						line = splitCustom2(buffer, '\n');
+						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{
 							connectToNetCat(user_talk, line[i]);
