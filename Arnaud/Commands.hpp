@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/22 13:30:28 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:48:45 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 class Client;
 class Server;
-class Server;
+class Channel;
 
 class Commands
 {
@@ -43,5 +43,5 @@ class Commands
 		//=========================COMMANDS======================//
 		void						cmdToConnect(Server *server, std::vector<std::string> cmd, Client *user, int user_talk);
 		bool						passCmd(std::vector<std::string> line, int cl, Client *user, Server *server);
-		void						privMsgCmd(int user_talk, Client *user, Server *server, std::vector<std::string> cmd);
+		void						privMsgCmd(int user_talk, Server *server, std::vector<std::string> cmd);
 };

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/22 13:29:45 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:40:09 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Server
 		void						chanExist(std::string name);
 		
 		std::vector<int>			getFdUsersDc();
-		void						setFdUsersDc(std::string fdUsersDc);
+		void						setFdUsersDc(int fdUsersDc);
 		
 		std::string					getPassword();
 		void						setPassword(std::string pwd);

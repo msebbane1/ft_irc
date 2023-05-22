@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/22 13:29:05 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/22 13:49:41 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	Commands::exec_cmd()
 	}
 	//================================CMD CONNECTION REGISTER==============================//
 	if (this->_user->isConnected() == false)
-		cmdToConnect(this->_s, this->_cmd, this->_user, this->_fd_user);
+		cmdToConnect(this->_s, this->_line_cmd, this->_user, this->_fd_user);
 	else
 	{
 	//================================CMD CONNECTION MSG==============================//
@@ -49,7 +49,7 @@ void	Commands::exec_cmd()
 		{
 			//if (chanExist(cmd[1]) == false)
 				//return ;
-			privMsgCmd(this->_fd_user, this->_user, this->_s, this->_line_cmd);	
+			privMsgCmd(this->_fd_user, this->_s, this->_line_cmd);	
 			return ;
 		}
     	else if (this->_line_cmd[0] == "JOIN")
@@ -58,14 +58,13 @@ void	Commands::exec_cmd()
 			{
 				std::cout << "join====" << std::endl;
 				Channel	*chan = new Channel(this->_line_cmd[1]);
-				this->_s->getListChan().push_back(chan);
-				//this->_list_chan.push_back(chan);
-				chan->addUser(server->_list_client[this->_fd_user], this->_fd_user);
+				this->_s->addListChan(chan);
+				chan->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
 			}
 			else
 			{
 				std::cout << "join====2222222" << std::endl;
-				takeServ(this->_line_cmd[1])->addUser(server->_list_client[this->_fd_user], this->_fd_user);
+				takeServ(this->_line_cmd[1])->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
 			}
 		}
 	}
@@ -89,25 +88,22 @@ bool	Commands::passCmd(std::vector<std::string> line, int cl, Client *user, Serv
 	user->increment_pass_try();
 	if (user->get_pass_try() == 3)
 	{
-		server->_fd_users_dc.push_back(cl);
-		
+		server->setFdUsersDc(cl);
 		msg = "No try left: User is disconnected.\n";
 		send(cl, msg.c_str(), msg.size(), 0);
 		std::cout << "Client " << cl << " has been disconnected." << std::endl;
-		return (false);
 	}
 	else
 	{
 		msg = "It left you " + std::to_string(3 - user->get_pass_try()) + " try.\n";
 		send(cl, msg.c_str(), msg.size(), 0);
-		return (false);
 	}
 	return (false);
 }
 
-void Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client *user, int user_talk)
+void	Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client *user, int user_talk)
 {
-	std::string		msg;
+	std::string	msg;
 
 	if (cmd[0] == "PASS" && !user->passwordIsSet())
 	{
@@ -140,42 +136,40 @@ void Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client
 
 /*--------------------------------------------------------*/
 
-void	Commands::privMsgCmd(int user_talk, Client *user, Server *server, std::vector<std::string> cmd) // std::string name_chan
+void	Commands::privMsgCmd(int user_talk, Server *server, std::vector<std::string> cmd) // std::string name_chan
 {
 	std::string	msg;
 	int			fd_received;
 
-	for(std::map<int, Client *>::iterator ite = server->_list_client.begin(); ite != server->_list_client.end(); ite++)
+	for(std::map<int, Client *>::iterator ite = server->getListClient().begin(); ite != server->getListClient().end(); ite++)
 	{
 		fd_received = ite->first;
-	}
-	//AJOUT nickname obligatoire avant de se connecter NICKNAME IS SET
-	//std::cout << "[CMD : PRIVMSG]" << server->_list_client[fd_received]->getUser() << "/" << cmd[1] << "/";
-	if(cmd[1] == server->_list_client[fd_received]->getNickname() && !cmd[2].empty()) // ou name of channel 
-	{
-		if (fd_received != user_talk && server->_list_client[fd_received]->passwordIsSet() == true) // && userIsInChan(name_chan, fd_received) == true 
+		//AJOUT nickname obligatoire avant de se connecter NICKNAME IS SET
+		//std::cout << "[CMD : PRIVMSG]" << server->_list_client[fd_received]->getUser() << "/" << cmd[1] << "/";
+		if(cmd[1] == server->getListClient()[fd_received]->getNickname() && !cmd[2].empty()) // ou name of channel 
 		{
-			msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
-			if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
+			if (fd_received != user_talk && server->getListClient()[fd_received]->passwordIsSet() == true) // && userIsInChan(name_chan, fd_received) == true 
 			{
-				std::cout << "Send failed" << std::endl;
-				server->getFdUsersDc().push_back(user_talk);
-				std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+				msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
+				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
+				{
+					std::cout << "Send failed" << std::endl;
+					server->setFdUsersDc(user_talk);
+					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+				}
 			}
 		}
+		else if(cmd[1] != server->getListClient()[fd_received]->getNickname())
+		{
+			msg = "\x1B[37mDidn't find the nickname or name channel called : " + cmd[1] + "\033[0m\n";
+			send(user_talk, msg.c_str(), msg.length(), 0);
+		}
+		else if(cmd[2].empty() && cmd[1] == server->getListClient()[fd_received]->getNickname())
+		{
+			msg = "PRIVMSG <target> <text to be send> \n";
+			send(user_talk, msg.c_str(), msg.length(), 0);
+		}
 	}
-	else if(cmd[1] != server->_list_client[fd_received]->getNickname())
-	{
-		msg = "\x1B[37mDidn't find the nickname or name channel called : " + cmd[1] + "\033[0m\n";
-		send(user_talk, msg.c_str(), msg.length(), 0);
-	}
-	else if(cmd[2].empty() && cmd[1] == server->_list_client[fd_received]->getNickname())
-	{
-		msg = "PRIVMSG <target> <text to be send> \n";
-		send(user_talk, msg.c_str(), msg.length(), 0);
-	}
-	if (user)
-		server->_historic.push_back(msg);
 }
 
 /*--------------------------------------------------------*/
