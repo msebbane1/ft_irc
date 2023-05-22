@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/22 11:49:50 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/19 13:17:55 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void	Channel::addUser(Client *cl, int fd_cl)
 	{
 		if (this->_list_banned[i] == fd_cl)
 		{
-			std::cout << "User has been banned. Can't join the channel."
 			// envoyer un message comme quoi il est ban
 			// il faut d'abord le deban pur l'add
 			return ;

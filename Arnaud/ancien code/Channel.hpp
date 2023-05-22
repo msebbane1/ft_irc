@@ -6,17 +6,17 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/22 12:09:36 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/19 13:02:47 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "Server.hpp"
-#include "Client.hpp"
-
 class Server;
+#include "Client.hpp"
 class Client;
+#include <vector>
 
 /**
  * Commande a gerer dans le channel:
@@ -28,7 +28,6 @@ class Client;
  * 	- NOTICE
  * 	- QUIT
 */
-
 class Channel
 {
 	private:
