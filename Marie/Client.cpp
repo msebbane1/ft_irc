@@ -64,7 +64,7 @@ bool	Client::nicknameIsSet()
 
 bool	Client::isConnected()
 {
-	if (userIsSet() == true && passwordIsSet() == true) // ajout nick && nicknameIsSet() == true
+	if (userIsSet() == true && passwordIsSet() == true && nicknameIsSet() == true)
 		return true;
 	else
 		return false;

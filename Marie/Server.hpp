@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 16:53:31 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/22 10:22:58 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class Client;
 
 class Server
 {
-	private:
+	protected:
 		struct sockaddr_in			_addr;
 		int							_addr_len;
 		int							_fd_server;

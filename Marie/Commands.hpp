@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/20 16:54:19 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/22 10:50:55 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,14 @@ class Commands
 		Commands();
 		~Commands();
 
-		void						exec_cmd(Server *server, std::string buf, Client *user, int user_talk);
+		void						exec_cmd(Server *server, std::vector<std::string>	cmd, Client *user, int user_talk);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 
 		bool						chanExist(std::string name);
 		Channel						*takeServ(std::string name);
 		bool						userIsInChan(std::string name_chan, int fd_user);
 		//=========================COMMANDS======================//
+		void						cmdToConnect(Server *server, std::vector<std::string> cmd, Client *user, int user_talk);
 		bool						passCmd(std::vector<std::string> line, int cl, Client *user, Server *server);
 		void						privMsgCmd(int user_talk, Client *user, Server *server, std::vector<std::string> cmd);
 };

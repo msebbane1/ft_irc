@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/20 17:57:03 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/22 10:55:29 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,9 @@ Commands::~Commands(){}
 
 /*--------------------------------------------------------*/
 
-void	Commands::exec_cmd(Server *server, std::string buf, Client *user, int user_talk)
+void	Commands::exec_cmd(Server *server, std::vector<std::string>	cmd, Client *user, int user_talk)
 {
-	buf.erase(buf.length() - 1);
 	std::string					msg;
-	std::vector<std::string>	cmd = splitCustom(buf, ' ');
-	//if (cmd[1].find("\n"))
-			//cmd[1].erase(cmd[1].length() - 1);
 
 	if (server->isCommandIrc(cmd[0]) == false)
 	{
@@ -34,43 +30,16 @@ void	Commands::exec_cmd(Server *server, std::string buf, Client *user, int user_
 	}
 	//================================CMD CONNECTION REGISTER==============================//
 	if (user->isConnected() == false)
-	{
-		if (cmd[0] == "PASS" && !user->passwordIsSet())
-		{
-			if (passCmd(cmd, user_talk, user, server) == false)
-			{
-				std::cout << "[CMD : PASS]" << std::endl;
-				msg = "You entered a wrong password.\n";
-				send(user_talk, msg.c_str(), msg.size(), 0);
-				return ;
-			}
-		}
-		else if(cmd[0] == "PASS" && user->passwordIsSet())
-		{
-			std::cout << "Already connected." << std::endl;
-		}
-		else if (cmd[0] == "USER" && user->passwordIsSet() == true)
-		{
-			//verifier user valide PARSE USER
-			std::cout << "[CMD : USER]" << std::endl;
-			user->setUser(cmd[1]);
-			msg = "====== USER is set =====\n";
-			send(user_talk, msg.c_str(), msg.size(), 0);
-			std::cout << "=====user is set====" << std::endl;
-		}
-	}
-	//================================CMD CONNECTION MSG==============================//
+		cmdToConnect(server, cmd, user, user_talk);
 	if (user->isConnected() == true)
 	{
-		if (cmd[0] == "NICK")
-		{
-			//verifier nickname valide PARSE NICK
-			std::cout << "[CMD : NICK]" << std::endl;
-			user->setNickname(cmd[1]);
-			msg = "======nickname is set=====\n";
-			send(user_talk, msg.c_str(), msg.size(), 0);
-			std::cout << "======nickname is set=====" << std::endl;
-		}
+	//================================CMD CONNECTION MSG==============================//
+		if (cmd[0] == "PASS")
+			std::cout << "Already connected." << std::endl;
+		else if (cmd[0] == "USER")
+			std::cout << "Already set USER." << std::endl;
+		else if (cmd[0] == "NICK")
+			std::cout << "Already set NICK." << std::endl;
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (cmd[0] == "PRIVMSG")
 		{
@@ -130,6 +99,39 @@ bool	Commands::passCmd(std::vector<std::string> line, int cl, Client *user, Serv
 		return (false);
 	}
 	return (false);
+}
+
+void Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client *user, int user_talk)
+{
+	std::string		msg;
+	
+	if (cmd[0] == "PASS" && !user->passwordIsSet())
+	{
+		if (passCmd(cmd, user_talk, user, server) == false)
+		{
+			std::cout << "[CMD : PASS]" << std::endl;
+			msg = "You entered a wrong password.\n";
+			send(user_talk, msg.c_str(), msg.size(), 0);
+			return ;
+		}
+	}
+	else if (cmd[0] == "USER" && user->passwordIsSet() == true)
+	{
+		//verifier user valide PARSE USER
+		std::cout << "[CMD : USER]" << std::endl;
+		user->setUser(cmd[1]);
+		msg = "====== USER is set ===== :" + user->getUser() + "\n";
+		send(user_talk, msg.c_str(), msg.size(), 0);
+	}
+	else if (cmd[0] == "NICK" && user->passwordIsSet() == true)
+	{
+			//verifier nickname valide PARSE NICK
+		std::cout << "[CMD : NICK]" << std::endl;
+		user->setNickname(cmd[1]);
+		msg = "======nickname is set=====:" + user->getNickname() + "\n";
+		send(user_talk, msg.c_str(), msg.size(), 0);
+		std::cout << "======nickname is set=====" << std::endl;
+	}
 }
 
 /*--------------------------------------------------------*/

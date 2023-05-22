@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 17:37:03 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/22 10:57:12 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,13 +155,15 @@ void	Server::connectToNetCat(int user_talk, std::string buf)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	cmd.exec_cmd(this, buf, _list_client[user_talk], user_talk);
-	if (this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false)
+	buf.erase(buf.length() - 1);
+	std::vector<std::string>	line = splitCustom2(buf, ' ');
+	cmd.exec_cmd(this, line, _list_client[user_talk], user_talk);
+	if (this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false || this->_list_client[user_talk]->nicknameIsSet() == false)
 	{
 		msg = "You need to enter the password first then your user name.\n";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 	}
-	//if (buf.find("\r\n") != std::string::npos)
+	//if (buf.find("\r\n") != std::string::npos) // pour IRSSI
 }
 
 
