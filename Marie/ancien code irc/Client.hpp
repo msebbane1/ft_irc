@@ -1,7 +1,21 @@
 #pragma once
 
 ///////INCLUDES//////
-#include "Server.hpp"
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <iostream>
+#include <string>
+#include <map>
+#include <algorithm>
+#include "Client.hpp"
+#include <fcntl.h>
+#include <vector>
+#include "Channel.hpp"
+#include "Commands.hpp"
+#include "Color.hpp"
 
 ///////DEFINES//////
 #define VALID 1
@@ -27,14 +41,9 @@ class Client
 		bool		passwordIsSet();
 		void		setPassword();
 
-		int 		get_fd();
-		void 		set_fd(int fd);
-
     private :
-		int		_fd;
 		int		_pass_try;
 		bool	_password;
 		std::string _nickname;
 		std::string	_user;
-		//std::string _mode;
 };

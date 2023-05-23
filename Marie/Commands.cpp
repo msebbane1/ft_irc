@@ -6,26 +6,24 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/22 14:19:38 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/23 18:24:46 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 #include "Server.hpp"
-Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
-{
-}
 
-Commands::~Commands()
-{
-}
+Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd){}
+
+Commands::~Commands(){}
 
 /*--------------------------------------------------------*/
 
 void	Commands::exec_cmd()
 {
 	std::string	msg;
-
+	
+	//this->_s->setListClient(this->_fd_user, this->_user);
 	if (this->_s->isCommandIrc(this->_line_cmd[0]) == false)
 	{
 		std::cout << "[not a command]" << std::endl;
@@ -38,31 +36,38 @@ void	Commands::exec_cmd()
 	{
 	//================================CMD CONNECTION MSG==============================//
 		if (this->_line_cmd[0] == "PASS")
+		{
 			std::cout << "Already connected." << std::endl;
+			return;
+		}
 		else if (this->_line_cmd[0] == "USER")
+		{
 			std::cout << "Already set USER." << std::endl;
+			return ;
+		}
 		else if (this->_line_cmd[0] == "NICK")
+		{
 			std::cout << "Already set NICK." << std::endl;
+			return ;
+		}
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (this->_line_cmd[0] == "PRIVMSG")
 		{
 			//if (chanExist(cmd[1]) == false)
 				//return ;
-			privMsgCmd(this->_fd_user, this->_s, this->_line_cmd);	
+			privMsgCmd(this->_fd_user, this->_line_cmd, this->_user);	
 			return ;
 		}
     	else if (this->_line_cmd[0] == "JOIN")
 		{
 			if (chanExist(this->_line_cmd[1]) == false)
 			{
-				std::cout << "join====" << std::endl;
 				Channel	*chan = new Channel(this->_line_cmd[1]);
 				this->_s->addListChan(chan);
 				chan->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
 			}
 			else
 			{
-				std::cout << "join====2222222" << std::endl;
 				takeServ(this->_line_cmd[1])->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
 			}
 		}
@@ -75,8 +80,6 @@ bool	Commands::passCmd(std::vector<std::string> line, int cl, Client *user, Serv
 {
 	std::string		msg;
 	
-	//if (line[1].find("\n") > 0)
-		//line[1].erase(line[1].size() - 1);
 	if (line[1] == server->getPassword())
 	{
 		user->setPassword();
@@ -116,7 +119,7 @@ void	Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client
 	}
 	else if (cmd[0] == "USER" && user->passwordIsSet() == true)
 	{
-		//verifier user valide PARSE USER // ne doit pas etre vide
+		//verifier user valide PARSE USER // ne doit pas etre vide // PARSE COMMAND USER 3 ARGUMENTS
 		std::cout << "[CMD : USER]" << std::endl;
 		user->setUser(cmd[1]);
 		msg = "====== USER is set ===== :" + user->getUser() + "\n";
@@ -133,44 +136,39 @@ void	Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client
 	}
 }
 
-/*--------------------------------------------------------*/
-
-void	Commands::privMsgCmd(int user_talk, Server *server, std::vector<std::string> cmd) // std::string name_chan
+void	Commands::privMsgCmd(int user_talk, std::vector<std::string> cmd, Client *user)
 {
-	std::string	msg;
-	int			fd_received;
+	std::string msg;
 
-	for(std::map<int, Client *>::iterator ite = server->getListClient().begin(); ite != server->getListClient().end(); ite++)
+	if(cmd.size() <= 2)
 	{
-		fd_received = ite->first;
+		//msg = "PRIVMSG <target> <text to be send> \n";
+		//send(user_talk, msg.c_str(), msg.length(), 0);
+		this->_s->errorSend("411", this->_user->getNickname(), "No receiver given", this->_user->get_fd());
 	}
-		//AJOUT nickname obligatoire avant de se connecter NICKNAME IS SET
-		//std::cout << "[CMD : PRIVMSG]" << server->_list_client[fd_received]->getUser() << "/" << cmd[1] << "/";
-		if(cmd[1] == server->getListClient()[fd_received]->getNickname() && !cmd[2].empty()) // ou name of channel 
+	else if(cmd.size() > 2)
+	{
+		/* POUR CHANNEL
+		if (cmd[1][0] == '#')
+			cmd[1].erase(0, 1);
+		if(chanExist(cmd[1]) == true)
 		{
-			if (fd_received != user_talk && server->getListClient()[fd_received]->passwordIsSet() == true) // && userIsInChan(name_chan, fd_received) == true 
-			{
-				msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
-				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
-				{
-					std::cout << "Send failed" << std::endl;
-					server->setFdUsersDc(user_talk);
-					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
-				}
-			}
+			ENVOIE MSG DIFFERENT
 		}
-		else if(cmd[1] != server->getListClient()[fd_received]->getNickname())
+		*/
+		if(this->_s->clientExist(cmd[1]) == true)
+		{
+			msg = "Message of [ID: " + std::to_string(user_talk) + "] : NICK :" + user->getNickname() + ": " + cmd[2] + "\n";
+			std::cout << "=======" << this->_s->getClient(cmd[1])->get_fd() << std::endl;
+			send(this->_s->getClient(cmd[1])->get_fd(), msg.c_str(), msg.length(), 0);
+		}
+		else
 		{
 			msg = "\x1B[37mDidn't find the nickname or name channel called : " + cmd[1] + "\033[0m\n";
 			send(user_talk, msg.c_str(), msg.length(), 0);
 		}
-		else if(cmd[2].empty() && cmd[1] == server->getListClient()[fd_received]->getNickname())
-		{
-			msg = "PRIVMSG <target> <text to be send> \n";
-			send(user_talk, msg.c_str(), msg.length(), 0);
-		}
+	}
 }
-
 
 /*--------------------------------------------------------*/
 bool	Commands::chanExist(std::string name)
