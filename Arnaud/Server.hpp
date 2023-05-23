@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/22 13:40:09 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/23 10:50:26 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,20 @@ class Server
 		Server();
 		virtual	~Server();
 
-		void						createServ(int port);
-		void						errorMsg(std::string msg);
-		void						displayMsgOnServer(std::string const &buf, int user_talk);
-		void						userSendMsg(std::string const &buf, int user_talk);
-		void						acceptUser();
 		void						serverIrc();
-		void						sendHistoric(int client_fd);
-		std::vector<std::string>	splitCustom2(std::string buf, char charset);
+		void						createServ(int port);
+		void						acceptUser();
 		int							received(char *buffer, int user_talk);
+		void						connectToNetCat(int user_talk, std::string buf);
+		
+		void						displayMsgOnServer(std::string const &buf, int user_talk);
+		void						sendHistoric(int client_fd);
+		void						errorMsg(std::string msg);
+		int							countCharInString(std::string buf, char c);
+		std::vector<std::string>	splitCustom(std::string buf, char charset);
+		
 		void						clientDisconnected();
 		bool						isCommandIrc(std::string str);
-		int							countCharInString(std::string buf, char c);
-		void						connectToNetCat(int user_talk, std::string buf);
 		void						chanExist(std::string name);
 		
 		std::vector<int>			getFdUsersDc();

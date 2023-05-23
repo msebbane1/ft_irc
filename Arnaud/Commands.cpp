@@ -6,14 +6,14 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/22 13:49:41 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/23 12:09:54 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 #include "Server.hpp"
 
-Commands::Commands(Server *s, Client *c, int fd_c, std::string cmd, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _cmd(cmd), _line_cmd(linecmd)
+Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
 {
 }
 
@@ -49,7 +49,7 @@ void	Commands::exec_cmd()
 		{
 			//if (chanExist(cmd[1]) == false)
 				//return ;
-			privMsgCmd(this->_fd_user, this->_s, this->_line_cmd);	
+			privMsgCmd(this->_fd_user, this->_line_cmd);	
 			return ;
 		}
     	else if (this->_line_cmd[0] == "JOIN")
@@ -136,63 +136,54 @@ void	Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client
 
 /*--------------------------------------------------------*/
 
-void	Commands::privMsgCmd(int user_talk, Server *server, std::vector<std::string> cmd) // std::string name_chan
+void	Commands::privMsgCmd(int user_talk, std::vector<std::string> cmd) // std::string name_chan
 {
 	std::string	msg;
 	int			fd_received;
+	std::string	dest = cmd[1];
 
-	for(std::map<int, Client *>::iterator ite = server->getListClient().begin(); ite != server->getListClient().end(); ite++)
+	for(std::map<int, Client *>::iterator ite = this->_s->getListClient().begin(); ite != this->_s->getListClient().end(); ite++)
 	{
 		fd_received = ite->first;
 		//AJOUT nickname obligatoire avant de se connecter NICKNAME IS SET
 		//std::cout << "[CMD : PRIVMSG]" << server->_list_client[fd_received]->getUser() << "/" << cmd[1] << "/";
-		if(cmd[1] == server->getListClient()[fd_received]->getNickname() && !cmd[2].empty()) // ou name of channel 
+		if (dest.find('#') == 0 || dest.find('&') == 0)
 		{
-			if (fd_received != user_talk && server->getListClient()[fd_received]->passwordIsSet() == true) // && userIsInChan(name_chan, fd_received) == true 
+			if (fd_received != user_talk && userIsInChan(dest, fd_received) == true && this->_s->getListClient()[fd_received]->passwordIsSet() == true)
 			{
-				msg = "Message of [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
+				msg = dest + " [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
 				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
 				{
 					std::cout << "Send failed" << std::endl;
-					server->setFdUsersDc(user_talk);
+					this->_s->setFdUsersDc(user_talk);
 					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
 				}
 			}
 		}
-		else if(cmd[1] != server->getListClient()[fd_received]->getNickname())
+		if(dest == this->_s->getListClient()[fd_received]->getNickname() && !cmd[2].empty()) // ou name of channel 
 		{
-			msg = "\x1B[37mDidn't find the nickname or name channel called : " + cmd[1] + "\033[0m\n";
+			if (fd_received != user_talk && this->_s->getListClient()[fd_received]->passwordIsSet() == true) // && userIsInChan(name_chan, fd_received) == true 
+			{
+				msg = dest + " [ID: " + std::to_string(user_talk) + "] : " + cmd[2] + "\n";
+				if (send(fd_received, msg.c_str(), msg.length(), 0) < 0)
+				{
+					std::cout << "Send failed" << std::endl;
+					this->_s->setFdUsersDc(user_talk);
+					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+				}
+			}
+		}
+		else if(dest != this->_s->getListClient()[fd_received]->getNickname())
+		{
+			msg = "\x1B[37mDidn't find the nickname or name channel called : " + dest + "\033[0m\n";
 			send(user_talk, msg.c_str(), msg.length(), 0);
 		}
-		else if(cmd[2].empty() && cmd[1] == server->getListClient()[fd_received]->getNickname())
+		else if(cmd[2].empty() && dest == this->_s->getListClient()[fd_received]->getNickname())
 		{
 			msg = "PRIVMSG <target> <text to be send> \n";
 			send(user_talk, msg.c_str(), msg.length(), 0);
 		}
 	}
-}
-
-/*--------------------------------------------------------*/
-
-std::vector<std::string>	Commands::splitCustom(std::string buf, char charset)
-{
-	std::string					tmp;
-	std::vector<std::string>	split;
-	unsigned long				e_i = 0;
-	unsigned long				s_i = 0;
-
-	for (unsigned long i = 0; i <= buf.size(); i++)
-	{
-		if (buf[i] == charset || i == buf.size())
-		{
-			e_i = i;
-			tmp.clear();
-			tmp.append(buf, s_i, e_i - s_i);
-			split.push_back(tmp);
-			s_i = e_i + 1;
-		}
-	}
-	return (split);
 }
 
 /*--------------------------------------------------------*/
@@ -215,7 +206,7 @@ bool	Commands::userIsInChan(std::string name_chan, int fd_user)
 	
 	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
 	{
-		if ( this->_s->getListChan()[i]->getName() == (name_chan + '\n'))
+		if (this->_s->getListChan()[i]->getName() == (name_chan + '\n') || this->_s->getListChan()[i]->getName() == name_chan)
 		{
 			j = i;
 			break ;
