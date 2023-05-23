@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/23 18:24:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/23 18:50:18 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ Commands::~Commands(){}
 void	Commands::exec_cmd()
 {
 	std::string	msg;
-	
+
+	//FAIRE UN SWITCH ?
+
 	//this->_s->setListClient(this->_fd_user, this->_user);
 	if (this->_s->isCommandIrc(this->_line_cmd[0]) == false)
 	{
@@ -127,7 +129,7 @@ void	Commands::cmdToConnect(Server *server, std::vector<std::string> cmd, Client
 	}
 	else if (cmd[0] == "NICK" && user->passwordIsSet() == true)
 	{
-			//verifier nickname valide PARSE NICK
+		//verifier nickname valide PARSE NICK
 		std::cout << "[CMD : NICK]" << std::endl;
 		user->setNickname(cmd[1]);
 		msg = "======nickname is set=====:" + user->getNickname() + "\n";
@@ -144,7 +146,7 @@ void	Commands::privMsgCmd(int user_talk, std::vector<std::string> cmd, Client *u
 	{
 		//msg = "PRIVMSG <target> <text to be send> \n";
 		//send(user_talk, msg.c_str(), msg.length(), 0);
-		this->_s->errorSend("411", this->_user->getNickname(), "No receiver given", this->_user->get_fd());
+		this->_s->errorSend("411", this->_user->getNickname(), "No receiver given", this->_user->get_fd()); // a regarder la doc
 	}
 	else if(cmd.size() > 2)
 	{
