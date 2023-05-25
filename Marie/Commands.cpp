@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:55:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:58:35 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,10 +154,13 @@ bool	Commands::nicknameIsValid(std::string nick)
 {
 	for (int i = 0; nick[i]; i++)
 	{
-		if(isdigit(nick[i]))
-			return false;
-		else
-			return true;
+		if(isalnum(nick[i]))
+		{
+			if(isdigit(nick[i]))
+				return false;
+			else
+				return true;
+		}
 	}
 	return false;
 }
