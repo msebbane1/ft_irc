@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/24 13:27:04 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/25 10:44:08 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,8 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 			e_i = i;
 			tmp.clear();
 			tmp.append(buf, s_i, e_i - s_i);
-			split.push_back(tmp);
+			if (!tmp.empty())
+				split.push_back(tmp);
 			s_i = e_i + 1;
 		}
 	}
@@ -215,7 +216,8 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 void	Server::connectToNetCat(int user_talk, std::string buf)
 {
-	std::string msg;
+	std::string	msg;
+	
 	buf.erase(buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
@@ -227,7 +229,8 @@ void	Server::connectToNetCat(int user_talk, std::string buf)
 void	Server::connectToIRSSI(int user_talk, std::string buf)
 {
 	//A CHANGER TOUT LE PARSE POUR IRSSI
-	std::string msg;
+	std::string	msg;
+	
 	buf.erase(buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
