@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/23 18:07:38 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/25 11:43:01 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@
 #include <algorithm>
 #include <fcntl.h>
 #include <vector>
-#include "Color.hpp"
 #include "Client.hpp"
-#include "Commands.hpp"
 #include "Channel.hpp"
+#include "Commands.hpp"
+#include "Color.hpp"
 
 class Commands;
 class Client;
+class Channel;
 
 class Server
 {
@@ -47,6 +48,7 @@ class Server
 	public:
 		Server();
 		virtual	~Server();
+
 		//=======================Creation Server=====================//
 		void						serverIrc();
 		void						createServ(int port);
@@ -62,7 +64,6 @@ class Server
 		int							countCharInString(std::string buf, char c);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 		
-		
 		void						clientDisconnected();
 		bool						isCommandIrc(std::string str);
 		void						chanExist(std::string name);
@@ -74,15 +75,14 @@ class Server
 		
 		std::string					getPassword();
 		void						setPassword(std::string pwd);
-		
+
 		std::map<int, Client*>		getListClient();
 		void						setListClient(int fd, Client *user);
 		Client *					getClient(std::string nick);
 		
-		
 		std::vector<Channel*>		getListChan();
 		void						addListChan(Channel *c);
-
+		
 		//===========================ERROR MSG && MSG==============================//
 		void	errorMsg(std::string msg);
 		void	errorSendBuf(std::string num, std::string nick, std::string arg, std::string msg, int fd);
