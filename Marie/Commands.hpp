@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 15:50:01 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:01:45 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,17 @@ class Commands
 		bool						chanExist(std::string name);
 		Channel						*takeServ(std::string name);
 		bool						userIsInChan(std::string name_chan, int fd_user);
+		void						sendToChannel(int user_talk, std::string msg, std::string chan);
+		
 		//=========================COMMANDS======================//
 		void						cmdToConnect();
 		void						passCmd();
 		void						userCmd();
 		void						nickCmd();
 		void						privMsgCmd();
-		void						sendToChannel(int user_talk, std::string msg, std::string chan);
+		void						joinCmd();
+
+		
 
 		class	NeedMoreParams: public std::exception
 		{

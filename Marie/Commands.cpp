@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 15:53:25 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:02:03 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,25 +39,9 @@ void	Commands::exec_cmd()
 			nickCmd();
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (this->_line_cmd[0] == "PRIVMSG")
-		{
-			//if (chanExist(cmd[1]) == false)
-				//return ;
 			privMsgCmd();	
-		}
     	else if (this->_line_cmd[0] == "JOIN") // <canal>{,<canal>} [<clé>{,<clé>}]
-		{
-			// PAS ENCORE TOUCHER APR LE PUSH DE MARIE
-			if (chanExist(this->_line_cmd[1]) == false)
-			{
-				Channel	*chan = new Channel(this->_line_cmd[1]);
-				this->_s->addListChan(chan);
-				chan->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
-			}
-			else
-			{
-				takeServ(this->_line_cmd[1])->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
-			}
-		}
+			joinCmd();
 		else if (this->_line_cmd[0] == "AUTHENTICATE"){}
 		else if (this->_line_cmd[0] == "QUIT"){} //  [<Message de départ >]
     	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
@@ -74,7 +58,33 @@ void	Commands::exec_cmd()
 	}
 }
 
-/*--------------------------------------------------------*/
+/*--------------------------------------------------COMMANDS---------------------------------------------*/
+
+//-------Commands to connects------//
+
+void	Commands::cmdToConnect()
+{
+	std::string	msg;
+
+	try
+	{
+		if (this->_line_cmd[0] == "PASS")
+			passCmd();
+		else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
+			userCmd();
+		else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
+			nickCmd();
+	}
+	catch (std::exception& e)
+	{
+		msg = _line_cmd[0] + e.what();
+		send(this->_fd_user, msg.c_str(), msg.size(), 0);
+	}
+	if (this->_user->isConnected())
+		this->_s->welcomeMsg(this->_user->getUser(), this->_user->getNickname(), this->_fd_user);
+}
+
+//---------------------PASS-------------------//
 
 void	Commands::passCmd()
 {
@@ -112,6 +122,8 @@ void	Commands::passCmd()
 		std::cout << "Already set PASS." << std::endl;
 }
 
+//---------------------USER-------------------//
+
 void	Commands::userCmd()
 {
 	std::string msg;
@@ -140,6 +152,8 @@ void	Commands::userCmd()
 		
 }
 
+//---------------------NICK-------------------//
+
 void	Commands::nickCmd()
 {
 	std::string	msg;
@@ -161,38 +175,14 @@ void	Commands::nickCmd()
 	}
 }
 
-void	Commands::cmdToConnect()
-{
-	std::string	msg;
-
-	try
-	{
-		if (this->_line_cmd[0] == "PASS")
-			passCmd();
-		else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
-			userCmd();
-		else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
-			nickCmd();
-	}
-	catch (std::exception& e)
-	{
-		msg = _line_cmd[0] + e.what();
-		send(this->_fd_user, msg.c_str(), msg.size(), 0);
-	}
-	if (this->_user->isConnected())
-		this->_s->welcomeMsg(this->_user->getUser(), this->_user->getNickname(), this->_fd_user);
-}
+//---------------------PRIVMSG-------------------//
 
 void	Commands::privMsgCmd()
 {
 	std::string	msg;
 
 	if(this->_line_cmd.size() <= 2)
-	{
-		//msg = "PRIVMSG <target> <text to be send> \n";
-		//send(user_talk, msg.c_str(), msg.length(), 0);
 		this->_s->errorSend("411", this->_user->getNickname(), "No receiver given", this->_user->get_fd()); // a regarder la doc
-	}
 	else if(this->_line_cmd.size() > 2)
 	{
 		if (this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&')
@@ -222,7 +212,29 @@ void	Commands::privMsgCmd()
 	}
 }
 
-/*--------------------------------------------------------*/
+
+//---------------------JOIN-------------------//
+
+void	Commands::joinCmd()
+{
+	if (chanExist(this->_line_cmd[1]) == false)
+	{
+		Channel	*chan = new Channel(this->_line_cmd[1]);
+		this->_s->addListChan(chan);
+		chan->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
+		}
+	else
+	{
+		takeServ(this->_line_cmd[1])->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
+	}
+}
+
+
+
+
+
+
+/*-------------------------CHANNELS-------------------------------*/
 bool	Commands::chanExist(std::string name)
 {
 	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
