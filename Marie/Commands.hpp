@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:01:45 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:41:54 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,7 @@ class Commands
 		void						passCmd();
 		void						userCmd();
 		void						nickCmd();
+		bool						nicknameIsValid(std::string nick);
 		void						privMsgCmd();
 		void						joinCmd();
-
-		
-
-		class	NeedMoreParams: public std::exception
-		{
-			public:
-				virtual const char *what() const _NOEXCEPT;
-		};
 };

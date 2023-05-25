@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:02:03 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:55:10 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,20 +66,14 @@ void	Commands::cmdToConnect()
 {
 	std::string	msg;
 
-	try
-	{
-		if (this->_line_cmd[0] == "PASS")
-			passCmd();
-		else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
-			userCmd();
-		else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
-			nickCmd();
-	}
-	catch (std::exception& e)
-	{
-		msg = _line_cmd[0] + e.what();
-		send(this->_fd_user, msg.c_str(), msg.size(), 0);
-	}
+	if (this->_line_cmd[0] == "PASS")
+		passCmd();
+	else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
+		userCmd();
+	else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
+		nickCmd();
+	else if(!this->_user->isConnected())
+		std::cout << "send error" << std::endl;
 	if (this->_user->isConnected())
 		this->_s->welcomeMsg(this->_user->getUser(), this->_user->getNickname(), this->_fd_user);
 }
@@ -94,7 +88,7 @@ void	Commands::passCmd()
 	if (!this->_user->passwordIsSet())
 	{
 		if (this->_line_cmd.size() < 2)
-			throw NeedMoreParams();
+			std::cout << "send error" << std::endl;
 		else if (this->_line_cmd[1] == this->_s->getPassword())
 		{
 			this->_user->setPassword();
@@ -131,15 +125,17 @@ void	Commands::userCmd()
 	if(!this->_user->realnameIsSet())
 	{
 		if (this->_line_cmd.size() < 5)
-			throw NeedMoreParams();
+			std::cout << "send error" << std::endl;
 		if (this->_line_cmd[4][0] == ':' && this->_line_cmd[4].size() >= 2)
 		{
 			_line_cmd[4] = _line_cmd[4].substr(1, _line_cmd[4].size() - 1);
 			std::string realname = _line_cmd[4] + " " + _line_cmd[5];
 			this->_user->setRealname(realname);
 			this->_user->setUser(this->_line_cmd[1]);
-			msg = "====== USER is set ===== :" + this->_user->getRealname() + "\n";
-			send(this->_fd_user, msg.c_str(), msg.size(), 0); 
+			msg = "====== Realname is set ===== :" + this->_user->getRealname() + "\n";
+			send(this->_fd_user, msg.c_str(), msg.size(), 0);
+			msg = "====== USER is set ===== :" + this->_user->getUser() + "\n";
+			send(this->_fd_user, msg.c_str(), msg.size(), 0);
 		}
 		else if(this->_line_cmd[4][0] != ':')
 		{
@@ -154,19 +150,38 @@ void	Commands::userCmd()
 
 //---------------------NICK-------------------//
 
+bool	Commands::nicknameIsValid(std::string nick)
+{
+	for (int i = 0; nick[i]; i++)
+	{
+		if(isdigit(nick[i]))
+			return false;
+		else
+			return true;
+	}
+	return false;
+}
+
 void	Commands::nickCmd()
 {
 	std::string	msg;
-	//verifier nickname valide PARSE NICK
+
 	if(!this->_user->nicknameIsSet())
 	{
-			if (_line_cmd[0].size() < 2)
-			throw NeedMoreParams();
-		std::cout << "[CMD : NICK]" << std::endl;
-		this->_user->setNickname(_line_cmd[1]);
-		msg = "======nickname is set=====:" + this->_user->getNickname() + "\n";
-		send(this->_fd_user, msg.c_str(), msg.size(), 0);
-		std::cout << "======nickname is set=====" << std::endl;
+		if (_line_cmd.size() == 1 ) 
+		{
+			this->_s->errorSend("431", this->_user->getNickname(), "No nickname given", this->_user->get_fd() );
+			return ;
+		}
+		if (nicknameIsValid(this->_line_cmd[1]) == true)
+		{
+			this->_user->setNickname(_line_cmd[1]);
+			msg = "======nickname is set=====:" + this->_user->getNickname() + "\n";
+			send(this->_fd_user, msg.c_str(), msg.size(), 0);
+			std::cout << "======nickname is set=====" << std::endl;
+		}
+		else
+			std::cout << "nickname not valid" << std::endl;
 	}
 	else if(_line_cmd[0] == "NICK" && this->_user->nicknameIsSet())
 	{
@@ -297,12 +312,4 @@ Channel*	Commands::takeServ(std::string name)
 			return (this->_s->getListChan()[i]);
 	}
 	return (0);
-}
-
-const char	*Commands::NeedMoreParams::what() const _NOEXCEPT // 461
-{
-	//std::string	msg;
-	
-	//msg = name_cmd + " :Not enough parameters\n";
-	return (" :Not enough parameters\n");
 }
