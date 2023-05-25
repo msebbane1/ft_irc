@@ -12,10 +12,12 @@ class Commands;
 class Client
 {
 	private :
+		int			_fd;
 		int			_pass_try;
 		bool		_password;
 		std::string	_nickname;
 		std::string	_user;
+		//std::string	_mode;
 		//std::string _real_name;
 
     public :
@@ -33,4 +35,6 @@ class Client
 		bool		userIsSet();
 		bool		passwordIsSet();
 		void		setPassword();
+		int 		get_fd();
+		void 		set_fd(int fd);
 };

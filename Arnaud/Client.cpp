@@ -54,6 +54,16 @@ bool	Client::userIsSet()
 		return true;
 }
 
+int Client::get_fd()
+{
+	return (_fd);
+}
+
+void Client::set_fd(int fd) 
+{
+	_fd = fd;
+}
+
 bool	Client::nicknameIsSet()
 {
 	if (this->_nickname.empty())

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/23 10:50:26 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/24 10:23:50 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,27 @@ class Server
 		Server();
 		virtual	~Server();
 
+		//=======================Creation Server=====================//
 		void						serverIrc();
 		void						createServ(int port);
 		void						acceptUser();
 		int							received(char *buffer, int user_talk);
 		void						connectToNetCat(int user_talk, std::string buf);
+		void						connectToIRSSI(int user_talk, std::string buf);
+		void 						connect(int user_talk, std::string buf);
 		
+		//==========================Utils===========================//
 		void						displayMsgOnServer(std::string const &buf, int user_talk);
 		void						sendHistoric(int client_fd);
-		void						errorMsg(std::string msg);
 		int							countCharInString(std::string buf, char c);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 		
 		void						clientDisconnected();
 		bool						isCommandIrc(std::string str);
 		void						chanExist(std::string name);
+		bool 						clientExist(std::string nick);
 		
+		//==========================GETTER && SETTER===========================//
 		std::vector<int>			getFdUsersDc();
 		void						setFdUsersDc(int fdUsersDc);
 		
@@ -72,7 +77,15 @@ class Server
 		void						setPassword(std::string pwd);
 
 		std::map<int, Client*>		getListClient();
+		void						setListClient(int fd, Client *user);
+		Client *					getClient(std::string nick);
 		
 		std::vector<Channel*>		getListChan();
 		void						addListChan(Channel *c);
+		
+		//===========================ERROR MSG && MSG==============================//
+		void	errorMsg(std::string msg);
+		void	errorSendBuf(std::string num, std::string nick, std::string arg, std::string msg, int fd);
+		void	errorSend(std::string num, std::string nick, std::string msg, int fd);
+		void	welcomeMsg(std::string user, std::string nick, int fd);
 };

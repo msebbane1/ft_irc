@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/23 10:58:36 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/24 13:27:04 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,21 @@ std::map<int, Client*>	Server::getListClient()
 	return (this->_list_client);
 }
 
+Client *Server::getClient(std::string nick) 
+{
+	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
+	{
+		if (it->second->getNickname() == nick)
+			return (it->second);
+	}
+	return (NULL);
+}
+
+void		Server::setListClient(int fd, Client *user)
+{
+	this->_list_client.insert(std::pair<int, Client*>(fd, user));
+}
+
 std::vector<Channel*>	Server::getListChan()
 {
 	return (this->_list_chan);
@@ -51,6 +66,48 @@ std::vector<Channel*>	Server::getListChan()
 void					Server::addListChan(Channel *c)
 {
 	this->_list_chan.push_back(c);
+}
+
+/*--------------------------------------------------------*/
+
+bool Server::clientExist(std::string nick) 
+{
+	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
+	{
+		if (it->second->getNickname() == nick) // ou USER ??
+		{
+			std::cout << "it->second = " << it->second << std::endl;
+			std::cout << "recup nick = " << it->second->getNickname() << std::endl;
+			std::cout << "it->first " << it->first << std::endl;
+			return (true);
+		}
+	}
+	return (false);
+}
+
+//A UTILISER TOUTE LES ERREURS voir doc
+/*-------------------------MSG POUR IRSSI-------------------------------*/
+void	Server::welcomeMsg(std::string user, std::string nick, int fd)
+{
+	std::string msg = ":localhost 001 " + nick + "\r\n" 
+	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
+	+ "@localhost" + "\"" + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Server::errorSend(std::string num, std::string nick, std::string line, int fd) 
+{
+	std::string msg = ":localhost " + num + " " + nick + " :" + line + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Server::errorSendBuf(std::string num, std::string nick, std::string arg, std::string line, int fd) 
+{
+	std::string msg = ":localhost " + num + " " + nick + " " + line + " :" + arg + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
 }
 
 /*--------------------------------------------------------*/
@@ -124,6 +181,15 @@ bool	Server::isCommandIrc(std::string str)
 
 /*--------------------------------------------------------*/
 
+int		Server::countCharInString(std::string buf, char c)
+{
+	int	count = 0;
+
+	for (unsigned long i = 0; (i = buf.find(c, i)) != std::string::npos; i++)
+        count++;
+	return (count);
+}
+
 std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 {
 	std::string					tmp;
@@ -147,39 +213,47 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-int						Server::countCharInString(std::string buf, char c)
-{
-	int	count = 0;
-
-	for (unsigned long i = 0; (i = buf.find(c, i)) != std::string::npos; i++)
-        count++;
-	return (count);
-}
-
-/*--------------------------------------------------------*/
-
 void	Server::connectToNetCat(int user_talk, std::string buf)
 {
 	std::string msg;
-	msg = "Error: limit char";
-	
-	if (buf.length() > 1000) {
-		send(user_talk, msg.c_str(), msg.size(), 0);
-		return ;
-	}
-	if (buf[0] == '\n' || buf[0] == '\t')
-		return ;
 	buf.erase(buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line);
 	cmd->exec_cmd();
-	if (this->_list_client[user_talk]->passwordIsSet() == false || this->_list_client[user_talk]->userIsSet() == false || this->_list_client[user_talk]->nicknameIsSet() == false)
+	delete cmd;
+}
+
+void	Server::connectToIRSSI(int user_talk, std::string buf)
+{
+	//A CHANGER TOUT LE PARSE POUR IRSSI
+	std::string msg;
+	buf.erase(buf.length() - 1);
+	std::vector<std::string>	line = splitCustom(buf, ' ');
+	
+	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line);
+	cmd->exec_cmd();
+	delete cmd;
+}
+
+/*--------------------------------------------------------*/
+
+void Server::connect(int user_talk, std::string buf)
+{
+	std::string msg;
+	msg = "Error: limit char";
+	
+	if (buf.length() > 1000)
 	{
-		msg = "You need to enter the password first then your user name.\n";
 		send(user_talk, msg.c_str(), msg.size(), 0);
+		return ;
 	}
-	//if (buf.find("\r\n") != std::string::npos) // pour IRSSI
+	if (buf[0] == '\n' || buf[0] == '\t')
+		return ;
+	if(buf.find("\r\n") != std::string::npos)
+		connectToIRSSI(user_talk, buf);
+	else
+		connectToNetCat(user_talk, buf);
 }
 
 /*--------------------------------------------------------*/
@@ -210,6 +284,9 @@ void	Server::acceptUser()
 			errorMsg("accept");
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
+		
+		this->_list_client[new_user]->set_fd(new_user);
+
 		std::cout << std::endl;
 		std::cout << "===================================" << std::endl;
 		std::cout << Colored <<" [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
@@ -285,13 +362,12 @@ void	Server::serverIrc()
 						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{
-							connectToNetCat(user_talk, line[i]);
+							connect(user_talk, line[i]);
 							i++;
 						}
 					}
 					else
-						connectToNetCat(user_talk, buffer);
-						// faire connectToISSRI
+						connect(user_talk, buffer);
 				}
 			}
 		}
