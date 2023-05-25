@@ -4,9 +4,9 @@ RM = rm -f
 
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = irc
+NAME = ircserv
 
-SRC = $(wildcard *.cpp)
+SRC = Client.cpp Server.cpp main.cpp Channel.cpp Commands.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
