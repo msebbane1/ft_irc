@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/24 13:10:51 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/25 16:41:10 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,4 @@ class Commands
 		void						privMsgCmd(int user_talk, std::vector<std::string> cmd, Client *user);
 		void						sendToChannel(int user_talk, std::string msg, std::string chan);
 
-		class	NeedMoreParams: public std::exception
-		{
-			public:
-				virtual const char *what() const _NOEXCEPT;
-		};
 };
