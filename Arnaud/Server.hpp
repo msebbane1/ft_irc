@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/24 10:23:50 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 13:22:48 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ class Channel;
 class Server
 {
 	private:
-		struct sockaddr_in			_addr;
-		int							_addr_len;
-		int							_fd_server;
-		fd_set						_fds;
-		std::string					_password;
-		std::vector<std::string>	_command_list;
-		std::vector<int>			_fd_users_dc;
-		std::map<int, Client*>		_list_client;
-		std::vector<Channel*>		_list_chan;
+		struct sockaddr_in				_addr;
+		int								_addr_len;
+		int								_fd_server;
+		fd_set							_fds;
+		std::string						_password;
+		std::vector<std::string>		_command_list;
+		std::vector<int>				_fd_users_dc;
+		std::map<int, Client*>			_list_client;
+		std::map<std::string, Channel*>	_list_chan;
 		
 	public:
 		Server();
@@ -70,18 +70,18 @@ class Server
 		bool 						clientExist(std::string nick);
 		
 		//==========================GETTER && SETTER===========================//
-		std::vector<int>			getFdUsersDc();
-		void						setFdUsersDc(int fdUsersDc);
+		std::vector<int>				getFdUsersDc();
+		void							setFdUsersDc(int fdUsersDc);
 		
-		std::string					getPassword();
-		void						setPassword(std::string pwd);
+		std::string						getPassword();
+		void							setPassword(std::string pwd);
 
-		std::map<int, Client*>		getListClient();
-		void						setListClient(int fd, Client *user);
-		Client *					getClient(std::string nick);
+		std::map<int, Client*>			getListClient();
+		void							setListClient(int fd, Client *user);
+		Client*							getClient(std::string nick);
 		
-		std::vector<Channel*>		getListChan();
-		void						addListChan(Channel *c);
+		std::map<std::string, Channel*>	getListChan();
+		void							addListChan(Channel *c);
 		
 		//===========================ERROR MSG && MSG==============================//
 		void	errorMsg(std::string msg);

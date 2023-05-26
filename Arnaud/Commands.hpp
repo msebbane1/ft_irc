@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:41:10 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 10:15:00 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,14 @@ class Commands
 		bool						chanExist(std::string name);
 		Channel						*takeServ(std::string name);
 		bool						userIsInChan(std::string name_chan, int fd_user);
-		//=========================COMMANDS======================//
-		void						cmdToConnect(Server *server, std::vector<std::string> cmd, Client *user, int user_talk);
-		bool						passCmd(std::vector<std::string> line, int cl, Client *user, Server *server);
-		void						privMsgCmd(int user_talk, std::vector<std::string> cmd, Client *user);
 		void						sendToChannel(int user_talk, std::string msg, std::string chan);
 
+		//=========================COMMANDS======================//
+		void						cmdToConnect();
+		void						passCmd();
+		void						userCmd();
+		void						nickCmd();
+		bool						nicknameIsValid(std::string nick);
+		void						privMsgCmd();
+		void						joinCmd();
 };

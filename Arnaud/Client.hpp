@@ -17,24 +17,34 @@ class Client
 		bool		_password;
 		std::string	_nickname;
 		std::string	_user;
+		std::string _real_name;
 		//std::string	_mode;
-		//std::string _real_name;
 
     public :
         Client();
         ~Client();
 
+		//===========UTILS==========//
+		bool		isConnected();
 		int			get_pass_try();
 		void		increment_pass_try();
+
+		//===========GETTERS && SETTERS==========//
+		std::string getRealname();
+		void		setRealname(std::string user);
+		bool		realnameIsSet();
+
 		void		setNickname(std::string nickname);
-		std::string getUser();
 		std::string getNickname();
-		void		setUser(std::string user);
-		bool		isConnected();
 		bool		nicknameIsSet();
+
+		std::string getUser();
+		void		setUser(std::string user);
 		bool		userIsSet();
+
 		bool		passwordIsSet();
 		void		setPassword();
+
 		int 		get_fd();
 		void 		set_fd(int fd);
 };

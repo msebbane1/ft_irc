@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:41:54 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/26 13:34:53 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Commands
 		Client*						_user;
 		int							_fd_user;
 		//std::string					_cmd;
+		bool						_changeNick;
 		std::vector<std::string>	_line_cmd;
 
 	public :

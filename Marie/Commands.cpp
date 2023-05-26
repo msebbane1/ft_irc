@@ -6,14 +6,17 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:58:35 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/26 13:36:52 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 #include "Server.hpp"
 
-Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd){}
+Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
+{
+	_changeNick = false;
+}
 
 Commands::~Commands(){}
 
@@ -23,8 +26,8 @@ void	Commands::exec_cmd()
 {
 	std::string	msg;
 
-	if (this->_s->isCommandIrc(this->_line_cmd[0]) == false)
-		return ;
+	if (this->_s->isCommandIrc(this->_line_cmd[0]) == false && _changeNick == false && this->_s->isCommandIrc(this->_line_cmd[1]) == false)
+			return ;
 	//================================CMD CONNECTION REGISTER==============================//
 	if (this->_user->isConnected() == false)
 		cmdToConnect();
@@ -35,7 +38,7 @@ void	Commands::exec_cmd()
 			passCmd();
 		else if (this->_line_cmd[0] == "USER")
 			userCmd();
-		else if (this->_line_cmd[0] == "NICK")
+		else if (this->_line_cmd[0] == "NICK" || this->_line_cmd[1] == "NICK")
 			nickCmd();
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (this->_line_cmd[0] == "PRIVMSG")
@@ -55,7 +58,9 @@ void	Commands::exec_cmd()
 		else if (this->_line_cmd[0] == "INVITE"){} // <pseudonyme> <canal>
 		else if (this->_line_cmd[0] == "KICK"){} // <canal> <utilisateur> [<commentaire>]
 		else if (this->_line_cmd[0] == "INFO"){}// [<serveur>]
+		
 	}
+	
 }
 
 /*--------------------------------------------------COMMANDS---------------------------------------------*/
@@ -112,7 +117,7 @@ void	Commands::passCmd()
 			}
 		}
 	}
-	if (_line_cmd[0] == "PASS" && this->_user->passwordIsSet())
+	if (this->_line_cmd[0] == "PASS" && this->_user->passwordIsSet())
 		std::cout << "Already set PASS." << std::endl;
 }
 
@@ -154,15 +159,13 @@ bool	Commands::nicknameIsValid(std::string nick)
 {
 	for (int i = 0; nick[i]; i++)
 	{
-		if(isalnum(nick[i]))
-		{
-			if(isdigit(nick[i]))
-				return false;
-			else
-				return true;
-		}
+		if (i == 0 && (nick[i] == '$' || nick[0] == ':' || nick[0] == '#' || nick[0] == '&'))
+			return (false);
+		if (nick[i] == ' ' || nick[0] == ',' || nick[0] == '?' || nick[0] == '!' 
+			|| nick[0] == '@' || nick[0] == '*' || nick[0] == '.')
+			return (false);
 	}
-	return false;
+	return (true);
 }
 
 void	Commands::nickCmd()
@@ -171,7 +174,7 @@ void	Commands::nickCmd()
 
 	if(!this->_user->nicknameIsSet())
 	{
-		if (_line_cmd.size() == 1 ) 
+		if (this->_line_cmd.size() == 1 ) 
 		{
 			this->_s->errorSend("431", this->_user->getNickname(), "No nickname given", this->_user->get_fd() );
 			return ;
@@ -186,11 +189,33 @@ void	Commands::nickCmd()
 		else
 			std::cout << "nickname not valid" << std::endl;
 	}
-	else if(_line_cmd[0] == "NICK" && this->_user->nicknameIsSet())
+	else if(this->_line_cmd[1] == "NICK" && this->_user->nicknameIsSet())
 	{
-		//Utilisateur peux changer de nickname
-		std::cout << "Already set Nick." << std::endl;
+		this->_changeNick = true;
+		if(this->_line_cmd[0][0] == ':' && this->_line_cmd[0].size() >= 2)
+		{
+			this->_line_cmd[0] = this->_line_cmd[0].substr(1, _line_cmd[0].size() - 1);
+			if (this->_line_cmd[0] == this->_user->getNickname())
+			{
+				if (this->_line_cmd.size() == 1 ) 
+				{
+					this->_s->errorSend("431", this->_user->getNickname(), "No nickname given", this->_user->get_fd() );
+					return ;
+				}
+				if (nicknameIsValid(this->_line_cmd[2]) == true)
+				{
+					this->_user->setNickname(_line_cmd[2]);
+					msg = "======nickname is set=====:" + this->_user->getNickname() + "\n";
+					send(this->_fd_user, msg.c_str(), msg.size(), 0);
+					std::cout << "======nickname is set=====" << std::endl;
+				}
+				else
+					std::cout << "nickname not valid" << std::endl;
+			}
+		}
 	}
+	else
+		return ;
 }
 
 //---------------------PRIVMSG-------------------//

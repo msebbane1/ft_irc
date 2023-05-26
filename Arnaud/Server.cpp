@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/25 10:44:08 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 13:49:36 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ void		Server::setListClient(int fd, Client *user)
 	this->_list_client.insert(std::pair<int, Client*>(fd, user));
 }
 
-std::vector<Channel*>	Server::getListChan()
+std::map<std::string, Channel*>	Server::getListChan()
 {
 	return (this->_list_chan);
 }
 
-void					Server::addListChan(Channel *c)
+void							Server::addListChan(Channel *c)
 {
-	this->_list_chan.push_back(c);
+	this->_list_chan.insert(std::pair<std::string, Channel*>(c->getName(), c));
 }
 
 /*--------------------------------------------------------*/
