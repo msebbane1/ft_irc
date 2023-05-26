@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/26 11:09:39 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 13:51:13 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,7 @@ void	Commands::privMsgCmd()
 		{
 			if(chanExist(this->_line_cmd[1]) == true)
 			{
+				std::cerr << "--IS IN COND--" << std::endl;
 				msg = "\"" + this->_line_cmd[1] + "\" [" + this->_user->getNickname() + "] [ID: " + std::to_string(this->_fd_user) + "] : " + this->_line_cmd[2] + "\n";
 				sendToChannel(this->_fd_user, msg, this->_line_cmd[1]);
 			}
@@ -240,11 +241,10 @@ void	Commands::joinCmd()
 	{
 		Channel	*chan = new Channel(this->_line_cmd[1], this->_user);
 		this->_s->addListChan(chan);
-		chan->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
 	}
 	else
 	{
-		takeServ(this->_line_cmd[1])->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
+		takeServ(this->_line_cmd[1])->addUser(this->_user, this->_fd_user);
 	}
 }
 
@@ -252,40 +252,48 @@ void	Commands::joinCmd()
 
 bool	Commands::chanExist(std::string name)
 {
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
+	(void) name;
+	/*for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
 	{
 		std::cout << "==========" << this->_s->getListChan()[i]->getName() << name << std::endl;
 		if (this->_s->getListChan()[i]->getName() == (name))
 		{
 			return (true);
 		}
-	}
+	}*/
 	return (false);
 }
 
 bool	Commands::userIsInChan(std::string name_chan, int fd_user)
 {
-	int	j = 0;
+	(void) name_chan;
+	(void) fd_user;
+	/*int	j = 0;
 	
 	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
 	{
-		if (this->_s->getListChan()[i]->getName() == (name_chan + '\n') || this->_s->getListChan()[i]->getName() == name_chan)
+		if (this->_s->getListChan()[i]->getName() == name_chan)
 		{
 			j = i;
 			break ;
 		}
 	}
-	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin(); it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
+	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin();
+			it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
 	{
 		if (it->first == fd_user)
 			return (true);
-	}
+	}*/
 	return (false);
 }
 
 void	Commands::sendToChannel(int user_talk, std::string msg, std::string chan)
 {
-	int	j = 0;
+	(void) user_talk;
+	(void) chan;
+	(void) msg;
+	/*int	j = 0;
+	std::cerr << "--BEFORE LOOP SEND CHANN SEARCH--" << std::endl;
 	
 	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
 	{
@@ -295,21 +303,24 @@ void	Commands::sendToChannel(int user_talk, std::string msg, std::string chan)
 			break ;
 		}
 	}
-	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin(); it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
+	std::cerr << "--BEFORE LOOP SEND CHANN--" << std::endl;
+	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin();
+			it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
 	{
 		if (it->first != user_talk)
 		{
 			send(it->first, msg.c_str(), msg.size(), 0);
 		}
-	}
+	}*/
 }
 
 Channel*	Commands::takeServ(std::string name)
 {
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
+	(void) name;
+	/*for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
 	{
-		if (this->_s->getListChan()[i]->getName() == (name + '\n'))
-			return (this->_s->getListChan()[i]);
-	}
+		//if (this->_s->getListChan()[i]->getName() == (name + '\n'))
+			//return (this->_s->getListChan()[i]); // A modif
+	}*/
 	return (0);
 }

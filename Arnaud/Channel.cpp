@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/26 10:26:29 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 12:33:07 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,31 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_topic(), _list_user_co(), _list_operators(),
 											_list_banned(), _password()
 {
+	this->_list_operators.insert(std::pair<int, Client*>(c->get_fd(), c));
 }
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
 																_topic(), _list_user_co(), _list_operators(),
 																_list_banned(), _password()
 {
+	this->_list_operators.insert(std::pair<int, Client*>(this->_creator->get_fd(), this->_creator));
 }
 
 Channel::~Channel()
 {
+}
+
+Channel*	Channel::operator=(Channel const *c)
+{
+	this->_name = c->_name;
+	this->_creator = c->_creator;
+	this->_key = c->_key;
+	this->_topic = c->_topic;
+	this->_list_user_co = c->_list_user_co;
+	this->_list_operators = c->_list_operators;
+	this->_list_banned = c->_list_banned;
+	this->_password = c->_password;
+	return (this);
 }
 
 void	Channel::banUser(std::string username)
