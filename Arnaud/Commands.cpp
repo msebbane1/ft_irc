@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 16:52:45 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 11:09:39 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,14 @@ void	Commands::cmdToConnect()
 {
 	std::string	msg;
 
-	try
-	{
-		if (this->_line_cmd[0] == "PASS")
-			passCmd();
-		else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
-			userCmd();
-		else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
-			nickCmd();
-	}
-	catch (std::exception& e)
-	{
-		msg = _line_cmd[0] + e.what();
-		send(this->_fd_user, msg.c_str(), msg.size(), 0);
-	}
+	if (this->_line_cmd[0] == "PASS")
+		passCmd();
+	else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
+		userCmd();
+	else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
+		nickCmd();
+	else if(!this->_user->isConnected())
+		std::cout << "send error" << std::endl;
 	if (this->_user->isConnected())
 		this->_s->welcomeMsg(this->_user->getUser(), this->_user->getNickname(), this->_fd_user);
 }
@@ -141,7 +135,9 @@ void	Commands::userCmd()
 			std::string realname = _line_cmd[4] + " " + _line_cmd[5];
 			this->_user->setRealname(realname);
 			this->_user->setUser(this->_line_cmd[1]);
-			msg = "====== USER is set ===== :" + this->_user->getRealname() + "\n";
+			msg = "====== Realname is set ===== :" + this->_user->getRealname() + "\n";
+			send(this->_fd_user, msg.c_str(), msg.size(), 0);
+			msg = "====== USER is set ===== :" + this->_user->getUser() + "\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0); 
 		}
 		else
@@ -157,19 +153,39 @@ void	Commands::userCmd()
 
 //---------------------NICK-------------------//
 
+bool	Commands::nicknameIsValid(std::string nick)
+{
+	for (int i = 0; nick[i]; i++)
+	{
+		if (i == 0 && (nick[i] == '$' || nick[0] == ':' || nick[0] == '#' || nick[0] == '&'))
+			return (false);
+		if (nick[i] == ' ' || nick[0] == ',' || nick[0] == '?' || nick[0] == '!' 
+			|| nick[0] == '@' || nick[0] == '*' || nick[0] == '.')
+			return (false);
+	}
+	return (true);
+}
+
 void	Commands::nickCmd()
 {
 	std::string	msg;
-	//verifier nickname valide PARSE NICK
+
 	if(!this->_user->nicknameIsSet())
 	{
-		if (_line_cmd[0].size() < 2)
+		if (_line_cmd.size() < 2)
+		{
+			this->_s->errorSend("431", this->_user->getNickname(), "No nickname given", this->_user->get_fd() );
 			return ;
-		std::cout << "[CMD : NICK]" << std::endl;
-		this->_user->setNickname(_line_cmd[1]);
-		msg = "======nickname is set=====:" + this->_user->getNickname() + "\n";
-		send(this->_fd_user, msg.c_str(), msg.size(), 0);
-		std::cout << "======nickname is set=====" << std::endl;
+		}
+		if (nicknameIsValid(this->_line_cmd[1]) == true)
+		{
+			this->_user->setNickname(_line_cmd[1]);
+			msg = "======nickname is set=====:" + this->_user->getNickname() + "\n";
+			send(this->_fd_user, msg.c_str(), msg.size(), 0);
+			std::cout << "======nickname is set=====" << std::endl;
+		}
+		else
+			std::cout << "nickname not valid" << std::endl;
 	}
 	else if(_line_cmd[0] == "NICK" && this->_user->nicknameIsSet())
 	{

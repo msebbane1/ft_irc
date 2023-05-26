@@ -27,10 +27,7 @@ void		Client::setPassword()
 		this->_password = false;
 }
 
-std::string Client::getUser()
-{
-	return (this->_user);
-}
+//======NICKNAME=====///
 std::string Client::getNickname()
 {
 	return (this->_nickname);
@@ -39,6 +36,39 @@ std::string Client::getNickname()
 void	Client::setNickname(std::string nickname)
 {
 	this->_nickname = nickname;
+}
+
+bool	Client::nicknameIsSet()
+{
+	if (this->_nickname.empty())
+		return false;
+	else
+		return true;
+}
+
+//======REALNAME=====///
+std::string Client::getRealname()
+{
+	return (this->_real_name);
+}
+
+void	Client::setRealname(std::string realname)
+{
+	this->_real_name = realname;
+}
+
+bool	Client::realnameIsSet()
+{
+	if (this->_real_name.empty())
+		return false;
+	else
+		return true;
+}
+
+//======USERNAME=====///
+std::string Client::getUser()
+{
+	return (this->_user);
 }
 
 void	Client::setUser(std::string user)
@@ -54,27 +84,20 @@ bool	Client::userIsSet()
 		return true;
 }
 
+//======FD=====///
 int Client::get_fd()
 {
-	return (_fd);
+	return (this->_fd);
 }
 
 void Client::set_fd(int fd) 
 {
-	_fd = fd;
-}
-
-bool	Client::nicknameIsSet()
-{
-	if (this->_nickname.empty())
-		return false;
-	else
-		return true;
+	this->_fd = fd;
 }
 
 bool	Client::isConnected()
 {
-	if (userIsSet() == true && passwordIsSet() == true && nicknameIsSet() == true)
+	if (realnameIsSet() == true && passwordIsSet() == true && nicknameIsSet() == true)
 		return true;
 	else
 		return false;

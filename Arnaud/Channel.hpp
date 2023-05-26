@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/25 16:52:20 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 10:46:45 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ class Client;
 class Channel
 {
 	private:
-		Client*						_creator;
 		std::string					_name;
+		Client*						_creator;
 		std::string					_key;
 		std::string					_topic;
 		std::map<int, Client *>		_list_user_co;
@@ -37,9 +37,6 @@ class Channel
 
 		void	banUser(std::string username);
 		void	displayUsers();
-		
-		std::vector<std::string>	getHisto();
-		void						addHisto(std::string msg);
 
 		std::string					getName();
 		void						setName(std::string name);

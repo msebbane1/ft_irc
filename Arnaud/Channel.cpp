@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/25 16:14:05 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/26 10:26:29 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 }
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
-																_password(), _topic(), _list_user_co(), 
-																_list_operators(), _list_banned()
+																_topic(), _list_user_co(), _list_operators(),
+																_list_banned(), _password()
 {
 }
 
