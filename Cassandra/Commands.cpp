@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 19:26:06 by clecat           ###   ########.fr       */
+/*   Updated: 2023/05/26 19:06:58 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,11 +324,6 @@ Channel*	Commands::takeServ(std::string name)
 //change the channels mode : parametre attendu : /mode <channel> <+ | -> <mode> [parametres]
 //												 cmd / name_chan / indicateur / option / optionnel(username for operator, etc)
 // id a gerer: i, t, k, o, l; + to do the action, - to undo
-// i : Set/remove Invite-only channel(no param needed)
-// t : Set/remove the restrictions of the TOPIC command to channel operators(topic protection, seuls les ChannelOperator peuvent changer le topic.)(no param needed)
-// k : Set/remove the channel key (password) (param needed) /mode #cool +k COOLKEY (protège le channel par le mot de passe COOLKEY)
-// o : Give/take channel operator privilege (param needed) /mode #cool +o MEAT (MEAT devient opérateur sur #cool)
-// l : Set/remove the user limit to channel (param needed) /mode #cool +l 20 (limite le channel #cool à 20 utilisateurs)
 // gerer les multiple mode ? ex: /mode #chan +tns(channel en ;ode +t, +n, +s)
 void	Commands::modeCmd(){
 
@@ -337,17 +332,89 @@ void	Commands::modeCmd(){
 	//send(_s->getFdServer(), msg.c_str(), msg.length(), 0);
 	if( _line_cmd.size() < 4)
 		std::cerr << "=== 461 === ERR_NEEDMOREPARAMS ====" << std::endl;
+	if(!verifModeParam()){
+		//std::cerr << "=== 472 === ERR_UNKNOWNMODE ====" << std::endl;
+		return;
+	}
 	//faire un switch pour chaque option (461 ERR_NEEDMOREPARAMS)
 	//verifier aussi l'indicateur ( + ou - )
 	//repartition
+	char	option; // = _line_cmd[2];
+	switch (option) // reflechir a si gerer l'indic dans la fonction ou dans le case switch
+	{
+		case 'i':
+			setChanInviteOnlyMode();
+			break;
+
+		case 't' :
+			setChanRestrictTopic();
+			break;
+
+		case 'k' :
+			setChanKey();
+			break;
+
+		case 'o' :
+			setChanOperator();
+			break;
+		
+		case 'l' :
+			setChanLimit();
+			break;
+	
+		default: // ? - voir doc
+			break;
+	}
+}
+
+//verifie les parametres
+int		Commands::verifModeParam(){
+
+	//checker si le nom de chan existe (2eme arg)
+	//checker si indicateur present (3eme arg)
+	//checker l'option(mode) (4eme arg)
+	//checker si le user existe(5eme arg)
+}
+
+//verifier si le User est OP pout chaque mode sauf o
+
+// i : Set/remove Invite-only channel(no param needed)
+void	Commands::setChanInviteOnlyMode(){
+	
+}
+
+// t : Set/remove the restrictions of the TOPIC command to channel operators(topic protection, seuls les ChannelOperator peuvent changer le topic.)(no param needed)
+void	Commands::setChanRestrictTopic(){
+	
+}
+
+// k : Set/remove the channel key (password) (param needed) /mode #cool +k COOLKEY (protège le channel par le mot de passe COOLKEY)
+void	Commands::setChanKey(){
+	
+}
+
+// o : Give/take channel operator privilege (param needed) /mode #cool +o MEAT (MEAT devient opérateur sur #cool)
+void	Commands::setChanOperator(){
+	
+}
+
+// l : Set/remove the user limit to channel (param needed) /mode #cool +l 20 (limite le channel #cool à 20 utilisateurs)
+void	Commands::setChanLimit(){
+	
 }
 // Message d'erreur + code d'erreur
-// ERR_NEEDMOREPARAMS 461               RPL_CHANNELMODEIS 324
-// ERR_CHANOPRIVSNEEDED 482             ERR_NOSUCHNICK 401
-// ERR_NOTONCHANNEL 442                 ERR_KEYSET 467
-// RPL_BANLIST 367                      RPL_ENDOFBANLIST 368
-// ERR_UNKNOWNMODE 472                  ERR_NOSUCHCHANNEL 403
+// ERR_NEEDMOREPARAMS 461 : quand il manque un paramètre à la commande.
+// RPL_CHANNELMODEIS 324 : indique les modes possibles pour les chans.
+// ERR_CHANOPRIVSNEEDED 482 : renvoyée quand vous tentez d'effectuer une opération d'administration sur un chan où vous n'êtes pas op
+// ERR_NOSUCHNICK 401 : quand le nick n'a pas été trouvé sur le réseau.
+// ERR_NOTONCHANNEL 442 : renvoyée quand vous n'êtes pas présent sur le chan.
+// ERR_KEYSET 467 : renvoyée quand la clé du chan est déjà définie
+// RPL_BANLIST 367 : indique un masque d'utilisateur qui est banni du chan.
+// RPL_ENDOFBANLIST 368 : indique que tous les masques d'utilisateurs bannis du chan ont été indiqués.
+// ERR_UNKNOWNMODE 472 : quand un code de mode de chan inconnu est utilisé.
+// ERR_NOSUCHCHANNEL 403 : quand le chan n'a pas été trouvé sur le réseau
 
-// ERR_USERSDONTMATCH 502               RPL_UMODEIS 221
+// ERR_USERSDONTMATCH 502 : 
+// RPL_UMODEIS 221 : renvoyée quand vous tentez d'effectuer une commande MODE sur un nick autre que le vôtre.
 // 501 ERR_UMODUUNKNOWNFLAG : Cette erreur est renvoyée quand vous envoyez une commande MODE sur un utilisateur avec un mode inconnu.
 // Faut-il gerer la version de MODE sur Utilisateur ? +i, +o

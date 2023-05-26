@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/25 17:11:37 by clecat           ###   ########.fr       */
+/*   Updated: 2023/05/26 18:35:34 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,5 +49,12 @@ class Commands
 		bool						nicknameIsValid(std::string nick);
 		void						privMsgCmd();
 		void						joinCmd();
-		void						modeCmd(); // fonction gestion Mode
+		//========================== MODE =========================//
+		void						modeCmd(); // fonction dispatch option mode
+		void						setChanInviteOnlyMode(); //i
+		void						setChanRestrictTopic();//t
+		void						setChanKey();//k
+		void						setChanOperator();//o
+		void						setChanLimit();//l
+		int							verifModeParam(); // check param
 };
