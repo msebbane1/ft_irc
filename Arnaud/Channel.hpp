@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/26 12:33:27 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/29 13:09:53 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Channel
 
 		void	banUser(std::string username);
 		void	displayUsers();
+		void	displayOp();
 
 		std::string					getName();
 		void						setName(std::string name);

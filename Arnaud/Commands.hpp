@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/26 10:15:00 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/29 13:15:39 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ class Commands
 
 		void						exec_cmd();
 
-		bool						chanExist(std::string name);
-		Channel						*takeServ(std::string name);
+		bool						chanExist(std::string name_chan);
+		Channel*					getChannel(std::string name_chan);
 		bool						userIsInChan(std::string name_chan, int fd_user);
-		void						sendToChannel(int user_talk, std::string msg, std::string chan);
+		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
 
 		//=========================COMMANDS======================//
 		void						cmdToConnect();

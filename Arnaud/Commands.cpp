@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/26 13:51:13 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/29 13:41:34 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	Commands::exec_cmd()
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (this->_line_cmd[0] == "PRIVMSG")
 			privMsgCmd();	
-    	else if (this->_line_cmd[0] == "JOIN") // <canal>{,<canal>} [<clé>{,<clé>}]
+    	else if (this->_line_cmd[0] == "JOIN")// <canal>{,<canal>} [<clé>{,<clé>}]
 			joinCmd();
 		else if (this->_line_cmd[0] == "AUTHENTICATE"){}
 		else if (this->_line_cmd[0] == "QUIT"){} //  [<Message de départ >]
@@ -208,7 +208,6 @@ void	Commands::privMsgCmd()
 		{
 			if(chanExist(this->_line_cmd[1]) == true)
 			{
-				std::cerr << "--IS IN COND--" << std::endl;
 				msg = "\"" + this->_line_cmd[1] + "\" [" + this->_user->getNickname() + "] [ID: " + std::to_string(this->_fd_user) + "] : " + this->_line_cmd[2] + "\n";
 				sendToChannel(this->_fd_user, msg, this->_line_cmd[1]);
 			}
@@ -237,6 +236,8 @@ void	Commands::privMsgCmd()
 
 void	Commands::joinCmd()
 {
+	std::string	msg;
+
 	if (chanExist(this->_line_cmd[1]) == false)
 	{
 		Channel	*chan = new Channel(this->_line_cmd[1], this->_user);
@@ -244,83 +245,63 @@ void	Commands::joinCmd()
 	}
 	else
 	{
-		takeServ(this->_line_cmd[1])->addUser(this->_user, this->_fd_user);
+		getChannel(this->_line_cmd[1])->addUser(this->_user, this->_fd_user);
 	}
+	msg = "You have joined successfully " + this->_line_cmd[1] + " !\n";
+	send(this->_user->get_fd(), msg.c_str(), msg.size(), 0);
+	
+	// affichage tt user dans le chann
+	std::cout << "----------------" << std::endl;
+	getChannel(this->_line_cmd[1])->displayUsers();
+	std::cout << "----------------" << std::endl;
+	getChannel(this->_line_cmd[1])->displayOp();
 }
 
 /*-------------------------CHANNELS-------------------------------*/
 
-bool	Commands::chanExist(std::string name)
+bool	Commands::chanExist(std::string name_chan)
 {
-	(void) name;
-	/*for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
+	std::map<std::string, Channel*>::iterator it = this->_s->getListChan().begin();
+	
+	while (it != this->_s->getListChan().end() && !this->_s->getListChan().empty())
 	{
-		std::cout << "==========" << this->_s->getListChan()[i]->getName() << name << std::endl;
-		if (this->_s->getListChan()[i]->getName() == (name))
-		{
+		if (it->first == name_chan)
 			return (true);
-		}
-	}*/
+		it++;
+	}
 	return (false);
 }
 
 bool	Commands::userIsInChan(std::string name_chan, int fd_user)
 {
-	(void) name_chan;
-	(void) fd_user;
-	/*int	j = 0;
-	
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
-	{
-		if (this->_s->getListChan()[i]->getName() == name_chan)
-		{
-			j = i;
-			break ;
-		}
-	}
-	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin();
-			it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
+	for (std::map<int, Client*>::iterator it = getChannel(name_chan)->getListUserCo().begin();
+			it != getChannel(name_chan)->getListUserCo().end(); it++)
 	{
 		if (it->first == fd_user)
 			return (true);
-	}*/
+	}
 	return (false);
 }
 
-void	Commands::sendToChannel(int user_talk, std::string msg, std::string chan)
-{
-	(void) user_talk;
-	(void) chan;
-	(void) msg;
-	/*int	j = 0;
-	std::cerr << "--BEFORE LOOP SEND CHANN SEARCH--" << std::endl;
-	
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
-	{
-		if (this->_s->getListChan()[i]->getName() == chan)
-		{
-			j = i;
-			break ;
-		}
-	}
-	std::cerr << "--BEFORE LOOP SEND CHANN--" << std::endl;
-	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin();
-			it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
+void	Commands::sendToChannel(int user_talk, std::string msg, std::string name_chan)
+{	
+	for (std::map<int, Client*>::iterator it = getChannel(name_chan)->getListUserCo().begin();
+			it != getChannel(name_chan)->getListUserCo().end(); it++)
 	{
 		if (it->first != user_talk)
-		{
 			send(it->first, msg.c_str(), msg.size(), 0);
-		}
-	}*/
+	}
 }
 
-Channel*	Commands::takeServ(std::string name)
+Channel*	Commands::getChannel(std::string name_chan)
 {
-	(void) name;
-	/*for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
+	std::map<std::string, Channel*>::iterator it = this->_s->getListChan().begin();
+
+	while (it != this->_s->getListChan().end() && !this->_s->getListChan().empty())
 	{
-		//if (this->_s->getListChan()[i]->getName() == (name + '\n'))
-			//return (this->_s->getListChan()[i]); // A modif
-	}*/
-	return (0);
+		if (it->first == name_chan)
+			return (it->second);
+		it++;
+	}
+	return (it->second);
 }

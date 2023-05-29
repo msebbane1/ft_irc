@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/26 12:33:07 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/29 13:16:07 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,16 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_topic(), _list_user_co(), _list_operators(),
 											_list_banned(), _password()
 {
-	this->_list_operators.insert(std::pair<int, Client*>(c->get_fd(), c));
+	this->addUser(c, c->get_fd());
+	this->addOperator(c, c->get_fd());
 }
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
 																_topic(), _list_user_co(), _list_operators(),
 																_list_banned(), _password()
 {
-	this->_list_operators.insert(std::pair<int, Client*>(this->_creator->get_fd(), this->_creator));
+	this->addUser(c, c->get_fd());
+	this->addOperator(c, c->get_fd());
 }
 
 Channel::~Channel()
@@ -62,7 +64,16 @@ void	Channel::displayUsers()
 	for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
 	{
 		if (!it->second->getNickname().empty())
-		std::cout << "- " << ((it->second->getNickname().empty()) ? it->second->getUser() : it->second->getNickname()) << std::endl;
+			std::cout << "- " << ((it->second->getNickname().empty()) ? it->second->getUser() : it->second->getNickname()) << std::endl;
+	}
+}
+
+void	Channel::displayOp()
+{
+	for (std::map<int, Client *>::iterator it = this->_list_operators.begin(); it != this->_list_operators.end(); it++)
+	{
+		if (!it->second->getNickname().empty())
+			std::cout << "- " << ((it->second->getNickname().empty()) ? it->second->getUser() : it->second->getNickname()) << std::endl;
 	}
 }
 
