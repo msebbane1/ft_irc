@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/30 14:43:35 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 16:41:02 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Commands
 		Server* 					_s;
 		Client*						_user;
 		int							_fd_user;
+		bool						_irssi;
 		//std::string					_cmd;
 		std::vector<std::string>	_line_cmd;
 

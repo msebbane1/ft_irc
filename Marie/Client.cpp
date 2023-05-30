@@ -96,7 +96,7 @@ bool	Client::nicknameIsSet()
 
 bool	Client::isConnected()
 {
-	if (realnameIsSet() == true && passwordIsSet() == true && nicknameIsSet() == true)
+	if (realnameIsSet() == true && passwordIsSet() == true && nicknameIsSet() == true && userIsSet())
 		return true;
 	else
 		return false;

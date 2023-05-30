@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/30 14:56:32 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 16:40:03 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ bool	Server::isCommandIrc(std::string str)
 	this->_command_list.push_back("JOIN");
 	this->_command_list.push_back("QUIT");
 	this->_command_list.push_back("PING");
+	this->_command_list.push_back("CAP");
 	
 	this->_command_list.push_back("KICK");
 	this->_command_list.push_back("AUTHENTICATE");
