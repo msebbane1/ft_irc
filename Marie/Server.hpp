@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/25 11:43:01 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 10:55:55 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,12 @@
 #include "Channel.hpp"
 #include "Commands.hpp"
 #include "Color.hpp"
+#include "Messages.hpp"
 
 class Commands;
 class Client;
 class Channel;
+class Messages;
 
 class Server
 {
@@ -43,7 +45,7 @@ class Server
 		std::vector<std::string>	_command_list;
 		std::vector<int>			_fd_users_dc;
 		std::map<int, Client*>		_list_client;
-		std::vector<Channel*>		_list_chan;
+		std::map<std::string, Channel*>	_list_chan;
 		
 	public:
 		Server();
@@ -80,8 +82,8 @@ class Server
 		void						setListClient(int fd, Client *user);
 		Client *					getClient(std::string nick);
 		
-		std::vector<Channel*>		getListChan();
-		void						addListChan(Channel *c);
+		std::map<std::string, Channel*>	getListChan();
+		void							addListChan(Channel *c);
 		
 		//===========================ERROR MSG && MSG==============================//
 		void	errorMsg(std::string msg);

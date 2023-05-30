@@ -6,11 +6,12 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/26 12:11:23 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 11:08:53 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Messages.hpp"
 
 Server::Server(){}
 
@@ -54,12 +55,14 @@ void		Server::setListClient(int fd, Client *user){
 }
 
 /*--------------------------------------------------------*/
-std::vector<Channel*>	Server::getListChan(){
+std::map<std::string, Channel*>	Server::getListChan()
+{
 	return (this->_list_chan);
 }
 
-void					Server::addListChan(Channel *c){
-	this->_list_chan.push_back(c);
+void							Server::addListChan(Channel *c)
+{
+	this->_list_chan.insert(std::pair<std::string, Channel*>(c->getName(), c));
 }
 
 /*--------------------------------------------------------*/
@@ -199,21 +202,23 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 void	Server::connectToNetCat(int user_talk, std::string buf)
 {
+	Messages msg;
 	buf.erase(buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 
 		
-	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line);
+	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
 	cmd->exec_cmd();
 	delete cmd;
 }
 
 void	Server::connectToIRSSI(int user_talk, std::string buf)
 {
+	Messages msg;
     buf = buf.substr(0, buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
-	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line);
+	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
 	cmd->exec_cmd();
 	delete cmd;
 }

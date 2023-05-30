@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/22 12:09:36 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/29 13:09:53 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,40 +18,37 @@
 class Server;
 class Client;
 
-/**
- * Commande a gerer dans le channel:
- * 	- KICK
- * 	- MODE
- * 	- JOIN
- * 	- PART
- * 	- PRIVMSG
- * 	- NOTICE
- * 	- QUIT
-*/
-
 class Channel
 {
 	private:
 		std::string					_name;
+		Client*						_creator;
+		std::string					_key;
+		std::string					_topic;
 		std::map<int, Client *>		_list_user_co;
-		//std::vector<int>			_fd_users_dc;
-		std::vector<int>			_list_banned;
+		std::map<int, Client *>		_list_operators;
+		std::vector<std::string>	_list_banned;
 		std::string					_password;
-		//std::vector<std::string>	_historic;
 		
 	public:
-		Channel(std::string name);
-		Channel(std::string name, std::string pw);
+		Channel(std::string name, Client* c);
+		Channel(std::string name,  Client* c, std::string key);
 		virtual	~Channel();
 
-		void	addUser(Client *cl, int fd_cl);
-		void	removeUser(std::string username);
+		Channel*	operator=(Channel const *c);
+
 		void	banUser(std::string username);
 		void	displayUsers();
-		
-		std::vector<std::string>	getHisto();
-		void						addHisto(std::string msg);
+		void	displayOp();
+
 		std::string					getName();
 		void						setName(std::string name);
+
 		std::map<int, Client*>		getListUserCo();
+		void						addUser(Client *cl, int fd_cl);
+		void						removeUser(std::string username);
+
+		std::map<int, Client*>		getListOp();
+		void						addOperator(Client *cl, int fd_cl);
+		void						removeOperator(std::string username);
 };

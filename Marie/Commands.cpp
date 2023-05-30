@@ -6,15 +6,17 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/26 13:36:52 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 12:04:01 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 #include "Server.hpp"
+#include "Messages.hpp"
 
-Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
+Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
 {
+	_msg = &msg;
 	_changeNick = false;
 }
 
@@ -36,7 +38,7 @@ void	Commands::exec_cmd()
 	//================================CMD CONNECTION MSG==============================//
 		if (this->_line_cmd[0] == "PASS")
 			passCmd();
-		else if (this->_line_cmd[0] == "USER")
+		else if (this->_line_cmd[0] == "USER") // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
 			userCmd();
 		else if (this->_line_cmd[0] == "NICK" || this->_line_cmd[1] == "NICK")
 			nickCmd();
@@ -60,7 +62,6 @@ void	Commands::exec_cmd()
 		else if (this->_line_cmd[0] == "INFO"){}// [<serveur>]
 		
 	}
-	
 }
 
 /*--------------------------------------------------COMMANDS---------------------------------------------*/
@@ -73,14 +74,14 @@ void	Commands::cmdToConnect()
 
 	if (this->_line_cmd[0] == "PASS")
 		passCmd();
-	else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) // Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
+	else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) 
 		userCmd();
 	else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
 		nickCmd();
 	else if(!this->_user->isConnected())
 		std::cout << "send error" << std::endl;
 	if (this->_user->isConnected())
-		this->_s->welcomeMsg(this->_user->getUser(), this->_user->getNickname(), this->_fd_user);
+		this->_msg->welcome(this->_user, this->_fd_user);
 }
 
 //---------------------PASS-------------------//
@@ -93,7 +94,7 @@ void	Commands::passCmd()
 	if (!this->_user->passwordIsSet())
 	{
 		if (this->_line_cmd.size() < 2)
-			std::cout << "send error" << std::endl;
+			_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		else if (this->_line_cmd[1] == this->_s->getPassword())
 		{
 			this->_user->setPassword();
@@ -118,7 +119,10 @@ void	Commands::passCmd()
 		}
 	}
 	if (this->_line_cmd[0] == "PASS" && this->_user->passwordIsSet())
-		std::cout << "Already set PASS." << std::endl;
+	{
+		msg = "You may not reregister";
+		this->_s->errorSend("462", this->_user->getNickname(), msg.c_str(), this->_user->get_fd());
+	}
 }
 
 //---------------------USER-------------------//
@@ -248,10 +252,7 @@ void	Commands::privMsgCmd()
 			send(this->_s->getClient(this->_line_cmd[1])->get_fd(), msg.c_str(), msg.length(), 0);
 		}
 		else
-		{
-			msg = "\x1B[37mDidn't find the nickname or name channel called : " + this->_line_cmd[1] + "\033[0m\n";
-			send(this->_fd_user, msg.c_str(), msg.length(), 0);
-		}
+			_msg->ERR_NOSUCHNICK(this->_fd_user);
 	}
 }
 
@@ -260,50 +261,59 @@ void	Commands::privMsgCmd()
 
 void	Commands::joinCmd()
 {
+	std::string	msg;
+
+	if (this->_line_cmd.size() == 1) {
+        this->_s->errorSend("461", this->_user->getNickname(), "Not enough argument given", this->_user->get_fd());
+        return;
+    }
+    else if (this->_line_cmd[1][0] != '#') {
+       this->_s->errorSend("", this->_user->getNickname(), "Wrong format", this->_user->get_fd());
+        return;
+    }
+    else
+        this->_line_cmd[1] = this->_line_cmd[1].substr(1);
+
 	if (chanExist(this->_line_cmd[1]) == false)
 	{
-		Channel	*chan = new Channel(this->_line_cmd[1]);
+		Channel	*chan = new Channel(this->_line_cmd[1], this->_user);
 		this->_s->addListChan(chan);
-		chan->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
-		}
+	}
 	else
 	{
-		takeServ(this->_line_cmd[1])->addUser(this->_s->getListClient()[this->_fd_user], this->_fd_user);
+		getChannel(this->_line_cmd[1])->addUser(this->_user, this->_fd_user);
 	}
+	msg = "You have joined successfully " + this->_line_cmd[1] + " !\n";
+	send(this->_user->get_fd(), msg.c_str(), msg.size(), 0);
+	
+	// affichage tt user dans le chann
+	std::cout << "----------------" << std::endl;
+	getChannel(this->_line_cmd[1])->displayUsers();
+	std::cout << "----------------" << std::endl;
+	getChannel(this->_line_cmd[1])->displayOp();
 }
 
 
 
-
-
-
 /*-------------------------CHANNELS-------------------------------*/
-bool	Commands::chanExist(std::string name)
+
+bool	Commands::chanExist(std::string name_chan)
 {
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
+	std::map<std::string, Channel*>::iterator it = this->_s->getListChan().begin();
+	
+	while (it != this->_s->getListChan().end() && !this->_s->getListChan().empty())
 	{
-		std::cout << "==========" << this->_s->getListChan()[i]->getName() << name << std::endl;
-		if (this->_s->getListChan()[i]->getName() == (name))
-		{
+		if (it->first == name_chan)
 			return (true);
-		}
+		it++;
 	}
 	return (false);
 }
 
 bool	Commands::userIsInChan(std::string name_chan, int fd_user)
 {
-	int	j = 0;
-	
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
-	{
-		if (this->_s->getListChan()[i]->getName() == (name_chan + '\n') || this->_s->getListChan()[i]->getName() == name_chan)
-		{
-			j = i;
-			break ;
-		}
-	}
-	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin(); it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
+	for (std::map<int, Client*>::iterator it = getChannel(name_chan)->getListUserCo().begin();
+			it != getChannel(name_chan)->getListUserCo().end(); it++)
 	{
 		if (it->first == fd_user)
 			return (true);
@@ -311,33 +321,25 @@ bool	Commands::userIsInChan(std::string name_chan, int fd_user)
 	return (false);
 }
 
-void	Commands::sendToChannel(int user_talk, std::string msg, std::string chan)
-{
-	int	j = 0;
-	
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
-	{
-		if (this->_s->getListChan()[i]->getName() == chan)
-		{
-			j = i;
-			break ;
-		}
-	}
-	for (std::map<int, Client*>::iterator it = this->_s->getListChan()[j]->getListUserCo().begin(); it != this->_s->getListChan()[j]->getListUserCo().end(); it++)
+void	Commands::sendToChannel(int user_talk, std::string msg, std::string name_chan)
+{	
+	for (std::map<int, Client*>::iterator it = getChannel(name_chan)->getListUserCo().begin();
+			it != getChannel(name_chan)->getListUserCo().end(); it++)
 	{
 		if (it->first != user_talk)
-		{
 			send(it->first, msg.c_str(), msg.size(), 0);
-		}
 	}
 }
 
-Channel*	Commands::takeServ(std::string name)
+Channel*	Commands::getChannel(std::string name_chan)
 {
-	for (unsigned long i = 0; i < this->_s->getListChan().size(); i++)
+	std::map<std::string, Channel*>::iterator it = this->_s->getListChan().begin();
+
+	while (it != this->_s->getListChan().end() && !this->_s->getListChan().empty())
 	{
-		if (this->_s->getListChan()[i]->getName() == (name + '\n'))
-			return (this->_s->getListChan()[i]);
+		if (it->first == name_chan)
+			return (it->second);
+		it++;
 	}
-	return (0);
+	return (it->second);
 }
