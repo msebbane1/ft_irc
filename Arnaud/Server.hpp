@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/26 13:22:48 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/30 13:41:47 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,12 @@
 #include "Channel.hpp"
 #include "Commands.hpp"
 #include "Color.hpp"
+#include "Messages.hpp"
 
 class Commands;
 class Client;
 class Channel;
+class Messages;
 
 class Server
 {
@@ -65,6 +67,7 @@ class Server
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 		
 		void						clientDisconnected();
+		void						channDisconnected();
 		bool						isCommandIrc(std::string str);
 		void						chanExist(std::string name);
 		bool 						clientExist(std::string nick);

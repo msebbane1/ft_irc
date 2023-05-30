@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = ircserv
 
-SRC = Client.cpp Server.cpp main.cpp Channel.cpp Commands.cpp
+SRC = Client.cpp Server.cpp main.cpp Channel.cpp Commands.cpp Messages.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
