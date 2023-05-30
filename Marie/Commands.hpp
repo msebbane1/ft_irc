@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/30 11:10:52 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 14:43:35 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Commands
 		Client*						_user;
 		int							_fd_user;
 		//std::string					_cmd;
-		bool						_changeNick;
 		std::vector<std::string>	_line_cmd;
 
 	public :
@@ -52,4 +51,5 @@ class Commands
 		bool						nicknameIsValid(std::string nick);
 		void						privMsgCmd();
 		void						joinCmd();
+		void						quitCmd();
 };

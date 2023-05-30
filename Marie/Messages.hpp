@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Messages.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
+/*   Updated: 2023/05/30 15:37:18 by msebbane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #pragma once
 
 #include "Commands.hpp"
@@ -21,9 +34,22 @@ class Messages
 	void	errorMsg(std::string msg);
 	void	displayMsgOnServer(std::string const &buf, int user_talk);
 
+
+	//============ERR NICK=========///
+	void	ERR_NOSUCHNICK(std::string nick, int fd);
+	void	ERR_NONICKNAMEGIVEN(int fd);
+	void	ERR_NICKNAMEINUSE(std::string nick, int fd);
+	void	ERR_ERRONEUSNICKNAME(std::string nick, int fd);
+
+	//============ERR PASS && USER=========///
 	void	ERR_NEEDMOREPARAMS(int fd);
+	void	ERR_ALREADYREGISTRED(int fd);
 
 	//============ERR PRIVMSG=========///
-	void	ERR_NOSUCHNICK(int fd);
+	void	ERR_NORECIPIENT(int fd);
+	void	ERR_NOTEXTTOSEND(int fd);
+
+	void	ERR_UNKNOWNCOMMAND(std::string cmd, int fd);
+	void	ERR_NOTREGISTERED(int fd);
 
 };

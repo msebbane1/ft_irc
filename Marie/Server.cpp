@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/30 11:08:53 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/30 14:56:32 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,18 +143,19 @@ void		Server::createServ(int port)
 
 bool	Server::isCommandIrc(std::string str)
 {
-	this->_command_list.push_back("AUTHENTICATE");
 	this->_command_list.push_back("PASS");
 	this->_command_list.push_back("NICK");
 	this->_command_list.push_back("USER");
 	this->_command_list.push_back("PRIVMSG");
 	this->_command_list.push_back("JOIN");
+	this->_command_list.push_back("QUIT");
+	this->_command_list.push_back("PING");
 	
 	this->_command_list.push_back("KICK");
+	this->_command_list.push_back("AUTHENTICATE");
 	this->_command_list.push_back("INVITE");
 	this->_command_list.push_back("TOPIC");
 	this->_command_list.push_back("MODE");
-	this->_command_list.push_back("QUIT");
 	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
 	
