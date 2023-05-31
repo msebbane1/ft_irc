@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/30 13:41:47 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/05/31 13:33:07 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,10 @@ class Server
 		void						createServ(int port);
 		void						acceptUser();
 		int							received(char *buffer, int user_talk);
-		void						connectToNetCat(int user_talk, std::string buf);
-		void						connectToIRSSI(int user_talk, std::string buf);
+		void						connectToClients(int user_talk, std::string buf);
 		void 						connect(int user_talk, std::string buf);
 		
 		//==========================Utils===========================//
-		void						displayMsgOnServer(std::string const &buf, int user_talk);
 		void						sendHistoric(int client_fd);
 		int							countCharInString(std::string buf, char c);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
@@ -84,11 +82,7 @@ class Server
 		Client*							getClient(std::string nick);
 		
 		std::map<std::string, Channel*>	getListChan();
+		Channel*						getChannel(std::string chann);
 		void							addListChan(Channel *c);
 		
-		//===========================ERROR MSG && MSG==============================//
-		void	errorMsg(std::string msg);
-		void	errorSendBuf(std::string num, std::string nick, std::string arg, std::string msg, int fd);
-		void	errorSend(std::string num, std::string nick, std::string msg, int fd);
-		void	welcomeMsg(std::string user, std::string nick, int fd);
 };
