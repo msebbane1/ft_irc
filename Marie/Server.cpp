@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 13:28:19 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 16:38:14 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,11 +169,11 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 void	Server::connectToClients(int user_talk, std::string buf)
 {
 	Messages msg;
-	buf.erase(buf.length() - 1);
+	if (buf.find("\r\n") != std::string::npos)
+        buf = buf.substr(0, buf.length() - 1);
+    buf = buf.substr(0, buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
-	if (line[0] == "CAP")
-		std::cout << "====Client IRSSI=====" << std::endl;
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
 	cmd->exec_cmd();
 	delete cmd;

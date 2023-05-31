@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 13:28:55 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 16:28:10 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Commands
 		void						nickCmd();
 		bool						nicknameIsValid(std::string nick);
 		void						privMsgCmd();
+		std::string					joinMessages();
 		void						joinCmd();
 		void						quitCmd();
 };
