@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 13:16:56 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 13:25:31 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@
 // CONNECT irc.dal.net 6667
 
 
-Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg, bool irssi): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
+Commands::Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg): _s(s), _user(c), _fd_user(fd_c), _line_cmd(linecmd)
 {
 	this->_msg = &msg;
-	_irssi = irssi;
 }
 
 Commands::~Commands(){}
@@ -59,13 +58,8 @@ void	Commands::exec_cmd()
 			quitCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{
-			std::cout << "TESTTT===" << std::endl;
-			
 			std::string msg = ":localhost PONG :localhost\r\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);
-			//if (this->_user->get_fd() == -1 ||  msg == ":localhost PONG :localhost\r\n")
-        		//return ;
-			
 		}
 		else if (this->_line_cmd[0] == "INFO"){}// [<serveur>]
 		else if (this->_line_cmd[0] == "AUTHENTICATE"){}
@@ -90,7 +84,6 @@ void	Commands::cmdToConnect()
 {
 	std::string	msg;
 
-
 	if (this->_line_cmd[0] == "PASS")
 		passCmd();
 	else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) 
@@ -98,21 +91,9 @@ void	Commands::cmdToConnect()
 	else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
 		nickCmd();
 	else
-	{
-		std::cout << "print == "<< _irssi << std::endl;
 		this->_msg->ERR_NOTREGISTERED(this->_fd_user);
-	}
 	if (this->_user->isConnected())
 		this->_msg->welcome(this->_user, this->_fd_user);
-	
-	
-	/*
-	else if (!this->_user->isConnected() && this->_s->isCommandIrc(this->_line_cmd[0]) == true)
-	{
-		std::cout << "print == "<< _irssi << std::endl;
-		this->_msg->ERR_NOTREGISTERED(this->_fd_user);
-	}
-	*/
 }
 
 //---------------------PASS-------------------//
@@ -120,7 +101,6 @@ void	Commands::cmdToConnect()
 void	Commands::passCmd()
 {
 	std::string		msg;
-	
 	
 	if (!this->_user->passwordIsSet())
 	{
@@ -161,10 +141,7 @@ void	Commands::userCmd()
 	if(!this->_user->realnameIsSet())
 	{
 		if (this->_line_cmd.size() < 5 || this->_line_cmd[4][0] != ':')
-		{
 			this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
-			return;
-		}
 		if (this->_line_cmd[4][0] == ':' && this->_line_cmd[4].size() >= 2)
 		{
 			this->_line_cmd[4] = this->_line_cmd[4].substr(1, this->_line_cmd[4].size() - 1);

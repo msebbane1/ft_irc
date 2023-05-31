@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 12:43:25 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 13:28:19 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,12 +172,9 @@ void	Server::connectToClients(int user_talk, std::string buf)
 	buf.erase(buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
-	if(line[0] == "CAP")
-	{
+	if (line[0] == "CAP")
 		std::cout << "====Client IRSSI=====" << std::endl;
-		_irssi = true;
-	}
-	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg, this->_irssi);
+	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
 	cmd->exec_cmd();
 	delete cmd;
 }
@@ -197,13 +194,9 @@ void Server::connect(int user_talk, std::string buf)
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
 	if (buf.find("\r\n") != std::string::npos) // IRSSI
-	{
-		_irssi = true;
 		connectToClients(user_talk, buf);
-	}
 	else // NETCAT
 	{
-		_irssi = false;
 		std::cout << "====Client NETCAT=====" << std::endl;
 		connectToClients(user_talk, buf);
 	}

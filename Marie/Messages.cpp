@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/30 15:36:51 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 13:24:24 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	Messages::ERR_NEEDMOREPARAMS(int fd) // 461
 	std::string msg = ":irc.com 461 ERR_NEEDMOREPARAMS :Not enough parameters\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
+	return ;
 }
 
 void	Messages::ERR_ALREADYREGISTRED(int fd) // 462
