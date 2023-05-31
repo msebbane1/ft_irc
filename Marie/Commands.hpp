@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/30 16:41:02 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 12:11:06 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Commands
 		std::vector<std::string>	_line_cmd;
 
 	public :
-		Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg);
+		Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg, bool irssi);
 		~Commands();
 
 		void						exec_cmd();
@@ -45,6 +45,7 @@ class Commands
 		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
 		
 		//=========================COMMANDS======================//
+		void						cmdToConnectIRSSI();
 		void						cmdToConnect();
 		void						passCmd();
 		void						userCmd();

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/30 16:40:03 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 12:43:25 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,66 +76,28 @@ bool Server::clientExist(std::string nick) {
 	return (false);
 }
 
-//A UTILISER TOUTE LES ERREURS voir doc
-/*-------------------------MESSAGES-------------------------------*/
-void	Server::welcomeMsg(std::string user, std::string nick, int fd)
-{
-	std::string msg = ":localhost 001 " + nick + "\r\n" 
-	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
-	+ "@localhost" + "\"" + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Server::errorSend(std::string num, std::string nick, std::string line, int fd) 
-{
-	std::string msg = ":localhost " + num + " " + nick + " :" + line + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Server::errorSendBuf(std::string num, std::string nick, std::string arg, std::string line, int fd) 
-{
-	std::string msg = ":localhost " + num + " " + nick + " " + line + " :" + arg + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void		Server::errorMsg(std::string msg)
-{
-    std::cout << Red << msg << Color << std::endl;
-	exit(EXIT_FAILURE);
-}
-
-void		Server::displayMsgOnServer(std::string const &buf, int user_talk)
-{
-	if (buf == "\n")
-		return;
-    std::cout << "| USER : client " << user_talk << " |" << std::endl;
-    std::cout << "Message send :" << buf ;
-}
-
 /*--------------------------------------------------------*/
 
 void		Server::createServ(int port)
 {
+	Messages msg;
 	int	opt = 1;
 	
 	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		errorMsg("socket failed");
+		msg.errorMsg("socket failed");
 	
 	if (setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		errorMsg("setsockopt");
+		msg.errorMsg("setsockopt");
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_addr.s_addr = INADDR_ANY;
 	this->_addr.sin_port = htons(port);
 	
 	if (bind(this->_fd_server, (struct sockaddr*) &this->_addr, sizeof(this->_addr)) < 0)
-		errorMsg("bind failed");
+		msg.errorMsg("bind failed");
 	this->_addr_len = sizeof(this->_addr);
 	
 	if (listen(this->_fd_server, 500) < 0)
-		errorMsg("listen");
+		msg.errorMsg("listen");
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
 
@@ -151,6 +113,8 @@ bool	Server::isCommandIrc(std::string str)
 	this->_command_list.push_back("QUIT");
 	this->_command_list.push_back("PING");
 	this->_command_list.push_back("CAP");
+
+	this->_command_list.push_back("WHOIS");
 	
 	this->_command_list.push_back("KICK");
 	this->_command_list.push_back("AUTHENTICATE");
@@ -202,25 +166,18 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-void	Server::connectToNetCat(int user_talk, std::string buf)
+void	Server::connectToClients(int user_talk, std::string buf)
 {
 	Messages msg;
 	buf.erase(buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
-
-		
-	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
-	cmd->exec_cmd();
-	delete cmd;
-}
-
-void	Server::connectToIRSSI(int user_talk, std::string buf)
-{
-	Messages msg;
-    buf = buf.substr(0, buf.length() - 1);
-	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
-	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
+	if(line[0] == "CAP")
+	{
+		std::cout << "====Client IRSSI=====" << std::endl;
+		_irssi = true;
+	}
+	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg, this->_irssi);
 	cmd->exec_cmd();
 	delete cmd;
 }
@@ -239,16 +196,24 @@ void Server::connect(int user_talk, std::string buf)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	if (buf.find("\r\n") != std::string::npos)
-		connectToIRSSI(user_talk, buf);
-	else
-		connectToNetCat(user_talk, buf);
+	if (buf.find("\r\n") != std::string::npos) // IRSSI
+	{
+		_irssi = true;
+		connectToClients(user_talk, buf);
+	}
+	else // NETCAT
+	{
+		_irssi = false;
+		std::cout << "====Client NETCAT=====" << std::endl;
+		connectToClients(user_talk, buf);
+	}
 }
 
 /*--------------------------------------------------------*/
 
 void	Server::acceptUser()
 {
+	Messages msg;
 	int	max_fd;
 	int	new_user;
 	int	fd_user;
@@ -266,11 +231,11 @@ void	Server::acceptUser()
 	}
 	
 	if (select(max_fd + 1, &this->_fds, NULL, NULL, NULL) < 0)
-		errorMsg("select");
+		msg.errorMsg("select");
 	if (FD_ISSET(this->_fd_server, &this->_fds))
 	{
 		if ((new_user = accept(this->_fd_server, (struct sockaddr*) &this->_addr,(socklen_t*) &this->_addr_len)) < 0)
-			errorMsg("accept");
+			msg.errorMsg("accept");
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
 		
@@ -319,6 +284,7 @@ void	Server::serverIrc()
 {
 	while (true)
 	{
+		Messages msg;
 		char	buffer[1024] = { 0 };
 		int		user_talk;
 
@@ -341,7 +307,7 @@ void	Server::serverIrc()
 				{
 					int	nb;
 					 
-					displayMsgOnServer(buffer, user_talk);
+					msg.displayMsgOnServer(buffer, user_talk);
 					nb = countCharInString(buffer, '\n');
 					if (nb > 1)
 					{
@@ -363,3 +329,70 @@ void	Server::serverIrc()
 		clientDisconnected();
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+/*
+void	Server::connectToIRSSI(int user_talk, std::string buf)
+{
+	Messages msg;
+	if(_list_client[user_talk]->isConnected() == false)
+	{
+		std::map<std::string, std::vector<std::string> > values;
+		std::vector<std::string> value = splitCustom(buf, '\r');
+
+		std::string entries [] = {
+			"PASS",
+			"NICK",
+			"USER"
+		};
+		for (std::vector<std::string>::iterator it = value.begin(); it != value.end(); it++) {
+			for (int i = 0; i < 3; i++) {
+				std::vector<std::string> tmp = splitCustom(*it, ' ');
+				if (tmp[0].size() > 0 && tmp[0][0] == '\n')
+					tmp[0] = tmp[0].substr(1);
+				if (tmp[0] == entries[i]) {
+					tmp.erase(tmp.begin());
+					values[entries[i]] = tmp;
+					break ;
+				}
+			}
+		}
+		for (std::map<std::string, std::vector<std::string> >::iterator it = values.begin(); it != values.end(); it++) {
+			if (it->first == "PASS") {
+				if (it->second[0] != getPassword())
+					return ;
+				_list_client[user_talk]->setPassword();
+			}
+			else if (it->first == "NICK") {
+				for (std::map<int, Client *>:: iterator ite = _list_client.begin(); ite != _list_client.end(); ite++) {
+					if (ite->second->getNickname() == it->second[0]) 
+					{
+						msg.ERR_NICKNAMEINUSE(it->second[0], user_talk);  
+					}
+				}
+				_list_client[user_talk]->setNickname(it->second[0]);
+			}
+			else if (it->first == "USER")
+				_list_client[user_talk]->setUser(it->second[0]);
+		}
+	}
+	else
+	
+		buf = buf.substr(0, buf.length() - 1);
+		std::vector<std::string>	line = splitCustom(buf, ' ');
+	
+		Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg, _irssi);
+		cmd->exec_cmd();
+		delete cmd;
+
+}
+*/

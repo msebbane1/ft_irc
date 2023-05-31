@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/30 10:55:55 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 12:20:22 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ class Server
 		std::vector<int>			_fd_users_dc;
 		std::map<int, Client*>		_list_client;
 		std::map<std::string, Channel*>	_list_chan;
+		bool						_irssi;
 		
 	public:
 		Server();
@@ -56,12 +57,12 @@ class Server
 		void						createServ(int port);
 		void						acceptUser();
 		int							received(char *buffer, int user_talk);
-		void						connectToNetCat(int user_talk, std::string buf);
-		void						connectToIRSSI(int user_talk, std::string buf);
+		//void						connectToNetCat(int user_talk, std::string buf);
+		//void						connectToIRSSI(int user_talk, std::string buf);
+		void						connectToClients(int user_talk, std::string buf);
 		void 						connect(int user_talk, std::string buf);
 		
 		//==========================Utils===========================//
-		void						displayMsgOnServer(std::string const &buf, int user_talk);
 		void						sendHistoric(int client_fd);
 		int							countCharInString(std::string buf, char c);
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
@@ -85,9 +86,4 @@ class Server
 		std::map<std::string, Channel*>	getListChan();
 		void							addListChan(Channel *c);
 		
-		//===========================ERROR MSG && MSG==============================//
-		void	errorMsg(std::string msg);
-		void	errorSendBuf(std::string num, std::string nick, std::string arg, std::string msg, int fd);
-		void	errorSend(std::string num, std::string nick, std::string msg, int fd);
-		void	welcomeMsg(std::string user, std::string nick, int fd);
 };

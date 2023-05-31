@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/20 17:03:44 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/05/31 12:23:55 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Client.hpp"
 #include "Commands.hpp"
 #include "Color.hpp"
+#include "Messages.hpp"
 #include "Channel.hpp"
 
 /*Verifie Password valid*/
@@ -38,11 +39,12 @@ bool check_adressIP(char *port)
 int main(int argc, char **argv)
 {
 	Server irc;
+	Messages msg;
 	
     if (argc != 3)
-		irc.errorMsg("Error: Usage : ./ircserv <port> <password> ");
+		msg.errorMsg("Error: Usage : ./ircserv <port> <password> ");
     if (check_adressIP(argv[1]) == true)
-        irc.errorMsg("Error: port [not valid] range betwen 0 and 65535");
+        msg.errorMsg("Error: port [not valid] range betwen 0 and 65535");
     irc.createServ(atoi(argv[1]));
 	irc.setPassword(std::string(argv[2]));
     std::cout << Blue << "Waiting for connections..." << Color << std::endl;
