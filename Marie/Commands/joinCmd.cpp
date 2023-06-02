@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 13:00:43 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 13:58:33 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	Commands::joinCmd()
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //461
 	else if (this->_line_cmd[1][0] != '#' || this->_line_cmd[1][0] != '&')
 	{
-		// A changer type erreur
-		this->_msg->errorSend("", this->_user->getNickname(), "Wrong format", this->_user->get_fd());
+		// A changer type erreur ?
+		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 		return;
 	}
 	if (chanExist(this->_line_cmd[1]) == false)

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 13:05:51 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:03:41 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,7 @@ void	Commands::exec_cmd()
 		return ;
 	}
 //==================================CMD CONNECTION REGISTER==============================//
-	
-	if (this->_line_cmd[0] == "CAP")
-	{
-		if (this->_line_cmd[0] == "PASS")
-			passCmd();
-		else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) 
-			userCmd();
-		else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
-			nickCmd();
-		if (this->_user->isConnected())
-			this->_msg->welcome(this->_user, this->_fd_user);
-	}
-	else if (this->_user->isConnected() == false)
+	if (this->_user->isConnected() == false)
 		cmdToConnect();
 	else
 	{
@@ -64,10 +52,10 @@ void	Commands::exec_cmd()
 			joinCmd();
 		else if (this->_line_cmd[0] == "QUIT")
 			quitCmd();
+	  	else if (this->_line_cmd[0] == "NOTICE") // <pseudonyme> <texte>
+			privMsgCmd();
 		else if (this->_line_cmd[0] == "INFO"){}// [<serveur>]
-		else if (this->_line_cmd[0] == "AUTHENTICATE"){}
     	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
-	  	else if (this->_line_cmd[0] == "NOTICE"){} // <pseudonyme> <texte>
     	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
     	else if (this->_line_cmd[0] == "MODE"){} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
 		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
@@ -90,16 +78,15 @@ void	Commands::exec_cmd()
 
 void	Commands::cmdToConnect()
 {
-	std::string	msg;
-
 	if (this->_line_cmd[0] == "PASS")
 		passCmd();
 	else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) 
 		userCmd();
 	else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
 		nickCmd();
-	else
+	else if(_line_cmd[0] != "CAP")
 		this->_msg->ERR_NOTREGISTERED(this->_fd_user);
+	
 	if (this->_user->isConnected())
 		this->_msg->welcome(this->_user, this->_fd_user);
 }

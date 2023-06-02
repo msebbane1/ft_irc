@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 12:04:39 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 13:56:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ class Messages
 	~Messages();
 	void	welcome(Client *user, int fd);
 	void	welcomeMsg(std::string user, std::string nick, int fd);
-	void	errorSend(std::string num, std::string nick, std::string line, int fd) ;
-	void	errorSendBuf(std::string num, std::string nick, std::string arg, std::string line, int fd) ;
 	void	errorMsg(std::string msg);
 	void	displayMsgOnServer(std::string const &buf, int user_talk);
 
@@ -50,5 +48,8 @@ class Messages
 
 	void	ERR_UNKNOWNCOMMAND(std::string cmd, int fd);
 	void	ERR_NOTREGISTERED(int fd);
+
+	//============ERR CHANNELS=========///
+	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
 
 };

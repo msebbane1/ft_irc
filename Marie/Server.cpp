@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/02 11:55:11 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:05:21 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,10 +188,10 @@ void	Server::connectToClients(int user_talk, std::string buf)
 void Server::connect(int user_talk, std::string buf)
 {
 	std::string msg;
-	msg = "Error: limit char";
 	
 	if (buf.length() > 1000)
 	{
+		msg = "Error: limit char";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 		return ;
 	}

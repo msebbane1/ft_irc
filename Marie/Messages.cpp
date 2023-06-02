@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 11:26:41 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:01:07 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,15 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 	return;
 }
 
+//====================CHANNELS===========//
+
+void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
+{
+	std::string msg = ":irc.com 403 ERR_NOSUCHCHANNEL " + channel + " :No such channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
 
 //gerer les REPLY
 
@@ -126,20 +135,6 @@ void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
 	std::string msg = ":irc.com localhost 001 " + nick + "\r\n" 
 	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
 	+ "@localhost" + "\"" + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Messages::errorSend(std::string num, std::string nick, std::string line, int fd) 
-{
-	std::string msg = ":localhost " + num + " " + nick + " :" + line + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Messages::errorSendBuf(std::string num, std::string nick, std::string arg, std::string line, int fd) 
-{
-	std::string msg = ":localhost " + num + " " + nick + " " + line + " :" + arg + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -154,6 +149,5 @@ void		Messages::displayMsgOnServer(std::string const &buf, int user_talk)
 {
 	if (buf == "\n")
 		return;
-    std::cout << "| USER : client " << user_talk << " |" << std::endl;
-    std::cout << "Message send :" << buf ;
+    std::cout << "|User: "<< user_talk << "| Message send :" << buf ;
 }
