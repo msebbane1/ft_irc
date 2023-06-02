@@ -6,15 +6,19 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 13:37:45 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:59:55 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(){}
+Server::Server()
+{
+}
 
-Server::~Server(){}
+Server::~Server()
+{
+}
 
 /*--------------------------------------------------------*/
 
@@ -111,13 +115,7 @@ void		Server::createServ(int port)
 	
 	if (listen(this->_fd_server, 500) < 0)
 		msg.errorMsg("listen");
-	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
-}
-
-/*--------------------------------------------------------*/
-
-bool	Server::isCommandIrc(std::string str)
-{
+	
 	this->_command_list.push_back("PASS");
 	this->_command_list.push_back("NICK");
 	this->_command_list.push_back("USER");
@@ -134,7 +132,13 @@ bool	Server::isCommandIrc(std::string str)
 	this->_command_list.push_back("MODE");
 	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
-	
+	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
+}
+
+/*--------------------------------------------------------*/
+
+bool	Server::isCommandIrc(std::string str)
+{	
 	for (unsigned int i = 0; i < this->_command_list.size(); i++)
 	{
 		if (this->_command_list[i] + '\n' == str || this->_command_list[i] == str)
@@ -181,11 +185,11 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 void	Server::connectToClients(int user_talk, std::string buf)
 {
 	Messages msg;
-	buf.erase(buf.length() - 1);
+	if (buf.find("\r\n") != std::string::npos)
+        buf = buf.substr(0, buf.length() - 1);
+    buf = buf.substr(0, buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
-	if (line[0] == "CAP")
-		std::cout << "====Client IRSSI=====" << std::endl;
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
 	cmd->exec_cmd();
 	delete cmd;
@@ -196,22 +200,16 @@ void	Server::connectToClients(int user_talk, std::string buf)
 void Server::connect(int user_talk, std::string buf)
 {
 	std::string msg;
-	msg = "Error: limit char";
 	
 	if (buf.length() > 1000)
 	{
+		msg = "Error: limit char";
 		send(user_talk, msg.c_str(), msg.size(), 0);
 		return ;
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	if (buf.find("\r\n") != std::string::npos) // IRSSI
-		connectToClients(user_talk, buf);
-	else // NETCAT
-	{
-		std::cout << "====Client NETCAT=====" << std::endl;
-		connectToClients(user_talk, buf);
-	}
+	connectToClients(user_talk, buf);
 }
 
 /*--------------------------------------------------------*/

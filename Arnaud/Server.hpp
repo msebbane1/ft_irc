@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 13:33:07 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:13:59 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #include <vector>
 #include "Client.hpp"
 #include "Channel.hpp"
-#include "Commands.hpp"
+#include "Commands/Commands.hpp"
 #include "Color.hpp"
 #include "Messages.hpp"
 

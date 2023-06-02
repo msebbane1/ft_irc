@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 10:09:16 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:11:18 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Messages::Messages(){}
 
 Messages::~Messages(){}
 
+//==============================================WELCOME MSG==================================================///
 
 void	Messages::welcome(Client *user, int fd)
 {
@@ -106,7 +107,6 @@ void Messages::ERR_UNKNOWNCOMMAND(std::string cmd, int fd) // 421
 	std::string msg = ":irc.com 421 ERR_UNKNOWNCOMMAND " + cmd + " :Unknown command\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
-	return;
 }
 
 void Messages::ERR_NOTREGISTERED(int fd) // 451
@@ -114,29 +114,31 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 	std::string msg = ":irc.com 451 ERR_NOTREGISTERED :You have not registered\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
-	return;
 }
 
+//====================CHANNELS===========//
+
+void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
+{
+	std::string msg = ":irc.com 403 ERR_NOSUCHCHANNEL " + channel + " :No such channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//====================REPLY================//
+
+void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
+{
+	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
 
 void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
 {
 	std::string msg = ":irc.com localhost 001 " + nick + "\r\n" 
 	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
 	+ "@localhost" + "\"" + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Messages::errorSend(std::string num, std::string nick, std::string line, int fd) 
-{
-	std::string msg = ":localhost " + num + " " + nick + " :" + line + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Messages::errorSendBuf(std::string num, std::string nick, std::string arg, std::string line, int fd) 
-{
-	std::string msg = ":localhost " + num + " " + nick + " " + line + " :" + arg + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -151,6 +153,46 @@ void		Messages::displayMsgOnServer(std::string const &buf, int user_talk)
 {
 	if (buf == "\n")
 		return;
-    std::cout << "| USER : client " << user_talk << " |" << std::endl;
-    std::cout << "Message send :" << buf ;
+    std::cout << "|User: "<< user_talk << "| Message send :" << buf ;
+}
+
+//==============================================ERROR & REPLY JOIN==================================================///
+
+void	Messages::RPL_NOTOPIC(Channel *c) // 331
+{
+	std::string	msg = ":irc.com 331 RPL_NOTOPIC " + c->getName() + " :No topic is set";
+	c->sendMsg(-1, msg);
+}
+
+void	Messages::RPL_TOPIC(Channel *c) // 332
+{
+	std::string	msg = ":irc.com 332 RPL_TOPIC " + c->getName() + " :" + c->getTopic();
+	c->sendMsg(-1, msg);
+}
+
+void	Messages::RPL_NAMREPLY(Channel *c) // 353
+{
+	std::map<int, Client*>				map = c->getListUserCo();
+	int									i = 0;
+	
+	std::string	msg = ":irc.com 353 RPL_NAMREPLY " + c->getName() + " :[USERS " + c->getName() + "]\n";
+	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
+	{
+		std::string mode;
+		if (c->isOperator(it->first) == true)
+			mode = "+";
+		else
+			mode = " ";
+		msg += "[[" + mode + "]" + it->second->getNickname() + "] ";
+		i++;
+		if (i % 4 == 0)
+			msg += "\n";
+	}
+	c->sendMsg(-1, msg);
+}
+
+void	Messages::RPL_ENDOFNAMES(Channel *c) // 366
+{
+	std::string	msg = ":irc.com 366 RPL_ENDOFNAMES " + c->getName() + " :End of /NAMES list";
+	c->sendMsg(-1, msg);
 }

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/29 13:16:07 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:06:28 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,31 @@ void	Channel::displayOp()
 		if (!it->second->getNickname().empty())
 			std::cout << "- " << ((it->second->getNickname().empty()) ? it->second->getUser() : it->second->getNickname()) << std::endl;
 	}
+}
+
+bool	Channel::userIsInChann(int user)
+{
+	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		if (it->first == user)
+			return (true);
+	return (false);
+}
+
+void	Channel::sendMsg(int user_talk, std::string msg)
+{
+	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		if (it->first != user_talk)
+			send(it->first, msg.c_str(), msg.size(), 0);
+}
+
+bool	Channel::isOperator(int fd)
+{
+	for (std::map<int, Client *>::iterator itop = this->_list_operators.begin(); itop != this->_list_operators.end(); itop++)
+	{
+		if (itop->first == fd)
+			return (true);
+	}
+	return (false);
 }
 
 /*---------------------------------------------------------------------*/
@@ -157,6 +182,18 @@ void					Channel::removeOperator(std::string username)
 			return ;
 		}
 	}
+}
+
+/*---------------------------------------------------------------------*/
+
+std::string	Channel::getTopic()
+{
+	return (this->_topic);
+}
+
+void		Channel::setTopic(std::string topic)
+{
+	this->_topic = topic;
 }
 
 /*---------------------------------------------------------------------*/

@@ -6,31 +6,27 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/01 10:39:26 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 16:05:02 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 ///////INCLUDES//////
-#include "Client.hpp"
-#include "Channel.hpp"
-#include "Server.hpp"
-#include "Messages.hpp"
+#include "../Server.hpp"
 
-class Client;
 class Server;
-class Channel;
 class Messages;
+class Channel;
+class Client;
 
 class Commands
 {
 	private :
-		Server* 					_s;
 		Messages*					_msg;
+		Server* 					_s;
 		Client*						_user;
 		int							_fd_user;
-		//std::string					_cmd;
 		std::vector<std::string>	_line_cmd;
 
 	public :
@@ -40,17 +36,17 @@ class Commands
 		void						exec_cmd();
 
 		bool						chanExist(std::string name_chan);
-		bool						userIsInChan(std::string name_chan, int fd_user);
 		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
-
+		
 		//=========================COMMANDS======================//
 		void						cmdToConnect();
 		void						passCmd();
 		void						userCmd();
 		void						nickCmd();
-		bool						nicknameIsValid(std::string nick);
 		void						privMsgCmd();
 		std::string					joinMessages();
 		void						joinCmd();
 		void						quitCmd();
+		void						operCmd();
+		void						killCmd();
 };

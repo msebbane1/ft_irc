@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 12:40:54 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:04:12 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ class Channel
 		void	banUser(std::string username);
 		void	displayUsers();
 		void	displayOp();
+		bool	userIsInChann(int user);
+		void	sendMsg(int user_talk, std::string msg);
+		bool	isOperator(int fd);
 
 		std::string					getName();
 		void						setName(std::string name);
@@ -51,4 +54,7 @@ class Channel
 		std::map<int, Client*>		getListOp();
 		void						addOperator(Client *cl, int fd_cl);
 		void						removeOperator(std::string username);
+
+		std::string					getTopic();
+		void						setTopic(std::string topic);
 };
