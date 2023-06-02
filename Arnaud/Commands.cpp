@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 13:39:26 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 10:23:21 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,24 @@ void	Commands::exec_cmd()
 	std::string	msg;
 
 	if (this->_s->isCommandIrc(this->_line_cmd[0]) == false)
+	{
 		this->_msg->ERR_UNKNOWNCOMMAND(this->_line_cmd[0], this->_fd_user);
+		return ;
+	}
 	//================================CMD CONNECTION REGISTER==============================//
-	if (this->_user->isConnected() == false)
+	
+	if (this->_line_cmd[0] == "CAP")
+	{
+		if (this->_line_cmd[0] == "PASS")
+			passCmd();
+		else if (_line_cmd[0] == "USER" && this->_user->passwordIsSet() == true) 
+			userCmd();
+		else if (_line_cmd[0] == "NICK" && this->_user->passwordIsSet() == true)
+			nickCmd();
+		if (this->_user->isConnected())
+			this->_msg->welcome(this->_user, this->_fd_user);
+	}
+	else if (this->_user->isConnected() == false)
 		cmdToConnect();
 	else
 	{
@@ -45,7 +60,7 @@ void	Commands::exec_cmd()
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (this->_line_cmd[0] == "PRIVMSG")
 			privMsgCmd();	
-    	else if (this->_line_cmd[0] == "JOIN")// <canal>{,<canal>} [<clé>{,<clé>}]
+    	else if (this->_line_cmd[0] == "JOIN") // <canal>{,<canal>} [<clé>{,<clé>}]
 			joinCmd();
 		else if (this->_line_cmd[0] == "QUIT") //  [<Message de départ >]
 			quitCmd();
@@ -53,8 +68,9 @@ void	Commands::exec_cmd()
 		{			
 			std::string msg = ":localhost PONG :localhost\r\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);
-			
 		}
+		else if (this->_line_cmd[0] == "WHOIS")
+			return ;
 		else if (this->_line_cmd[0] == "INFO"){}// [<serveur>]
 		else if (this->_line_cmd[0] == "AUTHENTICATE"){}
     	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
@@ -106,19 +122,10 @@ void	Commands::passCmd()
 		}
 		else
 		{
+			this->_msg->ERR_PASSWDMISMATCH(this->_fd_user);
 			this->_user->increment_pass_try();
 			if (this->_user->get_pass_try() == 3)
-			{
 				this->_s->setFdUsersDc(this->_fd_user);
-				msg = "No try left: User is disconnected.\n";
-				send(this->_fd_user, msg.c_str(), msg.size(), 0);
-				std::cout << "Client " << this->_fd_user << " has been disconnected." << std::endl;
-			}
-			else
-			{
-				msg = "Wrong password.It left you " + std::to_string(3 - this->_user->get_pass_try()) + " try.\n";
-				send(this->_fd_user, msg.c_str(), msg.size(), 0);
-			}
 		}
 	}
 	else if (this->_line_cmd[0] == "PASS" && this->_user->passwordIsSet())
@@ -179,9 +186,12 @@ void	Commands::nickCmd()
 			this->_msg->ERR_NICKNAMEINUSE(this->_line_cmd[1], this->_fd_user);
 		else if (nicknameIsValid(this->_line_cmd[1]) == true)
 		{
-			std::string	msg = ":" +  _user->getNickname() + "!" + _user->getUser() + "@localhost NICK :" + this->_line_cmd[1] + "\r\n";
-			if(send(this->_fd_user, msg.c_str(), msg.length(), 0) < 0)
-				this->_msg->errorMsg("failed send");
+			if(this->_user->nicknameIsSet())
+			{
+				std::string	msg = ":" +  _user->getNickname() + "!" + _user->getUser() + "@localhost NICK :" + this->_line_cmd[1] + "\r\n"; // POUR CHANGER NICK
+				if(send(this->_fd_user, msg.c_str(), msg.length(), 0) < 0)
+					_msg->errorMsg("failed send");
+			}
 			this->_user->setNickname(this->_line_cmd[1]);
 			std::cout << "======nickname is set=====: " << this->_user->getNickname() << std::endl;
 		}
@@ -192,15 +202,29 @@ void	Commands::nickCmd()
 
 //---------------------PRIVMSG-------------------//
 
+std::string	Commands::joinMessages()
+{
+	std::string msg;
+	std::vector<std::string>::iterator it = this->_line_cmd.begin() + 2;
+	while (it != this->_line_cmd.end())
+	{
+		msg += *it;
+		msg += " ";
+		it++;
+	}
+	//std::cout << msg << std::endl;
+	return(msg);
+}
+
 void	Commands::privMsgCmd()
 {
 	std::string	msg;
 
-	if(this->_line_cmd.size() <= 2)
+	if (this->_line_cmd.size() <= 2)
 		this->_msg->ERR_NORECIPIENT(this->_fd_user); 
-	else if(this->_line_cmd.size() > 2)
+	else if (this->_line_cmd.size() > 2)
 	{
-		if(this->_line_cmd[1].empty())
+		if (this->_line_cmd[1].empty())
 			this->_msg->ERR_NOTEXTTOSEND(this->_fd_user);
 		if (this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&')
 		{
@@ -215,9 +239,9 @@ void	Commands::privMsgCmd()
 				send(this->_fd_user, msg.c_str(), msg.length(), 0);
 			}
 		}
-		else if(this->_s->clientExist(this->_line_cmd[1]) == true)
+		else if (this->_s->clientExist(this->_line_cmd[1]) == true)
 		{
-			msg = this->_user->getNickname() + " [ID: " + std::to_string(this->_fd_user) + "] : " + this->_line_cmd[2] + "\n";
+			msg = ":" + this->_user->getNickname() + " PRIVMSG " +  this->_line_cmd[1] + " " + joinMessages() + "\r\n";
 			std::cout << "=======" << this->_s->getClient(this->_line_cmd[1])->get_fd() << std::endl;
 			send(this->_s->getClient(this->_line_cmd[1])->get_fd(), msg.c_str(), msg.length(), 0);
 		}
@@ -247,7 +271,9 @@ void	Commands::joinCmd()
 
 	if (this->_line_cmd.size() == 1)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //461
-	else if (this->_line_cmd[1][0] != '#' || this->_line_cmd[1][0] != '&') {
+	else if (this->_line_cmd[1][0] != '#' || this->_line_cmd[1][0] != '&')
+	{
+		// A changer type erreur
 		this->_msg->errorSend("", this->_user->getNickname(), "Wrong format", this->_user->get_fd());
 		return;
 	}

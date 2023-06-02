@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 13:39:01 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/01 10:39:26 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Commands
 		void						nickCmd();
 		bool						nicknameIsValid(std::string nick);
 		void						privMsgCmd();
+		std::string					joinMessages();
 		void						joinCmd();
 		void						quitCmd();
 };

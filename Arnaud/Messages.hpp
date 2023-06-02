@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 11:28:22 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 10:07:52 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Messages
 	//============ERR PASS && USER=========///
 	void	ERR_NEEDMOREPARAMS(int fd);
 	void	ERR_ALREADYREGISTRED(int fd);
+	void	ERR_PASSWDMISMATCH(int fd);
 
 	//============ERR PRIVMSG=========///
 	void	ERR_NORECIPIENT(int fd);

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 11:29:50 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/02 10:09:16 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,12 @@ void	Messages::ERR_ALREADYREGISTRED(int fd) // 462
 		errorMsg("failed send");
 }
 
+void	Messages::ERR_PASSWDMISMATCH(int fd) // 464
+{
+	std::string	msg = ":irc.com 464 ERR_PASSWDMISMATCH :Password incorrect\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
 
 //==============================================ERROR PRIVMSG==================================================///
 
