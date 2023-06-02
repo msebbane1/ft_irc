@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 13:56:51 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:25:23 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,8 @@ class Messages
 
 	//============ERR CHANNELS=========///
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
+
+	//============REPLY=========///
+	void	RPL_YOUREOPER(std::string nick, int fd);
 
 };

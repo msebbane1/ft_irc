@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 14:01:07 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:24:48 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,14 @@ void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 		errorMsg("failed send");
 }
 
+//====================REPLY================//
 
-//gerer les REPLY
+void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
+{
+	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
 
 void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
 {

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:49:06 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 12:57:57 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 14:13:02 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 //---------------------NICK-------------------//
 
-bool	Commands::nicknameIsValid(std::string nick)
+bool	nicknameIsValid(std::string nick)
 {
 	for (int i = 0; nick[i]; i++)
 	{
