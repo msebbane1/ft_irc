@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 14:11:57 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:10:01 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,13 @@ void	Commands::exec_cmd()
 	  	else if (this->_line_cmd[0] == "NOTICE") // <pseudonyme> <texte>
 			privMsgCmd();
     	else if (this->_line_cmd[0] == "OPER")
-			operCmd(); //params : <utilisateur> <mot de passe>
-		else if (this->_line_cmd[0] == "INFO"){}// [<serveur>]
+			operCmd();
+    	else if (this->_line_cmd[0] == "KILL")
+			killCmd();
     	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
     	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
     	else if (this->_line_cmd[0] == "MODE"){} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
 		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
-    	else if (this->_line_cmd[0] == "KILL"){} // <pseudonyme> <commentaire>
 		else if (this->_line_cmd[0] == "INVITE"){} // <pseudonyme> <canal>
 		else if (this->_line_cmd[0] == "KICK"){} // <canal> <utilisateur> [<commentaire>]
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]

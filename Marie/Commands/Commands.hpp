@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 14:14:21 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 15:10:15 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,5 @@ class Commands
 		void						joinCmd();
 		void						quitCmd();
 		void						operCmd();
+		void						killCmd();
 };
