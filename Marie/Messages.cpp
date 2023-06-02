@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 15:35:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 11:26:41 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,13 @@ void	Messages::ERR_NEEDMOREPARAMS(int fd) // 461
 void	Messages::ERR_ALREADYREGISTRED(int fd) // 462
 {
 	std::string msg = ":irc.com 462 ERR_ALREADYREGISTRED :You may not reregister\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::ERR_PASSWDMISMATCH(int fd) // 464
+{
+	std::string	msg = ":irc.com 464 ERR_PASSWDMISMATCH :Password incorrect\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 13:30:02 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 12:02:24 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@
 #include <vector>
 #include "Client.hpp"
 #include "Channel.hpp"
-#include "Commands.hpp"
-#include "Color.hpp"
 #include "Messages.hpp"
+#include "Color.hpp"
+#include "Commands/Commands.hpp"
 
 class Commands;
 class Client;
@@ -65,6 +65,7 @@ class Server
 		std::vector<std::string>	splitCustom(std::string buf, char charset);
 		
 		void						clientDisconnected();
+		void						channDisconnected();
 		bool						isCommandIrc(std::string str);
 		void						chanExist(std::string name);
 		bool 						clientExist(std::string nick);
@@ -81,6 +82,7 @@ class Server
 		Client *					getClient(std::string nick);
 		
 		std::map<std::string, Channel*>	getListChan();
+		Channel*						getChannel(std::string chann);
 		void							addListChan(Channel *c);
 		
 };

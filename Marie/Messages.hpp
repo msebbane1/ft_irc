@@ -6,21 +6,19 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/30 15:37:18 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 12:04:39 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #pragma once
 
-#include "Commands.hpp"
+#include "Commands/Commands.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
 
 class Server;
 class Client;
-
-
 
 class Messages
 {
@@ -44,6 +42,7 @@ class Messages
 	//============ERR PASS && USER=========///
 	void	ERR_NEEDMOREPARAMS(int fd);
 	void	ERR_ALREADYREGISTRED(int fd);
+	void	ERR_PASSWDMISMATCH(int fd);
 
 	//============ERR PRIVMSG=========///
 	void	ERR_NORECIPIENT(int fd);

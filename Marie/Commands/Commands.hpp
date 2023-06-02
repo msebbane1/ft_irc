@@ -6,21 +6,19 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/31 16:28:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 13:00:28 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 ///////INCLUDES//////
-#include "Client.hpp"
-#include "Channel.hpp"
-#include "Server.hpp"
+#include "../Server.hpp"
 
-class Client;
 class Server;
-class Channel;
 class Messages;
+class Channel;
+class Client;
 
 class Commands
 {
@@ -38,7 +36,6 @@ class Commands
 		void						exec_cmd();
 
 		bool						chanExist(std::string name_chan);
-		Channel*					getChannel(std::string name_chan);
 		bool						userIsInChan(std::string name_chan, int fd_user);
 		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
 		

@@ -6,13 +6,13 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 12:23:55 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 12:02:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "Client.hpp"
-#include "Commands.hpp"
+#include "Commands/Commands.hpp"
 #include "Color.hpp"
 #include "Messages.hpp"
 #include "Channel.hpp"

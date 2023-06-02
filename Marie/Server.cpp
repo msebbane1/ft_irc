@@ -6,12 +6,11 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 16:38:14 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/02 11:55:11 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include "Messages.hpp"
 
 Server::Server(){}
 
@@ -60,6 +59,11 @@ std::map<std::string, Channel*>	Server::getListChan()
 	return (this->_list_chan);
 }
 
+Channel*						Server::getChannel(std::string chann)
+{
+	return (this->_list_chan[chann]);
+}
+
 void							Server::addListChan(Channel *c)
 {
 	this->_list_chan.insert(std::pair<std::string, Channel*>(c->getName(), c));
@@ -82,6 +86,23 @@ void		Server::createServ(int port)
 {
 	Messages msg;
 	int	opt = 1;
+
+	this->_command_list.push_back("PASS");
+	this->_command_list.push_back("NICK");
+	this->_command_list.push_back("USER");
+	this->_command_list.push_back("PRIVMSG");
+	this->_command_list.push_back("JOIN");
+	this->_command_list.push_back("QUIT");
+	this->_command_list.push_back("PING");
+	this->_command_list.push_back("CAP");
+	this->_command_list.push_back("WHOIS");
+	this->_command_list.push_back("KICK");
+	this->_command_list.push_back("AUTHENTICATE");
+	this->_command_list.push_back("INVITE");
+	this->_command_list.push_back("TOPIC");
+	this->_command_list.push_back("MODE");
+	this->_command_list.push_back("LIST");
+	this->_command_list.push_back("NAMES");
 	
 	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		msg.errorMsg("socket failed");
@@ -105,24 +126,6 @@ void		Server::createServ(int port)
 
 bool	Server::isCommandIrc(std::string str)
 {
-	this->_command_list.push_back("PASS");
-	this->_command_list.push_back("NICK");
-	this->_command_list.push_back("USER");
-	this->_command_list.push_back("PRIVMSG");
-	this->_command_list.push_back("JOIN");
-	this->_command_list.push_back("QUIT");
-	this->_command_list.push_back("PING");
-	this->_command_list.push_back("CAP");
-
-	this->_command_list.push_back("WHOIS");
-	
-	this->_command_list.push_back("KICK");
-	this->_command_list.push_back("AUTHENTICATE");
-	this->_command_list.push_back("INVITE");
-	this->_command_list.push_back("TOPIC");
-	this->_command_list.push_back("MODE");
-	this->_command_list.push_back("LIST");
-	this->_command_list.push_back("NAMES");
 	
 	for (unsigned int i = 0; i < this->_command_list.size(); i++)
 	{
@@ -157,7 +160,8 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 			e_i = i;
 			tmp.clear();
 			tmp.append(buf, s_i, e_i - s_i);
-			split.push_back(tmp);
+			if (!tmp.empty())
+				split.push_back(tmp);
 			s_i = e_i + 1;
 		}
 	}
@@ -193,13 +197,7 @@ void Server::connect(int user_talk, std::string buf)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	if (buf.find("\r\n") != std::string::npos) // IRSSI
-		connectToClients(user_talk, buf);
-	else // NETCAT
-	{
-		std::cout << "====Client NETCAT=====" << std::endl;
-		connectToClients(user_talk, buf);
-	}
+	connectToClients(user_talk, buf);
 }
 
 /*--------------------------------------------------------*/
@@ -271,6 +269,23 @@ void	Server::clientDisconnected()
 	this->_fd_users_dc.clear();
 }
 
+
+void	Server::channDisconnected()
+{
+	std::map<std::string, Channel*> map = this->_list_chan;
+	std::map<std::string, Channel*>::iterator it = map.begin();
+	
+	while (it != map.end())
+	{
+		if (it->second->getListUserCo().empty())
+		{
+			this->_list_chan.erase(it->first);
+			delete it->second;
+		}
+		it++;
+	}
+}
+
 /*--------------------------------------------------------*/
 
 void	Server::serverIrc()
@@ -319,7 +334,10 @@ void	Server::serverIrc()
 				}
 			}
 		}
-		clientDisconnected();
+		if (!this->_fd_users_dc.empty())
+			clientDisconnected();
+		if (!this->_list_chan.empty())
+			channDisconnected();
 	}
 }
 

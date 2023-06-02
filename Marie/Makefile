@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = ircserv
 
-SRC = $(wildcard *.cpp)
+SRC = $(wildcard *.cpp) $(wildcard Commands/*.cpp)
 
 OBJ = $(SRC:.cpp=.o)
 
