@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 16:06:44 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/05 13:17:23 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,6 @@ bool	Commands::chanExist(std::string name_chan)
 	
 	if (!map.empty())
 	{
-		std::cout << "chann: |" << it->first << "|" << std::endl;
-		std::cout << "chann: |" << name_chan << "|" << std::endl;
 		while (it != map.end())
 		{
 			if (it->first == name_chan)

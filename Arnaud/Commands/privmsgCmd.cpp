@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 16:08:41 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/05 11:28:38 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	Commands::privMsgCmd()
 		{
 			if(chanExist(this->_line_cmd[1]) == true)
 			{
-				msg = ":" + this->_line_cmd[1] + " <@" + this->_user->getNickname() + "> : " + joinMessages() + "\r\n";
+				msg = ":" + this->_user->getNickname() + " PRIVMSG " + this->_line_cmd[1] + " " + joinMessages() + "\r\n";
 				this->_s->getChannel(this->_line_cmd[1])->sendMsg(this->_fd_user, msg);
 			}
 			else

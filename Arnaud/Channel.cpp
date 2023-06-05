@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/02 17:06:28 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/05 13:34:58 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_topic(), _list_user_co(), _list_operators(),
-											_list_banned(), _password()
+											_list_banned(), _password(), _size_max(10)
 {
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
@@ -22,7 +22,7 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
 																_topic(), _list_user_co(), _list_operators(),
-																_list_banned(), _password()
+																_list_banned(), _password(), _size_max(10)
 {
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
@@ -102,6 +102,14 @@ bool	Channel::isOperator(int fd)
 	return (false);
 }
 
+int		Channel::nbUserInChan()
+{
+	int	i = 0;
+	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		i++;
+	return (i);
+}
+
 /*---------------------------------------------------------------------*/
 
 std::string	Channel::getName()
@@ -134,7 +142,6 @@ void					Channel::addUser(Client *cl, int fd_cl)
 		}
 	}
 	this->_list_user_co.insert(std::pair<int, Client*>(fd_cl, cl));
-	// user added to chann
 }
 
 void					Channel::removeUser(std::string username)
@@ -197,3 +204,20 @@ void		Channel::setTopic(std::string topic)
 }
 
 /*---------------------------------------------------------------------*/
+
+std::string	Channel::getKey()
+{
+	return (this->_key);
+}
+
+void		Channel::setKey(std::string key)
+{
+	this->_key = key;
+}
+
+/*---------------------------------------------------------------------*/
+
+int	Channel::getSizeMax()
+{
+	return (this->_size_max);
+}

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/02 17:04:12 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/05 13:27:12 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Channel
 		std::map<int, Client *>		_list_operators;
 		std::vector<std::string>	_list_banned;
 		std::string					_password;
+		int							_size_max;
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -43,6 +44,7 @@ class Channel
 		bool	userIsInChann(int user);
 		void	sendMsg(int user_talk, std::string msg);
 		bool	isOperator(int fd);
+		int		nbUserInChan();
 
 		std::string					getName();
 		void						setName(std::string name);
@@ -57,4 +59,9 @@ class Channel
 
 		std::string					getTopic();
 		void						setTopic(std::string topic);
+
+		std::string					getKey();
+		void						setKey(std::string key);
+
+		int							getSizeMax();
 };
