@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/05 13:37:13 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/05 13:42:53 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,15 @@
 void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key)
 {
 	std::string	msg;
+	bool		key_empty = true;
 	
+	if (!key.empty())
+		key_empty = false;
 	if (cmd->chanExist(name_chann) == false)
 	{
 		Channel	*chan;
 		
-		if (!key.empty())
+		if (!key_empty)
 			chan = new Channel(name_chann, user, key);
 		else
 			chan = new Channel(name_chann, user);
@@ -30,7 +33,7 @@ void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *
 	}
 	else
 	{
-		if (key != s->getChannel(name_chann)->getKey())
+		if (!key_empty && key != s->getChannel(name_chann)->getKey())
 		{
 			m->ERR_BADCHANNELKEY(user->get_fd(), name_chann);
 			return ;
