@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/05 13:34:58 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 11:00:56 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_topic(), _list_user_co(), _list_operators(),
-											_list_banned(), _password(), _size_max(10)
+											_list_banned(), _password(), _size_max(10),
+											_i_only(false)
 {
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
@@ -22,7 +23,8 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
 																_topic(), _list_user_co(), _list_operators(),
-																_list_banned(), _password(), _size_max(10)
+																_list_banned(), _password(), _size_max(10),
+																_i_only(false)
 {
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
@@ -52,7 +54,7 @@ void	Channel::banUser(std::string username)
 		if (it->second->getUser() == username || it->second->getNickname() == username)
 		{
 			this->_list_user_co.erase(it->first);
-			this->_list_banned.push_back(it->second->getUser());
+			this->_list_banned.push_back(it->second->getNickname());
 			std::cout << "User " << it->second->getNickname() << " has been ban from " << this->_name << std::endl; 
 			return ;
 		}
@@ -108,6 +110,19 @@ int		Channel::nbUserInChan()
 	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
 		i++;
 	return (i);
+}
+
+bool	Channel::isBanned(std::string nickname)
+{
+	if (!this->_list_banned.empty())
+	{
+		for (std::vector<std::string>::iterator it = this->_list_banned.begin(); it != this->_list_banned.end(); it++)
+		{
+			if (it == nickname)
+				return (true);
+		}
+	}
+	return (false);
 }
 
 /*---------------------------------------------------------------------*/

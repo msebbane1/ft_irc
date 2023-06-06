@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/05 13:22:14 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 10:57:18 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 
 //====================REPLY================//
 
-void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
+void Messages::RPL_YOUREOPER(std::string nick, int fd) // 381
 {
 	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
@@ -198,16 +198,33 @@ void	Messages::RPL_ENDOFNAMES(Channel *c) // 366
 	c->sendMsg(-1, msg);
 }
 
-void	Messages::ERR_BADCHANNELKEY(int fd, std::string chann) // 475
+void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 474, 475
 {
-	std::string	msg = ":irc.com 475 ERR_BADCHANNELKEY " + chann + " :Cannot join channel (+k)\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Messages::ERR_CHANNELISFULL(int fd, std::string chann) // 471
-{
-	std::string	msg = ":irc.com 471 ERR_CHANNELISFULL " + chann + " :Cannot join channel (+l)\r\n";
+	std::string	mode;
+	std::string	type;
+	
+	if (err == 471)
+	{
+		type = " ERR_CHANNELISFULL ";
+		mode = "(+l)\r\n";
+	}
+	else if (err == 473)
+	{
+		type = " ERR_INVITEONLYCHAN ";
+		mode = "(+i)\r\n";
+	}
+	else if (err == 474)
+	{
+		type = " ERR_BANNEDFROMCHAN ";
+		mode = "(+b)\r\n";
+	}
+	else if (err == 475)
+	{
+		type = " ERR_BADCHANNELKEY ";
+		mode = "(+k)\r\n";
+	}
+	
+	std::string	msg = ":irc.com " + err + type + chann + " :Cannot join channel " + mode;
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

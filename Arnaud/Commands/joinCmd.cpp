@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/05 13:42:53 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 11:03:00 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,17 @@ void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *
 	{
 		if (!key_empty && key != s->getChannel(name_chann)->getKey())
 		{
-			m->ERR_BADCHANNELKEY(user->get_fd(), name_chann);
+			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 475);
 			return ;
 		}
-		if (s->getChannel(name_chann)->nbUserInChan() == s->getChannel(name_chann)->getSizeMax())
+		if (s->getChannel(name_chann)->getSizeMax() != -1 && s->getChannel(name_chann)->nbUserInChan() >= s->getChannel(name_chann)->getSizeMax())
 		{
-			m->ERR_CHANNELISFULL(user->get_fd(), name_chann);
+			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 471);
+			return ;
+		}
+		if (s->getChannel(name_chann)->isBanned(user->getNickname()))
+		{
+			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 474);
 			return ;
 		}
 		s->getChannel(name_chann)->addUser(user, user->get_fd());

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/05 13:20:44 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 10:47:24 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,5 @@ class Messages
 	void	RPL_TOPIC(Channel *c);
 	void	RPL_NAMREPLY(Channel *c);
 	void	RPL_ENDOFNAMES(Channel *c);
-	void	ERR_BADCHANNELKEY(int fd, std::string chann);
-	void	ERR_CHANNELISFULL(int d, std::string chann);
+	void	ERR_CANNOTJOIN(int fd, std::sring chann, int err);
 };
