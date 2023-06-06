@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/05/26 19:06:58 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/06 11:10:30 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	Commands::exec_cmd()
 	  	else if (this->_line_cmd[0] == "NOTICE"){} // <pseudonyme> <texte>
     	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
     	else if (this->_line_cmd[0] == "MODE"){ //{} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
-			std::cout << "else if MODE" << std::endl;
 			modeCmd();
 		}
 		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
@@ -331,16 +330,15 @@ void	Commands::modeCmd(){
 	//std::string msg =  std::to_string(_line_cmd.size());
 	//send(_s->getFdServer(), msg.c_str(), msg.length(), 0);
 	if( _line_cmd.size() < 4)
-		std::cerr << "=== 461 === ERR_NEEDMOREPARAMS ====" << std::endl;
-	if(!verifModeParam()){
-		//std::cerr << "=== 472 === ERR_UNKNOWNMODE ====" << std::endl;
+		//std::cerr << "=== 461 === ERR_NEEDMOREPARAMS ====" << std::endl;
+		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
+	if(!verifModeParam())
 		return;
-	}
 	//faire un switch pour chaque option (461 ERR_NEEDMOREPARAMS)
-	//verifier aussi l'indicateur ( + ou - )
+	//verifier aussi l'indicateur ( + ou - ) dans chaque fonction
 	//repartition
 	char	option; // = _line_cmd[2];
-	switch (option) // reflechir a si gerer l'indic dans la fonction ou dans le case switch
+	switch (option)
 	{
 		case 'i':
 			setChanInviteOnlyMode();
@@ -380,7 +378,7 @@ int		Commands::verifModeParam(){
 
 // i : Set/remove Invite-only channel(no param needed)
 void	Commands::setChanInviteOnlyMode(){
-	
+	//check indicateur
 }
 
 // t : Set/remove the restrictions of the TOPIC command to channel operators(topic protection, seuls les ChannelOperator peuvent changer le topic.)(no param needed)
@@ -400,7 +398,7 @@ void	Commands::setChanOperator(){
 
 // l : Set/remove the user limit to channel (param needed) /mode #cool +l 20 (limite le channel #cool à 20 utilisateurs)
 void	Commands::setChanLimit(){
-	
+	//-l -> size_max = -1;
 }
 // Message d'erreur + code d'erreur
 // ERR_NEEDMOREPARAMS 461 : quand il manque un paramètre à la commande.
@@ -414,7 +412,7 @@ void	Commands::setChanLimit(){
 // ERR_UNKNOWNMODE 472 : quand un code de mode de chan inconnu est utilisé.
 // ERR_NOSUCHCHANNEL 403 : quand le chan n'a pas été trouvé sur le réseau
 
-// ERR_USERSDONTMATCH 502 : 
+// ERR_USERSDONTMATCH 502 :
 // RPL_UMODEIS 221 : renvoyée quand vous tentez d'effectuer une commande MODE sur un nick autre que le vôtre.
 // 501 ERR_UMODUUNKNOWNFLAG : Cette erreur est renvoyée quand vous envoyez une commande MODE sur un utilisateur avec un mode inconnu.
 // Faut-il gerer la version de MODE sur Utilisateur ? +i, +o
