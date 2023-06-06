@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 13:22:01 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/06 14:07:10 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Commands
 		int							_fd_user;
 		std::vector<std::string>	_line_cmd;
 		char						_indice;
+		std::vector<char>			_optionList;// gestion d'option multiple
 
 	public :
 		Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg);
@@ -65,4 +66,5 @@ class Commands
 		int							verifModeParam(); // check param
 		int							countOption();//compte le nb d'optioin de mode
 		char						findIndice();
+		std::vector<char>			splitOption();
 };

@@ -6,17 +6,18 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/06 13:39:50 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/06 14:15:43 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
-/*--------------------- MODE ----------------------*/
 //change the channels mode : parametre attendu : /mode <channel> <+ | -> <mode> [parametres]
 //												 cmd / name_chan / indicateur / option / optionnel(username for operator, etc)
+//												  0		1			2			  3			4
 // id a gerer: i, t, k, o, l; + to do the action, - to undo
-// gerer les multiple mode ? ex: /mode #chan +tns(channel en mode +t, +n, +s)
+// gerer les multiple mode: /mode #chan +tns(channel en mode +t, +n, +s)
+/*--------------------- MODE ----------------------*/
 void	Commands::modeCmd(){
 
 	std::vector<std::string>::iterator	it = this->_line_cmd.begin();
@@ -24,7 +25,7 @@ void	Commands::modeCmd(){
 		std::string msg = this->_line_cmd[i];
 		send(this->_s->getFdServer(), msg.c_str(), msg.size(), 0);
 	}
-	if( _line_cmd.size() < 4) //verifier le nombre de param (entre 4 et 5)
+	if( _line_cmd.size() < 3) //verifier le nombre de param (entre 4 et 5)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 	if(!verifModeParam())
 		return;
@@ -53,8 +54,9 @@ void	Commands::modeCmd(){
 			setChanLimit();
 			break;
 	
-		// default: // ? - voir doc
-		// 	break;
+		default: // ? - voir doc
+			this->_msg
+			break;
 	}
 }
 
@@ -70,12 +72,11 @@ int		Commands::verifModeParam(){
 	if( Indice != '+' && Indice != '-')
 		std::cout << "ERR_WRONGARG" << std::endl;
 	this->setIndice(Indice);
+	this->_optionList = splitOption();
 	//checker l'option(mode) (4eme arg) i, t, k, o, l; gerer les multipples modes ex: +itk
 	//checker si le user existe(5eme arg)
 	return 0;
 }
-
-//verifier si le User est OP pout chaque mode sauf o
 
 // i : Set/remove Invite-only channel(no param needed)
 void	Commands::setChanInviteOnlyMode(){
@@ -124,11 +125,22 @@ int		Commands::countOption(){
 	return i;
 }
 
-char	Commands::findIndice(){
+char	Commands::findIndice(){ // a faire plus propre
 
-	char	c = '+';
-	
+	char	c = '\0';
+
+	if(this->_line_cmd[2].size() == 1)
+		std::cerr << "Missing Option or Indice" << std::endl;
+	else{
+		c = this->_line_cmd[2][0];
+		if(isalpha(c) || isdigit(c))
+			std::cerr << "Missing Indice" << std::endl; // voir l'erreur adéquat
+	}
 	return c;
+}
+
+std::vector<char>		Commands::splitOption(){
+	
 }
 
 // Message d'erreur + code d'erreur
