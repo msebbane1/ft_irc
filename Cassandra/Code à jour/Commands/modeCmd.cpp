@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/06 14:15:43 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/06 16:33:54 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,43 +20,46 @@
 /*--------------------- MODE ----------------------*/
 void	Commands::modeCmd(){
 
-	std::vector<std::string>::iterator	it = this->_line_cmd.begin();
-	for(int i = std::distance( this->_line_cmd.begin(), it ); it != this->_line_cmd.end(); ++it){
-		std::string msg = this->_line_cmd[i];
-		send(this->_s->getFdServer(), msg.c_str(), msg.size(), 0);
-	}
-	if( _line_cmd.size() < 3) //verifier le nombre de param (entre 4 et 5)
+	// std::vector<std::string>::iterator	it = this->_line_cmd.begin();
+	// for(int i = std::distance( this->_line_cmd.begin(), it ); it != this->_line_cmd.end(); ++it){
+	// 	std::string msg = this->_line_cmd[i];
+	// 	send(this->_s->getFdServer(), msg.c_str(), msg.size(), 0);
+	// }
+	if( _line_cmd.size() < 4) //verifier le nombre de param (entre 4 et 5)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 	if(!verifModeParam())
 		return;
-	//int		nb_opt = countOption();
-	char	option = 'l';// split pour plusieurs options
-	//faire une boucle sur nb_opt
-	switch (option)
+	// int		nb_opt = countOption();
+	std::vector<char>::iterator	it = this->_optionList.begin();
+	for(; it != this->_optionList.end(); it++)
 	{
-		case 'i':
-			setChanInviteOnlyMode();
-			break;
+		char option = this->_optionList[*it];
+		switch (option)
+		{
+			case 'i':
+				setChanInviteOnlyMode();
+				break;
 
-		case 't' :
-			setChanRestrictTopic();
-			break;
+			case 't' :
+				setChanRestrictTopic();
+				break;
 
-		case 'k' :
-			setChanKey();
-			break;
+			case 'k' :
+				setChanKey();
+				break;
 
-		case 'o' :
-			setChanOperator();
-			break;
+			case 'o' :
+				setChanOperator();
+				break;
+			
+			case 'l' :
+				setChanLimit();
+				break;
 		
-		case 'l' :
-			setChanLimit();
-			break;
-	
-		default: // ? - voir doc
-			this->_msg
-			break;
+			default: // ? - voir doc
+				this->_msg->ERR_UMODUUNKNOWNFLAG(this->_line_cmd[1], this->_fd_user);
+				break;
+		}
 	}
 }
 
@@ -72,7 +75,7 @@ int		Commands::verifModeParam(){
 	if( Indice != '+' && Indice != '-')
 		std::cout << "ERR_WRONGARG" << std::endl;
 	this->setIndice(Indice);
-	this->_optionList = splitOption();
+	splitOption();
 	//checker l'option(mode) (4eme arg) i, t, k, o, l; gerer les multipples modes ex: +itk
 	//checker si le user existe(5eme arg)
 	return 0;
@@ -115,15 +118,15 @@ void	Commands::setChanOperator(){
 void	Commands::setChanLimit(){
 
 	if(this->getIndice() == '+')
-		this->_s->getChannel(this->_line_cmd[3])->setSizeMax(20); // cast la taille en int a partir de _line_cmd
+		this->_s->getChannel(this->_line_cmd[3])->setSizeMax(ft_stoi(this->_line_cmd[4])); // cast la taille en int a partir de _line_cmd
 	else if (this->getIndice() == '-')
 		this->_s->getChannel(this->_line_cmd[3])->setSizeMax(-1);
 }
 
-int		Commands::countOption(){
-	int i = 0;
-	return i;
-}
+// int		Commands::countOption(){
+// 	int i = 0;
+// 	return i;
+// }
 
 char	Commands::findIndice(){ // a faire plus propre
 
@@ -139,8 +142,21 @@ char	Commands::findIndice(){ // a faire plus propre
 	return c;
 }
 
-std::vector<char>		Commands::splitOption(){
+void		Commands::splitOption(){
 	
+	//remplir optionList par toutes les options
+	for(int i = 0; i < (int)this->_line_cmd[2].size(); i++){
+		
+		if(i = 0 && ( this->_line_cmd[2][0] == '+' || this->_line_cmd[2][0] == '-'))
+			continue;
+		this->_optionList.push_back(this->_line_cmd[2][i]);
+	}
+}
+
+int		Commands::ft_stoi( std::string & s ){
+	int i = 0;
+	std::istringstream(s) >> i;
+	return i;
 }
 
 // Message d'erreur + code d'erreur

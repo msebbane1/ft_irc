@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 14:07:10 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/06 16:10:46 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 ///////INCLUDES//////
 #include "../Server.hpp"
+# include <sstream>
 
 class Server;
 class Messages;
@@ -66,5 +67,6 @@ class Commands
 		int							verifModeParam(); // check param
 		int							countOption();//compte le nb d'optioin de mode
 		char						findIndice();
-		std::vector<char>			splitOption();
+		void						splitOption();
+		int							ft_stoi( std::string & s );
 };
