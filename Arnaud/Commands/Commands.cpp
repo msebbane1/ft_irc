@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/05 13:17:23 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 13:07:11 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ void	Commands::exec_cmd()
     	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
     	else if (this->_line_cmd[0] == "MODE"){} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
 		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
-		else if (this->_line_cmd[0] == "INVITE"){} // <pseudonyme> <canal>
+		else if (this->_line_cmd[0] == "INVITE") // <pseudonyme> <canal>
+			inviteCmd();
 		else if (this->_line_cmd[0] == "KICK"){} // <canal> <utilisateur> [<commentaire>]
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{			
@@ -69,6 +70,8 @@ void	Commands::exec_cmd()
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);
 		}
 		else if (this->_line_cmd[0] == "WHOIS")
+			return ;
+		else if (this->_line_cmd[0] == "NAMES")
 			return ;
 
 	}

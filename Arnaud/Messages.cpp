@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 10:57:18 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 13:02:27 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,13 +218,29 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 		type = " ERR_BANNEDFROMCHAN ";
 		mode = "(+b)\r\n";
 	}
-	else if (err == 475)
+	else
 	{
 		type = " ERR_BADCHANNELKEY ";
 		mode = "(+k)\r\n";
 	}
 	
 	std::string	msg = ":irc.com " + err + type + chann + " :Cannot join channel " + mode;
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//==============================================ERROR & REPLY INVITE==================================================///
+
+void	Messages::ERR_NOTONCHANNEL(int fd, std::string chann) // 442
+{
+	std::string	msg = ":irc.com 442 ERR_NOTONCHANNEL " + chann + " :You're not on that channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) // 443
+{
+	std::string	msg = ":irc.com 443 ERR_USERONCHANNEL " + chann + " :is already on channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

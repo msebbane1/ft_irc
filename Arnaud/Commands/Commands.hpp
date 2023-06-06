@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 16:05:02 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 12:08:02 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,5 @@ class Commands
 		void						quitCmd();
 		void						operCmd();
 		void						killCmd();
+		void						inviteCmd();
 };

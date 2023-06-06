@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 10:59:30 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 11:43:08 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channel
 		std::string					_password;
 		int							_size_max;
 		bool						_i_only;
+		std::vector<std::string>	_list_inv;
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -47,6 +48,7 @@ class Channel
 		bool	isOperator(int fd);
 		int		nbUserInChan();
 		bool	isBanned(std::string nickname);
+		bool	isInv(std::string nickname);
 
 		std::string					getName();
 		void						setName(std::string name);
@@ -66,4 +68,8 @@ class Channel
 		void						setKey(std::string key);
 
 		int							getSizeMax();
+
+		std::vector<std::string>	getListInv();
+		void						addListInv(std::string nickname);
+		void						removeListInv(std::string nickname);
 };
