@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 12:08:02 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 13:48:51 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ class Commands
 		void						exec_cmd();
 
 		bool						chanExist(std::string name_chan);
-		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
 		
 		//=========================COMMANDS======================//
 		void						cmdToConnect();

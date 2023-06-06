@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 13:23:10 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/06 13:46:53 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,11 @@ std::map<int, Client*>	Channel::getListUserCo()
 
 void					Channel::addUser(Client *cl, int fd_cl)
 {
+	if (this->_i_only)
+	{
+		// do verif
+		return ;
+	}
 	for (unsigned long i = 0; i < this->_list_banned.size(); i++)
 	{
 		if (this->_list_banned[i] == cl->getUser())
@@ -261,7 +266,7 @@ std::vector<std::string>	Channel::getListInv()
 
 void						Channel::addListInv(std::string nickname)
 {
-	this->_list_inv.insert(nickname);
+	this->_list_inv.push_back(nickname);
 }
 
 void						Channel::removeListInv(std::string nickname)
