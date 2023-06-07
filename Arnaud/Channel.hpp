@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 11:43:08 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/07 13:34:29 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,6 @@ class Channel
 		std::vector<std::string>	getListInv();
 		void						addListInv(std::string nickname);
 		void						removeListInv(std::string nickname);
+
+		Client*						getCreator();
 };
