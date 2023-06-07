@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 14:25:23 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/07 13:20:37 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Messages
 	void	errorMsg(std::string msg);
 	void	displayMsgOnServer(std::string const &buf, int user_talk);
 
-
 	//============ERR NICK=========///
 	void	ERR_NOSUCHNICK(std::string nick, int fd);
 	void	ERR_NONICKNAMEGIVEN(int fd);
@@ -45,14 +44,29 @@ class Messages
 	//============ERR PRIVMSG=========///
 	void	ERR_NORECIPIENT(int fd);
 	void	ERR_NOTEXTTOSEND(int fd);
-
 	void	ERR_UNKNOWNCOMMAND(std::string cmd, int fd);
 	void	ERR_NOTREGISTERED(int fd);
 
 	//============ERR CHANNELS=========///
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
+	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
+	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
 
 	//============REPLY=========///
 	void	RPL_YOUREOPER(std::string nick, int fd);
+
+	void	ERR_NOTONCHANNEL(std::string channel, int fd);
+	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
+
+	//============ERR & RPL JOIN=========///
+	void	RPL_NOTOPIC(Channel *c);
+	void	RPL_TOPIC(Channel *c);
+	void	RPL_NAMREPLY(Channel *c);
+	void	RPL_ENDOFNAMES(Channel *c);
+	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
+
+	//============ERR & RPL INVITE=========///
+	void	ERR_NOTONCHANNEL(int fd, std::string chann);
+	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
 
 };

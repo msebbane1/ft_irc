@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 14:14:15 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/07 10:44:09 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ void	Commands::privMsgCmd()
 		{
 			if(chanExist(this->_line_cmd[1]) == true)
 			{
-				msg = "\"" + this->_line_cmd[1] + "\" [" + this->_user->getNickname() + "] [ID: " + std::to_string(this->_fd_user) + "] : " + this->_line_cmd[2] + "\n";
-				sendToChannel(this->_fd_user, msg, this->_line_cmd[1]);
+				msg = ":" + this->_user->getNickname() + " PRIVMSG " + this->_line_cmd[1] + " " + joinMessages() + "\r\n";
+				this->_s->getChannel(this->_line_cmd[1])->sendMsg(this->_fd_user, msg);
 			}
 			else
-				_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
+				this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 		}
 		else if(this->_s->clientExist(this->_line_cmd[1]) == true)
 		{

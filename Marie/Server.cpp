@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/02 14:05:21 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/07 11:28:24 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("MODE");
 	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
+	this->_command_list.push_back("PART");
 	
 	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		msg.errorMsg("socket failed");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/29 13:16:07 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/07 13:16:16 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_topic(), _list_user_co(), _list_operators(),
-											_list_banned(), _password()
+											_list_banned(), _password(), _size_max(10),
+											_i_only(false), _list_inv()
 {
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
@@ -22,7 +23,8 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
 																_topic(), _list_user_co(), _list_operators(),
-																_list_banned(), _password()
+																_list_banned(), _password(), _size_max(10),
+																_i_only(false), _list_inv()
 {
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
@@ -49,10 +51,10 @@ void	Channel::banUser(std::string username)
 {
 	for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
 	{
-		if (it->second->getUser() == username || it->second->getNickname() == username)
+		if (it->second->getNickname() == username)
 		{
-			this->_list_user_co.erase(it->first);
-			this->_list_banned.push_back(it->second->getUser());
+			this->removeUser(username);
+			this->_list_banned.push_back(it->second->getNickname());
 			std::cout << "User " << it->second->getNickname() << " has been ban from " << this->_name << std::endl; 
 			return ;
 		}
@@ -77,6 +79,65 @@ void	Channel::displayOp()
 	}
 }
 
+bool	Channel::userIsInChann(int user)
+{
+	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		if (it->first == user)
+			return (true);
+	return (false);
+}
+
+void	Channel::sendMsg(int user_talk, std::string msg)
+{
+	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		if (it->first != user_talk)
+			send(it->first, msg.c_str(), msg.size(), 0);
+}
+
+bool	Channel::isOperator(int fd)
+{
+	for (std::map<int, Client *>::iterator itop = this->_list_operators.begin(); itop != this->_list_operators.end(); itop++)
+	{
+		if (itop->first == fd)
+			return (true);
+	}
+	return (false);
+}
+
+int		Channel::nbUserInChan()
+{
+	int	i = 0;
+	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		i++;
+	return (i);
+}
+
+bool	Channel::isBanned(std::string nickname)
+{
+	if (!this->_list_banned.empty())
+	{
+		for (std::vector<std::string>::iterator it = this->_list_banned.begin(); it != this->_list_banned.end(); it++)
+		{
+			if (*it == nickname)
+				return (true);
+		}
+	}
+	return (false);
+}
+
+bool	Channel::isInv(std::string nickname)
+{
+	if (!this->_list_inv.empty())
+	{
+		for (std::vector<std::string>::iterator it = this->_list_inv.begin(); it != this->_list_inv.end(); it++)
+		{
+			if (*it == nickname)
+				return (true);
+		}
+	}
+	return (false);
+}
+
 /*---------------------------------------------------------------------*/
 
 std::string	Channel::getName()
@@ -98,6 +159,11 @@ std::map<int, Client*>	Channel::getListUserCo()
 
 void					Channel::addUser(Client *cl, int fd_cl)
 {
+	if (this->_i_only)
+	{
+		// do verif
+		return ;
+	}
 	for (unsigned long i = 0; i < this->_list_banned.size(); i++)
 	{
 		if (this->_list_banned[i] == cl->getUser())
@@ -109,7 +175,6 @@ void					Channel::addUser(Client *cl, int fd_cl)
 		}
 	}
 	this->_list_user_co.insert(std::pair<int, Client*>(fd_cl, cl));
-	// user added to chann
 }
 
 void					Channel::removeUser(std::string username)
@@ -119,6 +184,8 @@ void					Channel::removeUser(std::string username)
 		if (it->second->getUser() == username || it->second->getNickname() == username)
 		{
 			this->_list_user_co.erase(it->first);
+			if (isInv(it->second->getNickname()))
+				this->removeListInv(username);
 			return ;
 		}
 	}
@@ -160,3 +227,69 @@ void					Channel::removeOperator(std::string username)
 }
 
 /*---------------------------------------------------------------------*/
+
+std::string	Channel::getTopic()
+{
+	return (this->_topic);
+}
+
+void		Channel::setTopic(std::string topic)
+{
+	this->_topic = topic;
+}
+
+/*---------------------------------------------------------------------*/
+
+std::string	Channel::getKey()
+{
+	return (this->_key);
+}
+
+void		Channel::setKey(std::string key)
+{
+	this->_key = key;
+}
+
+/*---------------------------------------------------------------------*/
+
+int	Channel::getSizeMax()
+{
+	return (this->_size_max);
+}
+
+void	Channel::setSizeMax(int size)
+{
+	this->_size_max = size;
+}
+
+void	Channel::setInviteOnly(bool set){
+
+	this->_i_only = set;
+}
+
+/*---------------------------------------------------------------------*/
+
+std::vector<std::string>	Channel::getListInv()
+{
+	return (this->_list_inv);
+}
+
+void						Channel::addListInv(std::string nickname)
+{
+	this->_list_inv.push_back(nickname);
+}
+
+void						Channel::removeListInv(std::string nickname)
+{
+	if (!this->_list_inv.empty())
+	{
+		for (std::vector<std::string>::iterator it = this->_list_inv.begin(); it != this->_list_inv.end(); it++)
+		{
+			if (*it == nickname)
+			{
+				this->_list_inv.erase(it);
+				return ;
+			}
+		}
+	}
+}

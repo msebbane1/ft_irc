@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/05/31 12:40:54 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/07 13:16:08 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ class Channel
 		std::map<int, Client *>		_list_operators;
 		std::vector<std::string>	_list_banned;
 		std::string					_password;
+		int							_size_max;
+		bool						_i_only;
+		std::vector<std::string>	_list_inv;
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -40,6 +43,12 @@ class Channel
 		void	banUser(std::string username);
 		void	displayUsers();
 		void	displayOp();
+		bool	userIsInChann(int user);
+		void	sendMsg(int user_talk, std::string msg);
+		bool	isOperator(int fd);
+		int		nbUserInChan();
+		bool	isBanned(std::string nickname);
+		bool	isInv(std::string nickname);
 
 		std::string					getName();
 		void						setName(std::string name);
@@ -51,4 +60,19 @@ class Channel
 		std::map<int, Client*>		getListOp();
 		void						addOperator(Client *cl, int fd_cl);
 		void						removeOperator(std::string username);
+
+		std::string					getTopic();
+		void						setTopic(std::string topic);
+
+		std::string					getKey();
+		void						setKey(std::string key);
+
+		int							getSizeMax();
+		void						setSizeMax(int size);
+
+		void						setInviteOnly(bool set);
+
+		std::vector<std::string>	getListInv();
+		void						addListInv(std::string nickname);
+		void						removeListInv(std::string nickname);
 };

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 15:10:01 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/07 11:21:16 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,28 @@ void	Commands::exec_cmd()
 			operCmd();
     	else if (this->_line_cmd[0] == "KILL")
 			killCmd();
-    	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
-    	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
+		else if (this->_line_cmd[0] == "INVITE") // <pseudonyme> <canal>
+			inviteCmd();
     	else if (this->_line_cmd[0] == "MODE"){} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
-		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
-		else if (this->_line_cmd[0] == "INVITE"){} // <pseudonyme> <canal>
-		else if (this->_line_cmd[0] == "KICK"){} // <canal> <utilisateur> [<commentaire>]
+			//modeCmd();
+
+		////A FAIRE
+    	else if (this->_line_cmd[0] == "TOPIC") // <canal> [<sujet>]
+			topicCmd();
+		else if (this->_line_cmd[0] == "KICK") // <canal> <utilisateur> [<commentaire>]
+			kickCmd();
+		else if (this->_line_cmd[0] == "LIST") // [<canal>{,<canal>} [<serveur>]]
+			listCmd();
+    	else if (this->_line_cmd[0] == "PART")
+			partCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{
 			std::string msg = ":localhost PONG :localhost\r\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);
 		}
 		else if (this->_line_cmd[0] == "WHOIS")
+			return ;
+		else if (this->_line_cmd[0] == "NAMES")
 			return ;
 		
 	}
@@ -101,8 +111,6 @@ bool	Commands::chanExist(std::string name_chan)
 	
 	if (!map.empty())
 	{
-		std::cout << "chann: |" << it->first << "|" << std::endl;
-		std::cout << "chann: |" << name_chan << "|" << std::endl;
 		while (it != map.end())
 		{
 			if (it->first == name_chan)
@@ -113,25 +121,12 @@ bool	Commands::chanExist(std::string name_chan)
 	return (false);
 }
 
-bool	Commands::userIsInChan(std::string name_chan, int fd_user)
-{
-	std::map<int, Client*> map = this->_s->getChannel(name_chan)->getListUserCo();
-	
-	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
-	{
-		if (it->first == fd_user)
-			return (true);
-	}
-	return (false);
+//=========================ACCESSORS======================//
+
+char	Commands::getIndice(){
+	return this->_indice;
 }
 
-void	Commands::sendToChannel(int user_talk, std::string msg, std::string name_chan)
-{
-	std::map<int, Client*> map = this->_s->getChannel(name_chan)->getListUserCo();
-
-	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
-	{
-		if (it->first != user_talk)
-			send(it->first, msg.c_str(), msg.size(), 0);
-	}
+void	Commands::setIndice(char operand){
+	this->_indice = operand;
 }

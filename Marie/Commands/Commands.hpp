@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 15:10:15 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/07 11:05:59 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ class Commands
 		Client*						_user;
 		int							_fd_user;
 		std::vector<std::string>	_line_cmd;
+		char						_indice;
+		std::vector<char>			_optionList;// gestion d'option multiple
 
 	public :
 		Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg);
@@ -36,8 +38,11 @@ class Commands
 		void						exec_cmd();
 
 		bool						chanExist(std::string name_chan);
-		bool						userIsInChan(std::string name_chan, int fd_user);
-		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
+		
+		//=========================ACCESSORS======================//
+
+		char						getIndice();
+		void						setIndice(char operand);
 		
 		//=========================COMMANDS======================//
 		void						cmdToConnect();
@@ -50,4 +55,24 @@ class Commands
 		void						quitCmd();
 		void						operCmd();
 		void						killCmd();
+		void						inviteCmd();
+
+		void						kickCmd();
+		void						listCmd();
+		void						partCmd();
+		void						topicCmd();
+				//====== Mode =====//
+		/*
+		void						modeCmd(); // fonction dispatch option mode
+		void						setChanInviteOnlyMode(); //i
+		void						setChanRestrictTopic();//t
+		void						setChanKey();//k
+		void						setChanOperator();//o
+		void						setChanLimit();//l
+		int							verifModeParam(); // check param
+		int							countOption();//compte le nb d'optioin de mode
+		char						findIndice();
+		void						splitOption();
+		int							ft_stoi( std::string & s );
+		*/
 };
