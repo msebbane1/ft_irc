@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/07 11:05:59 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 11:10:05 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Commands
 		void						kickCmd();
 		void						listCmd();
 		void						partCmd();
+		void						channelExist(std::string nameChan);
 		void						topicCmd();
 				//====== Mode =====//
 		/*
