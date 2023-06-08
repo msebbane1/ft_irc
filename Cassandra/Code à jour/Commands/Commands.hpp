@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 16:10:46 by student          ###   ########.fr       */
+/*   Updated: 2023/06/08 15:33:30 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,23 @@ class Commands
 		void						quitCmd();
 		void						operCmd();
 		void						killCmd();
-				//====== Mode =====//
-		void						modeCmd(); // fonction dispatch option mode
+		//========================== MODE ==========================//
+		void						modeCmd(); // fonction dispatch for user or channel
+		void						modeOnUser(); // gestion mode on user
+		void						modeOnChannel(); // gestion mode on Channgel
+		//========================= MODE ON USER ==================//
+		void						setInvisibleMode();// mode on user
+		void						setUserOperator();// operator on user
+		//========================= MODE ON CHANNEL================//
 		void						setChanInviteOnlyMode(); //i
 		void						setChanRestrictTopic();//t
 		void						setChanKey();//k
 		void						setChanOperator();//o
 		void						setChanLimit();//l
+		void						banUser();//b
 		int							verifModeParam(); // check param
 		int							countOption();//compte le nb d'optioin de mode
 		char						findIndice();
-		void						splitOption();
-		int							ft_stoi( std::string & s );
+		void						splitOption(); //gestion multioption
+		int							ft_stoi( std::string & s ); //cast string en int
 };

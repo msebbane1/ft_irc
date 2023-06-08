@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 12:38:41 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/08 13:02:34 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,14 +86,14 @@ void	Messages::ERR_PASSWDMISMATCH(int fd) // 464
 //==============================================ERROR PRIVMSG==================================================///
 
 
-void Messages::ERR_NORECIPIENT(int fd) // 411
+void	Messages::ERR_NORECIPIENT(int fd) // 411
 {
 	std::string msg = ":irc.com 411 ERR_NORECIPIENT :No recipient given (<command>)\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
 
-void Messages::ERR_NOTEXTTOSEND(int fd) // 412
+void	Messages::ERR_NOTEXTTOSEND(int fd) // 412
 {
 	std::string msg = ":irc.com 412 ERR_NOTEXTTOSEND :No text to send\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
@@ -102,14 +102,14 @@ void Messages::ERR_NOTEXTTOSEND(int fd) // 412
 
 
 
-void Messages::ERR_UNKNOWNCOMMAND(std::string cmd, int fd) // 421
+void	Messages::ERR_UNKNOWNCOMMAND(std::string cmd, int fd) // 421
 {
 	std::string msg = ":irc.com 421 ERR_UNKNOWNCOMMAND " + cmd + " :Unknown command\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
 
-void Messages::ERR_NOTREGISTERED(int fd) // 451
+void	Messages::ERR_NOTREGISTERED(int fd) // 451
 {
 	std::string msg = ":irc.com 451 ERR_NOTREGISTERED :You have not registered\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
@@ -118,7 +118,7 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 
 //====================CHANNELS===========//
 
-void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
+void	Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 {
 	std::string msg = ":irc.com 403 ERR_NOSUCHCHANNEL " + channel + " :No such channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
@@ -126,9 +126,17 @@ void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 }
 
 //erreur pour MODE (si le client n'est pas OP sur le chan)
-void Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
+void	Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
 {
-	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :Unknown command\r\n";
+	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :Not operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//unknown mode
+void	Messages::ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd) // 501
+{
+	std::string msg = ":irc.com 501 ERR_UMODUUNKNOWNFLAG " + cmd + " :Unknown mode\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
