@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/07 13:21:31 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 12:06:08 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,9 +151,9 @@ void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string a
 		errorMsg("failed send");
 }
 
-void	Messages::ERR_NOTONCHANNEL(std::string channel, int fd) //442
+void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) //442
 {
-	std::string msg = ":irc.com 442 ERR_NOTONCHANNEL " + channel + " :You're not on that channel\r\n";
+	std::string msg = ":localhost 442 ERR_NOTONCHANNEL " + nick + " " + channel + " :You're not on that channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

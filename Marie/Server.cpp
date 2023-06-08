@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/07 11:28:24 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 15:20:26 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,10 @@ std::vector<int>		Server::getFdUsersDc(){
 /*--------------------------------------------------------*/
 std::string				Server::getPassword(){
     return (this->_password);
+}
+
+std::string				Server::getPasswordOper(){
+    return (this->_passwordOper);
 }
 
 void					Server::setPassword(std::string pwd){
@@ -341,70 +345,3 @@ void	Server::serverIrc()
 			channDisconnected();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-/*
-void	Server::connectToIRSSI(int user_talk, std::string buf)
-{
-	Messages msg;
-	if(_list_client[user_talk]->isConnected() == false)
-	{
-		std::map<std::string, std::vector<std::string> > values;
-		std::vector<std::string> value = splitCustom(buf, '\r');
-
-		std::string entries [] = {
-			"PASS",
-			"NICK",
-			"USER"
-		};
-		for (std::vector<std::string>::iterator it = value.begin(); it != value.end(); it++) {
-			for (int i = 0; i < 3; i++) {
-				std::vector<std::string> tmp = splitCustom(*it, ' ');
-				if (tmp[0].size() > 0 && tmp[0][0] == '\n')
-					tmp[0] = tmp[0].substr(1);
-				if (tmp[0] == entries[i]) {
-					tmp.erase(tmp.begin());
-					values[entries[i]] = tmp;
-					break ;
-				}
-			}
-		}
-		for (std::map<std::string, std::vector<std::string> >::iterator it = values.begin(); it != values.end(); it++) {
-			if (it->first == "PASS") {
-				if (it->second[0] != getPassword())
-					return ;
-				_list_client[user_talk]->setPassword();
-			}
-			else if (it->first == "NICK") {
-				for (std::map<int, Client *>:: iterator ite = _list_client.begin(); ite != _list_client.end(); ite++) {
-					if (ite->second->getNickname() == it->second[0]) 
-					{
-						msg.ERR_NICKNAMEINUSE(it->second[0], user_talk);  
-					}
-				}
-				_list_client[user_talk]->setNickname(it->second[0]);
-			}
-			else if (it->first == "USER")
-				_list_client[user_talk]->setUser(it->second[0]);
-		}
-	}
-	else
-	
-		buf = buf.substr(0, buf.length() - 1);
-		std::vector<std::string>	line = splitCustom(buf, ' ');
-	
-		Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg, _irssi);
-		cmd->exec_cmd();
-		delete cmd;
-
-}
-*/

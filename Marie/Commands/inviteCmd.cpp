@@ -3,15 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   inviteCmd.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 12:07:35 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 13:49:47 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/08 12:17:12 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
+/*
+	RPL_INVITING (341)
+	ERR_NEEDMOREPARAMS (461)
+	ERR_NOSUCHCHANNEL (403)
+	ERR_NOTONCHANNEL (442)
+	ERR_CHANOPRIVSNEEDED (482)
+	ERR_USERONCHANNEL (443)
+
+	exemples : INVITE Wiz #foo_bar
+	Parameters: <nickname> <channel>
+*/
 void	Commands::inviteCmd()
 {
 	std::string	msg;
