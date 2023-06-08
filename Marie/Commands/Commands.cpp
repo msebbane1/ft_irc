@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 11:40:22 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 15:13:10 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,19 @@ void	Commands::exec_cmd()
 			privMsgCmd();	
     	else if (this->_line_cmd[0] == "JOIN")
 			joinCmd();
-		else if (this->_line_cmd[0] == "QUIT")
+		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC MSG
 			quitCmd();
-	  	else if (this->_line_cmd[0] == "NOTICE") // <pseudonyme> <texte>
+	  	else if (this->_line_cmd[0] == "NOTICE") // a verifier
 			privMsgCmd();
-    	else if (this->_line_cmd[0] == "OPER")
+    	else if (this->_line_cmd[0] == "OPER") // A FINIR
 			operCmd();
-    	else if (this->_line_cmd[0] == "KILL")
+    	else if (this->_line_cmd[0] == "KILL") // A FINIR
 			killCmd();
-		else if (this->_line_cmd[0] == "INVITE") // <pseudonyme> <canal>
+		else if (this->_line_cmd[0] == "INVITE") // A FINIR
 			inviteCmd();
-    	else if (this->_line_cmd[0] == "MODE"){} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
+		else if (this->_line_cmd[0] == "PART")
+			partCmd();
+    	else if (this->_line_cmd[0] == "MODE"){}
 			//modeCmd();
 
 		////A FAIRE
@@ -70,14 +72,14 @@ void	Commands::exec_cmd()
 			kickCmd();
 		else if (this->_line_cmd[0] == "LIST") // [<canal>{,<canal>} [<serveur>]]
 			listCmd();
-    	else if (this->_line_cmd[0] == "PART")
-			partCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{
 			std::string msg = ":localhost PONG :localhost\r\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);
 		}
 		else if (this->_line_cmd[0] == "WHOIS")
+			return ;
+		else if (this->_line_cmd[0] == "WHO")
 			return ;
 		else if (this->_line_cmd[0] == "NAMES")
 			return ;

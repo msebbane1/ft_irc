@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/02 12:02:24 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 15:19:41 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class Server
 		int							_fd_server;
 		fd_set						_fds;
 		std::string					_password;
+		std::string					_passwordOper = "password";
 		std::vector<std::string>	_command_list;
 		std::vector<int>			_fd_users_dc;
 		std::map<int, Client*>		_list_client;
@@ -75,6 +76,7 @@ class Server
 		void						setFdUsersDc(int fdUsersDc);
 		
 		std::string					getPassword();
+		std::string					getPasswordOper();
 		void						setPassword(std::string pwd);
 
 		std::map<int, Client*>		getListClient();
