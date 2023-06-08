@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:03:01 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 14:03:27 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 15:55:19 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,19 @@ void	Commands::leaveMultiChan()
 
 void	Commands::partCmd()
 {
-	std::string::iterator it = find(this->_line_cmd[1].begin(), this->_line_cmd[1].end(), ',');
+	std::string::iterator searchMulti = find(this->_line_cmd[1].begin(), this->_line_cmd[1].end(), ',');
 	if (this->_line_cmd.size() < 1)
 	{
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		return ;
 	}
-	if(*it == ',')
+	if(*searchMulti == ',')
 	{
 		std::cout << "hee" << std::endl;
 		leaveMultiChan();
 		return ;
 	}
-	if ((this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&') && chanExist(this->_line_cmd[1]) == true && *it != ',') // a verifier sur nc
+	if ((this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&') && chanExist(this->_line_cmd[1]) == true && *searchMulti != ',') // a verifier sur nc
 	{
 		std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
 		if(this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) == true)

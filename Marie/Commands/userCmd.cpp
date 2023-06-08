@@ -6,15 +6,21 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:58:20 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 12:59:54 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/08 15:30:36 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
+/*
+	ERR_NEEDMOREPARAMS (461)
+	ERR_ALREADYREGISTERED (462)
+	
+	Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
+*/
+
 //---------------------USER-------------------//
 
-// Paramètres: <nom d'utilisateur> <hôte> <nom de serveur> <nom réel>
 void	Commands::userCmd()
 {
 	std::string realname;
