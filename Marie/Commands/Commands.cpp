@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 15:13:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 15:49:00 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ void	Commands::exec_cmd()
 			userCmd();
 		else if (this->_line_cmd[0] == "NICK")
 			nickCmd();
-		else if (this->_line_cmd[0] == "PRIVMSG")
+		else if (this->_line_cmd[0] == "PRIVMSG") // a finir a cause d'un petit msg en plus
 			privMsgCmd();	
     	else if (this->_line_cmd[0] == "JOIN")
 			joinCmd();
-		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC MSG
+		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC UN MSG
 			quitCmd();
 	  	else if (this->_line_cmd[0] == "NOTICE") // a verifier
 			privMsgCmd();
@@ -62,12 +62,12 @@ void	Commands::exec_cmd()
 			inviteCmd();
 		else if (this->_line_cmd[0] == "PART")
 			partCmd();
+    	else if (this->_line_cmd[0] == "TOPIC")
+			topicCmd();
     	else if (this->_line_cmd[0] == "MODE"){}
 			//modeCmd();
 
 		////A FAIRE
-    	else if (this->_line_cmd[0] == "TOPIC") // <canal> [<sujet>]
-			topicCmd();
 		else if (this->_line_cmd[0] == "KICK") // <canal> <utilisateur> [<commentaire>]
 			kickCmd();
 		else if (this->_line_cmd[0] == "LIST") // [<canal>{,<canal>} [<serveur>]]
