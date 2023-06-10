@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/07 13:16:16 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 13:59:32 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,6 +236,14 @@ std::string	Channel::getTopic()
 void		Channel::setTopic(std::string topic)
 {
 	this->_topic = topic;
+}
+
+bool		Channel::topicIsSet()
+{
+	if(this->_topic.empty())
+		return false;
+	else
+		return true;
 }
 
 /*---------------------------------------------------------------------*/

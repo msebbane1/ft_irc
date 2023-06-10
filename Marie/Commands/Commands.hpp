@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 12:24:53 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 13:48:54 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,9 @@ class Commands
 		void						listCmd();
 		void						partCmd();
 		void						topicCmd();
+
+		void		create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key);
+		bool 	channel_exist(std::string channel_name);
 				//====== Mode =====//
 		/*
 		void						modeCmd(); // fonction dispatch option mode

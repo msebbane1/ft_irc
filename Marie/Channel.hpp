@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/07 13:16:08 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 13:59:40 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ class Channel
 
 		std::string					getTopic();
 		void						setTopic(std::string topic);
+		bool						topicIsSet();
 
 		std::string					getKey();
 		void						setKey(std::string key);

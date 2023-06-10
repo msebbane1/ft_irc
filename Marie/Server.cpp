@@ -6,13 +6,15 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/08 15:20:26 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 09:29:39 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(){}
+Server::Server() : _passwordOper("password")
+{
+}
 
 Server::~Server(){}
 

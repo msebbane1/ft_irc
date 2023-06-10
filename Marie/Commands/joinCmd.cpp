@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 12:21:42 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 14:40:46 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 */
 //---------------------JOIN-------------------//
 
-void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key)
+void	Commands::create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key)
 {
 	std::string	msg;
 	bool		key_empty = true;
@@ -67,10 +67,11 @@ void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *
 	
 	msg = ":" + user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
-	if (c->getTopic().size() < 1)
-		m->RPL_NOTOPIC(c);
+	if(_s->getChannel(this->_line_cmd[1])->topicIsSet())
+		this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1]));
 	else
-		m->RPL_TOPIC(c);
+		this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
+
 	m->RPL_NAMREPLY(c);
 	m->RPL_ENDOFNAMES(c);
 }

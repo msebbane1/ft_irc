@@ -6,20 +6,23 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:11 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 16:10:07 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/10 15:17:09 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
+// /connect localhost 8080 oui
 /*
 	ERR_NEEDMOREPARAMS (461)
 	ERR_NOSUCHCHANNEL (403)
 	ERR_NOTONCHANNEL (442)
-	ERR_CHANOPRIVSNEEDED (482)
 	RPL_NOTOPIC (331)
 	RPL_TOPIC (332)
+
+	// A FAIRE ??
 	RPL_TOPICWHOTIME (333)
+	ERR_CHANOPRIVSNEEDED (482)
 
 	Exemples :
 	TOPIC #test :New topic          ; Setting the topic on "#test" to "New topic"
@@ -28,46 +31,48 @@
 
 	Parameters: <channel> [<topic>]
 */
+
 void	Commands::topicCmd()
 {
-	bool userInchan = this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user);
-	if (this->_line_cmd.size() < 2)
+	if (this->_line_cmd.size() == 1)
 	{
 		_msg->ERR_NEEDMOREPARAMS(_fd_user);
 		return ;
 	}
-	if ((this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&') && chanExist(this->_line_cmd[1]) == true)
+	if ((this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&') && chanExist(this->_line_cmd[1]) == false)
 	{
-		if (this->_line_cmd.size() == 2)
-		{
-			if (userInchan == true)
-				std::cout << "bb";
-				//this->_msg->RPL_TOPIC(this->_user->getNickname(), this->_user->getUser(), this->_line_cmd[1], _user->get);
-		}
-			//server->send_reply(client->get_nick(), client->get_user(), "TOPIC", server->get_channel(arg[1])->get_topic(), client->get_fd()); 332
-		else if(this->_line_cmd.size() > 2) // a verifier sur nc
+		_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);
+		return;
+	}
+	if (this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user))
+	{
+		if(this->_line_cmd[2] == "::")
 		{
 			std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
-			if(userInchan == true)
+			for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
 			{
-				for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
-				{
-					this->_msg->RPL_LEFTCHANNEL(this->_user->getNickname(), this->_user->getUser(), this->_line_cmd[1], it->first);
-				}
-				this->_s->getChannel(this->_line_cmd[1])->removeUser(_user->getNickname());
+				std::string msg = ":" + _user->getNickname() + "!" + _user->getUser() + "@localhost TOPIC :" + this->_line_cmd[1] + "\r\n";
+				if(send(it->second->get_fd(), msg.c_str(), msg.length(), 0) < 0)
+					_msg->errorMsg("failed send");
 			}
-			else
-				this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user); // verif sur vrai server le msg exac
-			/*
-			_s->getChannel(this->_line_cmd[1])->setTopic(joinMessages());
-			for (client_map_it it = server->get_channel(arg[1])->get_users().begin(); it != server->get_channel(arg[1])->get_users().end(); it++) 
-			{
-				string to_send = ":" + it->second->get_nick() + "!" + it->second->get_user() + "@localhost TOPIC #" + arg[1] + " :" + joined + "\r\n";
-				ft_send(it->second->get_fd(), to_send.c_str());
-			}
-			*/
+			return ;
 		}
+		if (this->_line_cmd.size() > 2 && this->_line_cmd[2] != "::")
+		{
+			std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
+			for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
+			{
+				std::string msg = ":" + it->second->getNickname() + "!" + it->second->getUser() + "@localhost TOPIC #" + this->_line_cmd[1] + " :" + joinMessages() + "\r\n";
+				if(send(it->second->get_fd(), msg.c_str(), msg.length(), 0) < 0)
+					_msg->errorMsg("failed send");
+			}
+			_s->getChannel(this->_line_cmd[1])->setTopic(joinMessages());
+		}
+		if(_s->getChannel(this->_line_cmd[1])->topicIsSet() && this->_line_cmd[2] != "::")
+			this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1])); // peut etre revoir le msg
+		else
+			this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
 	}
 	else
-		_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);
+		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);
 }
