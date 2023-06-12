@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/12 11:04:32 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 17:50:53 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@ std::vector<int>		Server::getFdUsersDc()
 std::string				Server::getPassword()
 {
     return (this->_password);
+}
+
+std::string				Server::getPasswordOper(){
+    return (this->_passwordOper);
 }
 
 void					Server::setPassword(std::string pwd)

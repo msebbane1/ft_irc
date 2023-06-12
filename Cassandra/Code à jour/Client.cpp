@@ -122,7 +122,7 @@ bool	Client::getIRCOperator() const
 	return this->_isIRCOperator;
 }
 
-// void	Client::setIRCOperator(bool operator)
-// {
-// 	this->_isIRCOperator = operator;
-// }
+void	Client::setIRCOperator(bool ircop)
+{
+	this->_isIRCOperator = ircop;
+}

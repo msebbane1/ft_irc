@@ -54,5 +54,5 @@ class Client
 		void		setInvisible(bool mode);
 
 		bool		getIRCOperator() const;
-		// void		setIRCOperator(bool operator);
+		void		setIRCOperator(bool ircop);
 };

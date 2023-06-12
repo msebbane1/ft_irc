@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/12 11:06:27 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 17:51:47 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Server
 		int								_fd_server;
 		fd_set							_fds;
 		std::string						_password;
+		std::string						_passwordOper;
 		std::vector<std::string>		_command_list;
 		std::vector<int>				_fd_users_dc;
 		std::map<int, Client*>			_list_client;
@@ -75,6 +76,7 @@ class Server
 		void							setFdUsersDc(int fdUsersDc);
 		
 		std::string						getPassword();
+		std::string						getPasswordOper();
 		void							setPassword(std::string pwd);
 
 		std::map<int, Client*>			getListClient();
