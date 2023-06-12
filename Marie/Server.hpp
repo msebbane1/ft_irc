@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/10 09:29:54 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:05:58 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ class Server
 		void						clientDisconnected();
 		void						channDisconnected();
 		bool						isCommandIrc(std::string str);
-		void						chanExist(std::string name);
 		bool 						clientExist(std::string nick);
 		
 		//==========================GETTER && SETTER===========================//

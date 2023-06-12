@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/10 14:40:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:37:01 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	Commands::create_oa_join(std::string name_chann, Commands *cmd, Server *s, 
 		else
 			chan = new Channel(name_chann, user);
 		s->addListChan(chan);
+		
 	}
 	else
 	{

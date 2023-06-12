@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:03:01 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 15:55:19 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 14:42:03 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	Commands::partCmd()
 			{
 				this->_msg->RPL_LEFTCHANNEL(this->_user->getNickname(), this->_user->getUser(), this->_line_cmd[1], it->first);
 			}
-			this->_s->getChannel(this->_line_cmd[1])->removeUser(_user->getNickname());
+			//this->_s->getChannel(this->_line_cmd[1])->removeUser(_user->getNickname());
 		}
 		else
 			this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user); // verif sur vrai server le msg exact
