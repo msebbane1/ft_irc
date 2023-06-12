@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/10 15:49:00 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 10:38:05 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ void	Commands::exec_cmd()
 		////A FAIRE
 		else if (this->_line_cmd[0] == "KICK") // <canal> <utilisateur> [<commentaire>]
 			kickCmd();
-		else if (this->_line_cmd[0] == "LIST") // [<canal>{,<canal>} [<serveur>]]
-			listCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{
 			std::string msg = ":localhost PONG :localhost\r\n";

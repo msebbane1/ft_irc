@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:11:23 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 15:24:34 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 11:15:48 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ void	Commands::operCmd()
 		else
 			_msg->RPL_YOUREOPER(_user->getNickname(), this->_fd_user);
 		/* a rajouter pour mode les acces operateur au client
-		if (mode == o)
-			setmod
+		if (getIrcOperator )
+			setIrcOperator
 		*/
 	}
 	

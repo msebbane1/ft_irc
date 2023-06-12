@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 12:01:05 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 15:47:40 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,15 @@ class Messages
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
 	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
 	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
+	void	ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd);
 
 	//============REPLY=========///
 	void	RPL_YOUREOPER(std::string nick, int fd);
-
-	void	ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd);
 	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
+	void 	RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd);
+	
+	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
+	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
 
 	//============ERR & RPL JOIN=========///
 	void	RPL_NOTOPIC(Channel *c);

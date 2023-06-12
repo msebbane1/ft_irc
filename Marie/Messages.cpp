@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 12:06:08 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/12 15:47:25 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,11 +142,31 @@ void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
 		errorMsg("failed send");
 }
 
+void Messages::ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd) // 482
+{
+	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + nick + " " + channel + " :You're not channel operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd) // 441
+{
+	std::string msg = ":irc.com 441 ERR_USERNOTINCHANNEL " + nick + " " + channel + " :They aren't on that channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
 //====================PART REPLY & ERR ================//
 
 void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)
 {
 	std::string	msg = ":" +  nick + "!" + user + "@localhost " + "PART" + " :" + arg + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd)
+{
+	std::string	msg = ":" +  nick + "!" + user + "@localhost" + " KICK " + channel + " " + kick +  " " + reason + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
