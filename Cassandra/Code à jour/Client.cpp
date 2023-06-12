@@ -4,7 +4,7 @@ Client::Client(): _pass_try(0), _password(false){}
 
 Client::~Client(){}
 
-int			Client::get_pass_try()
+int			Client::get_pass_try() const
 {
 	return (this->_pass_try);
 }
@@ -14,7 +14,7 @@ void		Client::increment_pass_try()
 	this->_pass_try++;
 }
 
-bool		Client::passwordIsSet()
+bool		Client::passwordIsSet() const 
 {
 	return (this->_password);
 }
@@ -28,7 +28,7 @@ void		Client::setPassword()
 }
 
 //======NICKNAME=====///
-std::string Client::getNickname()
+std::string Client::getNickname() const
 {
 	return (this->_nickname);
 }
@@ -47,7 +47,7 @@ bool	Client::nicknameIsSet()
 }
 
 //======REALNAME=====///
-std::string Client::getRealname()
+std::string Client::getRealname() const
 {
 	return (this->_real_name);
 }
@@ -66,7 +66,7 @@ bool	Client::realnameIsSet()
 }
 
 //======USERNAME=====///
-std::string Client::getUser()
+std::string Client::getUser() const
 {
 	return (this->_user);
 }
@@ -85,7 +85,7 @@ bool	Client::userIsSet()
 }
 
 //======FD=====///
-int Client::get_fd()
+int Client::get_fd() const
 {
 	return (this->_fd);
 }
@@ -101,4 +101,28 @@ bool	Client::isConnected()
 		return true;
 	else
 		return false;
+}
+
+//========= For MODE Invisible ==========//
+
+bool	Client::getInvisible() const
+{
+	return this->_isInvisible;
+}
+
+void	Client::setInvisible(bool mode)
+{
+	this->_isInvisible = mode;
+}
+
+//========= For MODE Operator ==========//
+
+bool	Client::getIRCOperator() const
+{
+	return this->_isIRCOperator;
+}
+
+void	Client::setIRCOperator(bool operator)
+{
+	this->_isIRCOperator = operator;
 }

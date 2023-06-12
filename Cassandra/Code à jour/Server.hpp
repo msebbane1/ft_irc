@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 15:54:08 by student          ###   ########.fr       */
+/*   Updated: 2023/06/12 11:06:27 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ class Server
 		void						clientDisconnected();
 		void						channDisconnected();
 		bool						isCommandIrc(std::string str);
-		void						chanExist(std::string name);
 		bool 						clientExist(std::string nick);
 		
 		//==========================GETTER && SETTER===========================//

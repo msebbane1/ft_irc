@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/08 15:29:35 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 11:06:15 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,42 +25,11 @@ void	Commands::modeCmd(){
 	if( _line_cmd.size() < 2) //verifier le nombre de param (entre 3 et 4)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //cette erreur fonctionne
 	//faire un dispatch en foction d'un user ou d'un channel
-	//if() //si _line_cmd[1] est un user
-	//	modeOnUser();
-	//else() //si un channel
-	//	modeOnChannel();
+	if(this->_s->clientExist(this->_line_cmd[1])) //si _line_cmd[1] est un user
+		modeOnUser();
+	else if (chanExist(this->_line_cmd[1])) //si un channel
+		modeOnChannel();
 	verifModeParam();
-	std::vector<char>::iterator	it = this->_optionList.begin();
-	for(; it != this->_optionList.end(); it++)
-	{
-		char option = this->_optionList[*it];
-		switch (option)
-		{
-			case 'i':
-				setChanInviteOnlyMode();
-				break;
-
-			case 't' :
-				setChanRestrictTopic();
-				break;
-
-			case 'k' :
-				setChanKey();
-				break;
-
-			case 'o' :
-				setChanOperator();
-				break;
-			
-			case 'l' :
-				setChanLimit();
-				break;
-		
-			default:
-				this->_msg->ERR_UMODUUNKNOWNFLAG(this->_line_cmd[1], this->_fd_user); //checker l'option(mode) i, t, k, o, l; 
-				break;
-		}
-	}
 }
 
 
