@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 16:12:41 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 16:24:17 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,9 +247,9 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 
 //========== ERROR ============//
 
-void	Messages::ERR_NOTONCHANNEL(int fd, std::string chann) // 442
+void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) //442
 {
-	std::string	msg = ":irc.com 442 ERR_NOTONCHANNEL " + chann + " :You're not on that channel\r\n";
+	std::string msg = ":localhost 442 ERR_NOTONCHANNEL " + nick + " " + channel + " :You're not on that channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
