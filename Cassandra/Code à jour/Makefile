@@ -10,7 +10,7 @@ SRC = Client.cpp Server.cpp main.cpp Channel.cpp Messages.cpp \
 		Commands/Commands.cpp Commands/joinCmd.cpp Commands/nickCmd.cpp \
 		Commands/passCmd.cpp Commands/privmsgCmd.cpp Commands/quitCmd.cpp \
 		Commands/userCmd.cpp Commands/killCmd.cpp Commands/operCmd.cpp \
-		Commands/modeCmd.cpp
+		Commands/modeCmd.cpp Commands/modeUserCmd.cpp Commands/modeChanCmd.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

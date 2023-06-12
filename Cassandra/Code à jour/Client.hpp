@@ -18,6 +18,8 @@ class Client
 		std::string	_nickname;
 		std::string	_user;
 		std::string _real_name;
+		bool		_isInvisible;
+		bool		_isIRCOperator;
 		//std::string	_mode;
 
     public :
@@ -26,25 +28,31 @@ class Client
 
 		//===========UTILS==========//
 		bool		isConnected();
-		int			get_pass_try();
+		int			get_pass_try() const;
 		void		increment_pass_try();
 
 		//===========GETTERS && SETTERS==========//
-		std::string getRealname();
+		std::string getRealname() const;
 		void		setRealname(std::string user);
 		bool		realnameIsSet();
 
 		void		setNickname(std::string nickname);
-		std::string getNickname();
+		std::string getNickname() const;
 		bool		nicknameIsSet();
 
-		std::string getUser();
+		std::string getUser() const;
 		void		setUser(std::string user);
 		bool		userIsSet();
 
-		bool		passwordIsSet();
+		bool		passwordIsSet() const;
 		void		setPassword();
 
-		int 		get_fd();
+		int 		get_fd() const;
 		void 		set_fd(int fd);
+
+		bool		getInvisible() const;
+		void		setInvisible(bool mode);
+
+		bool		getIRCOperator() const;
+		void		setIRCOperator(bool operator);
 };

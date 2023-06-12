@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 15:33:30 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 11:26:59 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ class Commands
 		void						modeOnChannel(); // gestion mode on Channgel
 		//========================= MODE ON USER ==================//
 		void						setInvisibleMode();// mode on user
-		void						setUserOperator();// operator on user
 		//========================= MODE ON CHANNEL================//
 		void						setChanInviteOnlyMode(); //i
 		void						setChanRestrictTopic();//t

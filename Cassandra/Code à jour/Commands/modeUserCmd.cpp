@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:22 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/08 15:40:35 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 11:26:49 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,6 @@ void	Commands::modeOnUser(){
 				setChanInviteOnlyMode();
 				break;
 
-			case 'o' : //+o : pour avoir le status IRCOperator (IRCOperator)
-				setChanOperator();
-				break;
-
 			default:
 				this->_msg->ERR_UMODUUNKNOWNFLAG(this->_line_cmd[1], this->_fd_user); //checker l'option(mode) i, t, k, o, l; 
 				break;
@@ -38,14 +34,11 @@ void	Commands::modeOnUser(){
 	}
 }
 
+// + user devient invisible; - user redevient visible
 void	Commands::setInvisibleMode()
 {
-	// + user devient invisible
-	// - user redevient visible
-}
-
-void	Commands::setUserOperator()
-{
-	// +o user devient operator
-	// -o user n'est plus operator
+	if(this->getIndice() == '+')
+		this->_s->getClient(this->_line_cmd[1])->setInvisible(true);
+	else if (this->getIndice() == '-')
+		this->_s->getClient(this->_line_cmd[1])->setInvisible(false);
 }
