@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 12:14:17 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 16:05:47 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Channel
 		Channel*	operator=(Channel const *c);
 
 		void	banUser(std::string username);
+		void	unbanUser(std::string username); //a ajouter
 		void	displayUsers();
 		void	displayOp();
 		bool	userIsInChann(int user);
@@ -61,6 +62,7 @@ class Channel
 
 		std::string					getTopic();
 		void						setTopic(std::string topic);
+		bool						topicIsSet();
 
 		std::string					getKey();
 		void						setKey(std::string key);

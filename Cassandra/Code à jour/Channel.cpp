@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/06 12:58:12 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 16:06:50 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,24 @@ void	Channel::banUser(std::string username)
 			this->_list_banned.push_back(it->second->getNickname());
 			std::cout << "User " << it->second->getNickname() << " has been ban from " << this->_name << std::endl; 
 			return ;
+		}
+	}
+}
+
+//ajouter 
+void	Channel::unbanUser(std::string username)
+{
+	if(isBanned(username))
+	{
+		for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
+		{
+			if (it->second->getUser() == username || it->second->getNickname() == username)
+			{
+				addUser(it->second, it->first);
+				//this->_list_banned.push_back(it->second->getNickname()); //remove user from list
+				std::cout << "User " << it->second->getNickname() << " has been unban from " << this->_name << std::endl; 
+				return ;
+			}
 		}
 	}
 }
@@ -216,6 +234,14 @@ std::string	Channel::getTopic()
 void		Channel::setTopic(std::string topic)
 {
 	this->_topic = topic;
+}
+
+bool		Channel::topicIsSet()
+{
+	if(this->_topic.empty())
+		return false;
+	else
+		return true;
 }
 
 /*---------------------------------------------------------------------*/

@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 13:02:34 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 16:12:41 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,6 +241,29 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 	}
 	
 	std::string	msg = ":irc.com " + /*err +*/ type + chann + " :Cannot join channel " + mode;
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//========== ERROR ============//
+
+void	Messages::ERR_NOTONCHANNEL(int fd, std::string chann) // 442
+{
+	std::string	msg = ":irc.com 442 ERR_NOTONCHANNEL " + chann + " :You're not on that channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) // 443
+{
+	std::string	msg = ":irc.com 443 ERR_USERONCHANNEL " + chann + nick + " :is already on channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)
+{
+	std::string	msg = ":" +  nick + "!" + user + "@localhost " + "PART" + " :" + arg + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

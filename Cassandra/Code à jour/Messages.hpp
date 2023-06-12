@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 14:20:07 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 16:12:32 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,9 @@ class Messages
 	void	RPL_NAMREPLY(Channel *c);
 	void	RPL_ENDOFNAMES(Channel *c);
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
+
+	//============ERR & RPL INVITE=========///
+	void	ERR_NOTONCHANNEL(int fd, std::string chann);
+	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
+	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
 };

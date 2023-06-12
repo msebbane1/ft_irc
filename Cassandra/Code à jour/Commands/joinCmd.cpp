@@ -3,18 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   joinCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 11:03:00 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/12 15:54:34 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
-
+/*
+	ERR_NEEDMOREPARAMS (461)
+	ERR_NOSUCHCHANNEL (403)
+	ERR_TOOMANYCHANNELS (405)
+	ERR_BADCHANNELKEY (475)
+	ERR_BANNEDFROMCHAN (474)
+	ERR_CHANNELISFULL (471)
+	ERR_INVITEONLYCHAN (473)
+	ERR_BADCHANMASK (476)
+	RPL_TOPIC (332)
+	RPL_TOPICWHOTIME (333)
+	RPL_NAMREPLY (353)
+	RPL_ENDOFNAMES (366)
+*/
 //---------------------JOIN-------------------//
 
-void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key)
+void	Commands::create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key)
 {
 	std::string	msg;
 	bool		key_empty = true;
@@ -54,10 +67,11 @@ void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *
 	
 	msg = ":" + user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
-	if (c->getTopic().size() < 1)
-		m->RPL_NOTOPIC(c);
+	if(_s->getChannel(this->_line_cmd[1])->topicIsSet())
+		this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1]));
 	else
-		m->RPL_TOPIC(c);
+		this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
+
 	m->RPL_NAMREPLY(c);
 	m->RPL_ENDOFNAMES(c);
 }

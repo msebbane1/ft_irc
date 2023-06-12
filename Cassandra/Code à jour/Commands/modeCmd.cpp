@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/12 11:06:15 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 15:36:55 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,26 @@
 // id a gerer: i, t, k, o, l; + to do the action, - to undo
 // gerer les multiple mode: /mode #chan +tns(channel en mode +t, +n, +s), cas possible : -b+i
 /*--------------------- MODE ----------------------*/
+void	Commands::printListCmd()
+{
+	std::vector<std::string>::iterator	it = this->_line_cmd.begin();
+	for(; it != this->_line_cmd.end(); it++)
+	{
+		std::cout << *it << std::endl;
+	}
+}
+
 void	Commands::modeCmd(){
 
-	if( _line_cmd.size() < 2) //verifier le nombre de param (entre 3 et 4)
+	printListCmd();
+	if( _line_cmd.size() == 2) //verifier le nombre de param (entre 3 et 4)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //cette erreur fonctionne
 	//faire un dispatch en foction d'un user ou d'un channel
 	if(this->_s->clientExist(this->_line_cmd[1])) //si _line_cmd[1] est un user
 		modeOnUser();
 	else if (chanExist(this->_line_cmd[1])) //si un channel
 		modeOnChannel();
-	verifModeParam();
 }
-
-
 
 char	Commands::findIndice(){ // a faire plus propre
 
@@ -51,7 +58,8 @@ char	Commands::findIndice(){ // a faire plus propre
 void		Commands::splitOption(){
 	
 	//remplir optionList par toutes les options: gestion option multiple
-	for(int i = 0; i < (int)this->_line_cmd[2].size(); i++){
+	for(int i = 0; i < (int)this->_line_cmd[2].size(); i++)
+	{
 		
 		if((i == 0 && (this->_line_cmd[2][0] == '+' || this->_line_cmd[2][0] == '-')))
 			continue;

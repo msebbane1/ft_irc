@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 11:26:59 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/12 16:08:11 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ class Commands
 		void						exec_cmd();
 
 		bool						chanExist(std::string name_chan);
-		void						sendToChannel(int user_talk, std::string msg, std::string name_chan);
+		
+		void						create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key);
 		
 		//=========================ACCESSORS======================//
 
@@ -57,6 +58,9 @@ class Commands
 		void						quitCmd();
 		void						operCmd();
 		void						killCmd();
+		void						partCmd();
+		void						topicCmd();
+		void						leaveMultiChan();
 		//========================== MODE ==========================//
 		void						modeCmd(); // fonction dispatch for user or channel
 		void						modeOnUser(); // gestion mode on user
@@ -75,4 +79,5 @@ class Commands
 		char						findIndice();
 		void						splitOption(); //gestion multioption
 		int							ft_stoi( std::string & s ); //cast string en int
+		void						printListCmd();
 };
