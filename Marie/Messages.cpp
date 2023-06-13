@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 10:38:25 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 13:40:17 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,15 @@ void	Messages::welcome(Client *user, int fd)
 {
 	std::string msg = ":localhost 001 " + user->getNickname() + "\r\n" 
 	+ "\"Welcome to the Internet Relay Chat Network " + user->getNickname() + "!" + user->getUser()
+	+ "@localhost" + "\"" + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
+{
+	std::string msg = ":irc.com localhost 001 " + nick + "\r\n" 
+	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
 	+ "@localhost" + "\"" + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
@@ -86,7 +95,6 @@ void	Messages::ERR_PASSWDMISMATCH(int fd) // 464
 
 //==============================================ERROR PRIVMSG==================================================///
 
-
 void Messages::ERR_NORECIPIENT(int fd) // 411
 {
 	std::string msg = ":irc.com 411 ERR_NORECIPIENT :No recipient given (<command>)\r\n";
@@ -116,7 +124,14 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 	return;
 }
 
-//====================CHANNELS===========//
+//==============================================CHANNEL==================================================///
+
+void	Messages::ERR_CANNOTSENDTOCHAN(std::string target, int fd) //404
+{
+	std::string msg = ":irc.com 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
 
 void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 {
@@ -133,11 +148,16 @@ void Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
 		errorMsg("failed send");
 }
 
-//====================REPLY================//
-
-void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
+void	Messages::ERR_NOTONCHANNEL(int fd, std::string chann) // 442
 {
-	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
+	std::string	msg = ":irc.com 442 ERR_NOTONCHANNEL " + chann + " :You're not on that channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) // 443
+{
+	std::string	msg = ":irc.com 443 ERR_USERONCHANNEL " + chann + nick + " :is already on channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -156,43 +176,6 @@ void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int f
 		errorMsg("failed send");
 }
 
-//INVITE//
-void Messages::RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd)
-{
-	//RPL_INVITE(user_id, invited, channel) (user_id + " INVITE " + invited + " #" + channel + "\r\n")
-	//":" + nickname + "!" + username + "@localhost"
-	// (user_id + " 341 " + client + " " + nick + " #" + channel + "\r\n")
-	std::string	msg = ":" + nick + "!" + user + "@localhost" + " 341 " + nick + " " + invited + " " + channel + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void Messages::RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd)
-{
-	//RPL_INVITE(user_id, invited, channel) (user_id + " INVITE " + invited + " #" + channel + "\r\n")
-	//":" + nickname + "!" + username + "@localhost"
-	// (user_id + " 341 " + client + " " + nick + " #" + channel + "\r\n")
-	std::string	msg = ":" + nick + "!" + user + "@localhost" + " INVITE " + invited + " " + channel + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-//====================PART REPLY & ERR ================//
-
-void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)
-{
-	std::string	msg = ":" +  nick + "!" + user + "@localhost " + "PART" + " :" + arg + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void Messages::RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd)
-{
-	std::string	msg = ":" +  nick + "!" + user + "@localhost" + " KICK " + channel + " " + kick +  " " + reason + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
 void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) //442
 {
 	std::string msg = ":localhost 442 ERR_NOTONCHANNEL " + nick + " " + channel + " :You're not on that channel\r\n";
@@ -200,8 +183,58 @@ void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) /
 		errorMsg("failed send");
 }
 
-//==============================================ERROR & REPLY JOIN==================================================///
+//==============================================REPLY==================================================///
 
+void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
+{
+	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+//INVITE
+void Messages::RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd)
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " 341 " + nick + " " + invited + " " + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd)
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " INVITE " + invited + " " + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//PRIVMSG
+void Messages::RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd)
+{
+	std::string msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	chan->sendMsg(fd, msgg);
+}
+
+void Messages::RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd)
+{
+	std::string	msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	if(send(fd, msgg.c_str(), msgg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//PART
+void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)
+{
+	std::string	msg = ":" +  nick + "!" + user + "@localhost " + "PART" + " :" + arg + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+//KICK
+void Messages::RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd)
+{
+	std::string	msg = ":" +  nick + "!" + user + "@localhost" + " KICK " + channel + " " + kick +  " " + reason + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+//TOPIC
 void	Messages::RPL_NOTOPIC(Channel *c) // 331
 {
 	std::string	msg = ":irc.com 331 RPL_NOTOPIC " + c->getName() + " :No topic is set\r\n";
@@ -213,6 +246,9 @@ void	Messages::RPL_TOPIC(Channel *c) // 332
 	std::string	msg = ":irc.com 332 RPL_TOPIC " + c->getName() + " :" + c->getTopic() + "\r\n";
 	c->sendMsg(-1, msg);
 }
+
+//==============================================JOIN==================================================///
+
 
 void	Messages::RPL_NAMREPLY(Channel *c) // 353
 {
@@ -273,31 +309,7 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 		errorMsg("failed send");
 }
 
-//==============================================ERROR & REPLY INVITE==================================================///
-
-void	Messages::ERR_NOTONCHANNEL(int fd, std::string chann) // 442
-{
-	std::string	msg = ":irc.com 442 ERR_NOTONCHANNEL " + chann + " :You're not on that channel\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) // 443
-{
-	std::string	msg = ":irc.com 443 ERR_USERONCHANNEL " + chann + nick + " :is already on channel\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
-
-
-void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
-{
-	std::string msg = ":irc.com localhost 001 " + nick + "\r\n" 
-	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
-	+ "@localhost" + "\"" + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
+//==============================================ERROR MSG==================================================///
 
 void		Messages::errorMsg(std::string msg)
 {

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 10:38:51 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 13:40:37 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,21 +52,24 @@ class Messages
 	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
 	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
 	void	ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd);
+	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
+	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
+	void	ERR_CANNOTSENDTOCHAN(std::string target, int fd);
 
 	//============REPLY=========///
 	void	RPL_YOUREOPER(std::string nick, int fd);
 	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
 	void 	RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd);
 	
-	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
-	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
 
 	void	RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd);
 	void	RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd);
-
-	//============ERR & RPL JOIN=========///
 	void	RPL_NOTOPIC(Channel *c);
 	void	RPL_TOPIC(Channel *c);
+	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
+	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
+
+	//============ERR & RPL JOIN=========///
 	void	RPL_NAMREPLY(Channel *c);
 	void	RPL_ENDOFNAMES(Channel *c);
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
