@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 16:24:17 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 13:32:43 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,14 @@ void	Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
 void	Messages::ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd) // 501
 {
 	std::string msg = ":irc.com 501 ERR_UMODUUNKNOWNFLAG " + cmd + " :Unknown mode\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//404 ERR_CANNOTSENDTOCHAN
+void	Messages::ERR_CANNOTSENDTOCHAN(std::string target, int fd) //404
+{
+	std::string msg = ":irc.com 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

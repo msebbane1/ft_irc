@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/12 16:05:47 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 12:20:06 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ class Channel
 		std::vector<std::string>	_list_banned;
 		std::string					_password;
 		int							_size_max;
-		bool						_i_only; //mode invite
+		bool						_i_only; //invite
+		bool						_topicProtected;
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -60,15 +61,19 @@ class Channel
 		void						addOperator(Client *cl, int fd_cl);
 		void						removeOperator(std::string username);
 
-		std::string					getTopic();
+		std::string					getTopic() const;
 		void						setTopic(std::string topic);
 		bool						topicIsSet();
 
-		std::string					getKey();
+		std::string					getKey() const;
 		void						setKey(std::string key);
 
-		int							getSizeMax();
+		int							getSizeMax() const;
 		void						setSizeMax(int size);
 
 		void						setInviteOnly(bool set);
+		bool						getInviteOnly() const;
+
+		bool						getTopicProtected() const;
+		void						setTopicProtected(bool protect);
 };

@@ -6,18 +6,20 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/12 15:36:55 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 13:38:14 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 //installer irssi sur ordi maison 
 //irssi : /connect localhost port mdp
+// vrai serveur : CONNECT irc.dal.net 6667
 
 //change the channels mode : parametre attendu : /mode <channel> <+ | -> <mode> [parametres]
 //												 cmd / name_chan / indicateur / option / optionnel(username for operator, etc)
 //												  0		1			2			  3			4
-// id a gerer: i, t, k, o, l; + to do the action, - to undo
+// id a gerer on channel: i, t, k, o, l; + , - 
+// on user: i,
 // gerer les multiple mode: /mode #chan +tns(channel en mode +t, +n, +s), cas possible : -b+i
 /*--------------------- MODE ----------------------*/
 void	Commands::printListCmd()
@@ -34,7 +36,6 @@ void	Commands::modeCmd(){
 	printListCmd();
 	if( _line_cmd.size() == 2) //verifier le nombre de param (entre 3 et 4)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //cette erreur fonctionne
-	//faire un dispatch en foction d'un user ou d'un channel
 	if(this->_s->clientExist(this->_line_cmd[1])) //si _line_cmd[1] est un user
 		modeOnUser();
 	else if (chanExist(this->_line_cmd[1])) //si un channel
@@ -58,6 +59,8 @@ char	Commands::findIndice(){ // a faire plus propre
 void		Commands::splitOption(){
 	
 	//remplir optionList par toutes les options: gestion option multiple
+	// if(this->_line_cmd[2])
+	// 	return;
 	for(int i = 0; i < (int)this->_line_cmd[2].size(); i++)
 	{
 		

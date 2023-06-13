@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/12 16:06:50 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 12:21:11 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ void					Channel::removeOperator(std::string username)
 
 /*---------------------------------------------------------------------*/
 
-std::string	Channel::getTopic()
+std::string	Channel::getTopic() const
 {
 	return (this->_topic);
 }
@@ -246,7 +246,7 @@ bool		Channel::topicIsSet()
 
 /*---------------------------------------------------------------------*/
 
-std::string	Channel::getKey()
+std::string	Channel::getKey() const
 {
 	return (this->_key);
 }
@@ -258,7 +258,7 @@ void		Channel::setKey(std::string key)
 
 /*---------------------------------------------------------------------*/
 
-int	Channel::getSizeMax()
+int	Channel::getSizeMax() const
 {
 	return (this->_size_max);
 }
@@ -268,7 +268,22 @@ void	Channel::setSizeMax(int size)
 	this->_size_max = size;
 }
 
+bool	Channel::getInviteOnly() const
+{
+	return this->_i_only;
+}
+
 void	Channel::setInviteOnly(bool set){
 
 	this->_i_only = set;
+}
+
+bool	Channel::getTopicProtected() const
+{
+	return this->_topicProtected;
+}
+
+void	Channel::setTopicProtected(bool protect)
+{
+	this->_topicProtected = protect;
 }

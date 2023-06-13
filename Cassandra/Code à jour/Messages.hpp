@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 16:22:33 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 13:29:11 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ class Messages
 	//============ERR CHANNELS=========///
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
 	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
-	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
+	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue
+	void	ERR_CANNOTSENDTOCHAN(std::string target, int fd); // for BAN and PRIVMSG
 
 	//============REPLY=========///
 	void	RPL_YOUREOPER(std::string nick, int fd);
