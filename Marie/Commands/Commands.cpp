@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 09:52:02 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 12:37:02 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,11 @@ void	Commands::exec_cmd()
 		this->_msg->ERR_UNKNOWNCOMMAND(this->_line_cmd[0], this->_fd_user);
 		return ;
 	}
-//==================================CMD CONNECTION REGISTER==============================//
-	if (this->_user->isConnected() == false)
+//=======================================COMMANDS=========================================//
+	if (this->_user->isConnected() == false) // REGISTER
 		cmdToConnect();
 	else
 	{
-//=======================================COMMANDS=========================================//
 		if (this->_line_cmd[0] == "PASS")
 			passCmd();
 		else if (this->_line_cmd[0] == "USER")
@@ -58,13 +57,13 @@ void	Commands::exec_cmd()
 			operCmd();
     	else if (this->_line_cmd[0] == "KILL") // A FAIRE ?
 			killCmd();
-		else if (this->_line_cmd[0] == "INVITE") // A FINIR
+		else if (this->_line_cmd[0] == "INVITE")
 			inviteCmd();
 		else if (this->_line_cmd[0] == "PART")
 			partCmd();
     	else if (this->_line_cmd[0] == "TOPIC")
 			topicCmd();
-		else if (this->_line_cmd[0] == "KICK") // <canal> <utilisateur> [<commentaire>]
+		else if (this->_line_cmd[0] == "KICK")
 			kickCmd();
     	else if (this->_line_cmd[0] == "MODE"){}
 			//modeCmd();
