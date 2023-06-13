@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 14:18:48 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 16:53:45 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,12 @@ class Channel
 		std::map<int, Client *>		_list_user_co;
 		std::map<int, Client *>		_list_operators;
 		std::vector<std::string>	_list_banned;
+		std::vector<std::string>	_listBannedNotParted;
 		std::string					_password;
 		int							_size_max;
 		bool						_i_only; //invite
 		bool						_topicProtected; //topic
+		
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -41,7 +43,12 @@ class Channel
 		Channel*	operator=(Channel const *c);
 
 		void	banUser(std::string username);
-		void	unbanUser(std::string username); //a faire
+	//--------------AJOUT Cassandra --------------/
+		void	unbanUser(std::string username);
+		void	addBanUserNotParted(std::string nickname);
+		void	removeBanUserNotParted(std::string nickname);
+		bool	isBanned(std::string nickname);
+	//--------------------------------------------/
 		void	displayUsers();
 		void	displayOp();
 		bool	userIsInChann(int user);
@@ -49,7 +56,6 @@ class Channel
 		void	sendMsg(int user_talk, std::string msg);
 		bool	isOperator(int fd);
 		int		nbUserInChan();
-		bool	isBanned(std::string nickname);
 
 	//========================== ACCESSEURS ==============================//
 		std::string					getName();

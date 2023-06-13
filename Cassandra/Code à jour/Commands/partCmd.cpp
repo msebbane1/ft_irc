@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   partCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:03:01 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 15:55:19 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 16:45:01 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,5 @@ void	Commands::partCmd()
 		return ;
 	}
 	if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
-       this->_s->channDisconnected();
+		this->_s->channDisconnected();
 }

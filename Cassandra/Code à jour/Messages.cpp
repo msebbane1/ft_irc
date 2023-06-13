@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 16:04:55 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 16:29:42 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	Messages::ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd) // 501
 //404 ERR_CANNOTSENDTOCHAN
 void	Messages::ERR_CANNOTSENDTOCHAN(std::string target, int fd) //404
 {
-	std::string msg = ":irc.com 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
+	std::string msg = ":localhost 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -282,5 +282,18 @@ void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int f
 {
 	std::string msg = ":irc.com 441 ERR_USERNOTINCHANNEL " + nick + " " + channel + " :They aren't on that channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd)
+{
+	std::string msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	chan->sendMsg(fd, msgg);
+}
+
+void Messages::RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd)
+{
+	std::string	msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	if(send(fd, msgg.c_str(), msgg.length(), 0) < 0)
 		errorMsg("failed send");
 }

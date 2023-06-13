@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/13 14:42:10 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 17:01:25 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,22 @@
 void	Commands::modeOnChannel(){
 
 	verifModeParam();
+	if(getIndice() == '\0')
+		return;
+	std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo(); //mettre ailleur sd car affiche message 2 fois
+	if(this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) == true)
+	{
+		for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
+		{
+			std::string msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
+			if(send(it->first, msg.c_str(), msg.length(), 0) < 0)
+				this->_msg->errorMsg("failed send");
+		}
+	}
 	std::vector<char>::iterator	it = this->_optionList.begin();
 	for(; it != this->_optionList.end(); ++it)
 	{
 		char option = *it;
-		std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo(); //mettre ailleur sd car affiche message 2 fois
-		if(this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) == true)
-		{
-			for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
-			{
-				std::string msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
-				if(send(it->first, msg.c_str(), msg.length(), 0) < 0)
-					this->_msg->errorMsg("failed send");
-			}
-		}
 		switch (option)
 		{
 			case 'i':
@@ -151,8 +153,12 @@ void	Commands::banUser()
 	// faire fonction pour verifier si le user is in chan
 	if(this->getIndice() == '+'){
 		this->_s->getChannel(this->_line_cmd[1])->banUser(this->_line_cmd[3]);
+		this->_s->getChannel(this->_line_cmd[1])->addBanUserNotParted(this->_line_cmd[3]);
 	}
-	else if (this->getIndice() == '-')
+	else if (this->getIndice() == '-'){
 		this->_s->getChannel(this->_line_cmd[1])->unbanUser(this->_line_cmd[3]);
+		this->_s->getChannel(this->_line_cmd[1])->removeBanUserNotParted(this->_line_cmd[3]);
+	}
 }
-//comportement a changer pour ban : le user ban doit recevoir les message mais ne peux plus les envoyer
+//comportement a changer pour ban : le user ban doit recevoir les message mais ne peux plus les envoyer tant qu'il ne quitte pas le channel
+//faire une verif pour part pour le remove de la list + user not part recois le message des autres condition privmsg

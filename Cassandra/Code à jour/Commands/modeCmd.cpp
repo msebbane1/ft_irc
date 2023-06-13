@@ -6,13 +6,13 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/13 15:00:22 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 16:44:29 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 //installer irssi sur ordi maison 
-//irssi : /connect localhost port mdp
+//irssi : /connect localhost 8080 irc
 // vrai serveur : CONNECT irc.dal.net 6667
 
 //change the channels mode : parametre attendu : /mode <channel> <+ | -> <mode> [parametres]
@@ -50,11 +50,11 @@ char	Commands::findIndice(){ // a faire plus propre
 	char	c = '\0';
 
 	if(this->_line_cmd[2].size() == 1)
-		std::cerr << "Missing Option or Indice" << std::endl;
+		return c; //std::cerr << "Missing Option or Indice" << std::endl;
 	else{
 		c = this->_line_cmd[2][0];
 		if(isalpha(c) || isdigit(c))
-			std::cerr << "Missing Indice" << std::endl; // voir l'erreur adéquat
+			return '\0';//std::cerr << "Missing Indice" << std::endl; // voir l'erreur adéquat
 	}
 	return c;
 }
@@ -87,8 +87,10 @@ int		Commands::verifModeParam(){
 	if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // verif if user isOperator in chan
 		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user); // ERR_CHANOPRIVSNEEDED 482
 	char Indice = findIndice();
-	if( Indice != '+' && Indice != '-')
+	if( Indice != '+' && Indice != '-'){
+		setIndice('\0');
 		return 1;
+	}
 	this->setIndice(Indice);
 	splitOption();
 	if(!verifUser())

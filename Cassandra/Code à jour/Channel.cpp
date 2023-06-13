@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 14:53:00 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 16:59:07 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,7 +282,6 @@ bool	Channel::userIsInChan(std::string nickname)
 	return false;
 }
 
-//ajouter 
 void	Channel::unbanUser(std::string username)
 {
 	if(isBanned(username))
@@ -297,5 +296,20 @@ void	Channel::unbanUser(std::string username)
 				return ;
 			}
 		}
+	}
+}
+
+void	Channel::addBanUserNotParted(std::string nickname)
+{
+	this->_listBannedNotParted.push_back(nickname);
+}
+
+void	Channel::removeBanUserNotParted(std::string nickname)
+{
+	std::vector<std::string>::iterator	it = this->_listBannedNotParted.begin();
+	for(; it != this->_listBannedNotParted.begin(); it++)
+	{
+		if(*it == nickname)
+			this->_listBannedNotParted.erase(it);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 14:16:14 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 16:23:18 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,6 @@ class Messages
 	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
 	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
 	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
+	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
+	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
 };
