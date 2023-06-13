@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/13 13:38:14 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 15:00:22 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,11 @@ void	Commands::printListCmd()
 void	Commands::modeCmd(){
 
 	printListCmd();
-	if( _line_cmd.size() == 2) //verifier le nombre de param (entre 3 et 4)
+	if( this->_line_cmd.size() == 2)
+	{
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //cette erreur fonctionne
+		return;
+	}
 	if(this->_s->clientExist(this->_line_cmd[1])) //si _line_cmd[1] est un user
 		modeOnUser();
 	else if (chanExist(this->_line_cmd[1])) //si un channel
@@ -59,8 +62,6 @@ char	Commands::findIndice(){ // a faire plus propre
 void		Commands::splitOption(){
 	
 	//remplir optionList par toutes les options: gestion option multiple
-	// if(this->_line_cmd[2])
-	// 	return;
 	for(int i = 0; i < (int)this->_line_cmd[2].size(); i++)
 	{
 		
@@ -76,6 +77,26 @@ int		Commands::ft_stoi( std::string & s ){
 	return i;
 }
 
+//verifie les parametres
+int		Commands::verifModeParam(){
+
+	if(!chanExist(this->_line_cmd[1])) // check if chan exist
+		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
+	if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user)) //user not on channel 
+		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);
+	if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // verif if user isOperator in chan
+		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user); // ERR_CHANOPRIVSNEEDED 482
+	char Indice = findIndice();
+	if( Indice != '+' && Indice != '-')
+		return 1;
+	this->setIndice(Indice);
+	splitOption();
+	if(!verifUser())
+		return 1;
+	return 0;
+}
+
+//message envoyé sur irssi quand le user ban est partie du channel et le essaie de le rejoindre : -!- Cannot join to channel #ko (You are banned)
 // Message d'erreur + code d'erreur
 // ERR_NEEDMOREPARAMS 461 : quand il manque un paramètre à la commande.
 // RPL_CHANNELMODEIS 324 : indique les modes possibles pour les chans.

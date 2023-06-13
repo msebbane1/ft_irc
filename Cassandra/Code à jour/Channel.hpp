@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 12:20:06 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 14:18:48 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Channel
 		std::string					_password;
 		int							_size_max;
 		bool						_i_only; //invite
-		bool						_topicProtected;
+		bool						_topicProtected; //topic
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -41,15 +41,17 @@ class Channel
 		Channel*	operator=(Channel const *c);
 
 		void	banUser(std::string username);
-		void	unbanUser(std::string username); //a ajouter
+		void	unbanUser(std::string username); //a faire
 		void	displayUsers();
 		void	displayOp();
 		bool	userIsInChann(int user);
+		bool	userIsInChan(std::string nickname); // ajouter pour mode
 		void	sendMsg(int user_talk, std::string msg);
 		bool	isOperator(int fd);
 		int		nbUserInChan();
 		bool	isBanned(std::string nickname);
 
+	//========================== ACCESSEURS ==============================//
 		std::string					getName();
 		void						setName(std::string name);
 
@@ -76,4 +78,5 @@ class Channel
 
 		bool						getTopicProtected() const;
 		void						setTopicProtected(bool protect);
+
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/12 17:50:53 by student          ###   ########.fr       */
+/*   Updated: 2023/06/13 15:56:33 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,8 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("MODE");
 	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
+	this->_command_list.push_back("PART");
+	this->_command_list.push_back("WHO");
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
 

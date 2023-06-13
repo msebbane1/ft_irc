@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/13 13:16:45 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 14:42:10 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,18 +70,31 @@ void	Commands::modeOnChannel(){
 	return;
 }
 
-//verifie les parametres
-int		Commands::verifModeParam(){
-
-	if(!chanExist(this->_line_cmd[1])) // check if chan exist
-		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
-	if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // verif if user is
-		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user); // ERR_CHANOPRIVSNEEDED 482
-	char Indice = findIndice();
-	if( Indice != '+' && Indice != '-')
-		std::cout << "NO OPTION MODE" << std::endl; // trouver l'erreur pour ce cas
-	this->setIndice(Indice);
-	splitOption();
+int	Commands::verifUser()
+{
+	std::vector<char>::iterator	it = this->_optionList.begin();
+	for(; it != this->_optionList.end(); it++)
+	{
+		char	option = this->_optionList[*it];
+		if(option == 'o')
+		{
+			if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]))//verif if user in chan for mode b/o
+			{
+				this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
+				this->_msg->ERR_USERNOTINCHANNEL(this->_line_cmd[3], this->_line_cmd[1], this->_fd_user);
+				return 1;
+			}
+		}
+		else if(option == 'b')
+		{
+			if(!this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]))//verif if user in chan for mode b/o
+			{
+				this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
+				this->_msg->ERR_USERNOTINCHANNEL(this->_line_cmd[3], this->_line_cmd[1], this->_fd_user);
+				return 1;
+			}
+		}
+	}
 	return 0;
 }
 
@@ -142,3 +155,4 @@ void	Commands::banUser()
 	else if (this->getIndice() == '-')
 		this->_s->getChannel(this->_line_cmd[1])->unbanUser(this->_line_cmd[3]);
 }
+//comportement a changer pour ban : le user ban doit recevoir les message mais ne peux plus les envoyer

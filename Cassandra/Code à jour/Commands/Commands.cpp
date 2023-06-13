@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 13:08:12 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 15:05:11 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,12 @@ void	Commands::exec_cmd()
 			operCmd();
     	else if (this->_line_cmd[0] == "KILL")
 			killCmd();
-    	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
-    	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
-    	else if (this->_line_cmd[0] == "MODE"){
-			modeCmd();
-		} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
+    	else if (this->_line_cmd[0] == "PART") //  <canal>{,< canal >}
+			partCmd();
+    	else if (this->_line_cmd[0] == "TOPIC") // <canal> [<sujet>]
+			topicCmd();
+    	else if (this->_line_cmd[0] == "MODE")
+			modeCmd(); // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
 		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
 		else if (this->_line_cmd[0] == "INVITE"){} // <pseudonyme> <canal>
 		else if (this->_line_cmd[0] == "KICK"){} // <canal> <utilisateur> [<commentaire>]
@@ -72,7 +73,10 @@ void	Commands::exec_cmd()
 		}
 		else if (this->_line_cmd[0] == "WHOIS")
 			return ;
-
+		else if (this->_line_cmd[0] == "WHO")
+			return ;
+		else if (this->_line_cmd[0] == "NAMES")
+			return ;
 	}
 }
 

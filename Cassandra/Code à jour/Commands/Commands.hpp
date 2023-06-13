@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 16:08:11 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 14:34:11 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,5 @@ class Commands
 		void						splitOption(); //gestion multioption
 		int							ft_stoi( std::string & s ); //cast string en int
 		void						printListCmd();
+		int							verifUser();
 };

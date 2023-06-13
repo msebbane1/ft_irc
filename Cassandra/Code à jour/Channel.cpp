@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 12:21:11 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 14:53:00 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,23 +61,6 @@ void	Channel::banUser(std::string username)
 	}
 }
 
-//ajouter 
-void	Channel::unbanUser(std::string username)
-{
-	if(isBanned(username))
-	{
-		for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
-		{
-			if (it->second->getUser() == username || it->second->getNickname() == username)
-			{
-				addUser(it->second, it->first);
-				//this->_list_banned.push_back(it->second->getNickname()); //remove user from list
-				std::cout << "User " << it->second->getNickname() << " has been unban from " << this->_name << std::endl; 
-				return ;
-			}
-		}
-	}
-}
 
 void	Channel::displayUsers()
 {
@@ -256,7 +239,7 @@ void		Channel::setKey(std::string key)
 	this->_key = key;
 }
 
-/*---------------------------------------------------------------------*/
+/*---------------------------- FOR MODE-----------------------------------------*/
 
 int	Channel::getSizeMax() const
 {
@@ -286,4 +269,33 @@ bool	Channel::getTopicProtected() const
 void	Channel::setTopicProtected(bool protect)
 {
 	this->_topicProtected = protect;
+}
+
+bool	Channel::userIsInChan(std::string nickname)
+{
+	std::map<int, Client *>::iterator	it = this->_list_user_co.begin();
+	for(; it != this->_list_user_co.end(); it++)
+	{
+		if(nickname == it->second->getNickname())
+			return true;
+	}
+	return false;
+}
+
+//ajouter 
+void	Channel::unbanUser(std::string username)
+{
+	if(isBanned(username))
+	{
+		std::vector<std::string>::iterator	it = this->_list_banned.begin();
+		for(; it != this->_list_banned.end(); it++)
+		{
+			if(username == *it)
+			{
+				this->_list_banned.erase(it);
+				std::cout << "User " << username << " has been unban from " << this->_name << std::endl;
+				return ;
+			}
+		}
+	}
 }

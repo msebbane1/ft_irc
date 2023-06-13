@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 13:32:43 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/13 16:04:55 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,6 +241,8 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 	{
 		type = " ERR_BANNEDFROMCHAN ";
 		mode = "(+b)\r\n";
+		//erreur: Cannot join to channel #ko (You are banned)
+
 	}
 	else if (err == 475)
 	{
@@ -272,6 +274,13 @@ void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) //
 void	Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)
 {
 	std::string	msg = ":" +  nick + "!" + user + "@localhost " + "PART" + " :" + arg + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd) // 441
+{
+	std::string msg = ":irc.com 441 ERR_USERNOTINCHANNEL " + nick + " " + channel + " :They aren't on that channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
