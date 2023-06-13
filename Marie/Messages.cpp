@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 13:40:17 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 14:39:46 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,14 @@ void Messages::RPL_INVITE(std::string nick, std::string user, std::string invite
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
+//QUIT
+void Messages::RPL_QUIT(std::string nick, std::string user, std::string reason, int fd)
+{
+	std::string msg = ":" + nick + "!" + user + "@localhost" + " QUIT :Quit: " + reason + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
 
 //PRIVMSG
 void Messages::RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd)

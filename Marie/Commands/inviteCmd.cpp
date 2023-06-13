@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 12:07:35 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 12:22:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 14:50:30 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 	ERR_NOTONCHANNEL (442)
 	ERR_USERONCHANNEL (443)
 	ERR_CHANOPRIVSNEEDED (482)
-	
 	RPL_INVITING (341)
 
 	exemples : INVITE Wiz #foo_bar

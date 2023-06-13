@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 13:40:37 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 14:34:44 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ class Messages
 	void	RPL_TOPIC(Channel *c);
 	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
 	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
+	void	RPL_QUIT(std::string nick, std::string user, std::string reason, int fd);
 
 	//============ERR & RPL JOIN=========///
 	void	RPL_NAMREPLY(Channel *c);
