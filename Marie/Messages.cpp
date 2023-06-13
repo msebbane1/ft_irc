@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 15:47:25 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 10:38:25 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,28 @@ void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int f
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
+
+//INVITE//
+void Messages::RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd)
+{
+	//RPL_INVITE(user_id, invited, channel) (user_id + " INVITE " + invited + " #" + channel + "\r\n")
+	//":" + nickname + "!" + username + "@localhost"
+	// (user_id + " 341 " + client + " " + nick + " #" + channel + "\r\n")
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " 341 " + nick + " " + invited + " " + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd)
+{
+	//RPL_INVITE(user_id, invited, channel) (user_id + " INVITE " + invited + " #" + channel + "\r\n")
+	//":" + nickname + "!" + username + "@localhost"
+	// (user_id + " 341 " + client + " " + nick + " #" + channel + "\r\n")
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " INVITE " + invited + " " + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
 //====================PART REPLY & ERR ================//
 
 void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)

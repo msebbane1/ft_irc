@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 15:47:40 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 10:38:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ class Messages
 	
 	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
 	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
+
+	void	RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd);
+	void	RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd);
 
 	//============ERR & RPL JOIN=========///
 	void	RPL_NOTOPIC(Channel *c);

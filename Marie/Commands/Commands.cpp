@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 10:38:05 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/13 09:52:02 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	Commands::exec_cmd()
 			privMsgCmd();
     	else if (this->_line_cmd[0] == "OPER") // A FINIR
 			operCmd();
-    	else if (this->_line_cmd[0] == "KILL") // A FINIR
+    	else if (this->_line_cmd[0] == "KILL") // A FAIRE ?
 			killCmd();
 		else if (this->_line_cmd[0] == "INVITE") // A FINIR
 			inviteCmd();
@@ -64,12 +64,10 @@ void	Commands::exec_cmd()
 			partCmd();
     	else if (this->_line_cmd[0] == "TOPIC")
 			topicCmd();
-    	else if (this->_line_cmd[0] == "MODE"){}
-			//modeCmd();
-
-		////A FAIRE
 		else if (this->_line_cmd[0] == "KICK") // <canal> <utilisateur> [<commentaire>]
 			kickCmd();
+    	else if (this->_line_cmd[0] == "MODE"){}
+			//modeCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{
 			std::string msg = ":localhost PONG :localhost\r\n";
