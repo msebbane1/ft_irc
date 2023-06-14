@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 16:53:45 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 10:34:03 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ class Channel
 		void	banUser(std::string username);
 	//--------------AJOUT Cassandra --------------/
 		void	unbanUser(std::string username);
-		void	addBanUserNotParted(std::string nickname);
-		void	removeBanUserNotParted(std::string nickname);
 		bool	isBanned(std::string nickname);
 	//--------------------------------------------/
 		void	displayUsers();

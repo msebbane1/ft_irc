@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 15:54:34 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 10:52:25 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ void	Commands::create_oa_join(std::string name_chann, Commands *cmd, Server *s, 
 		}
 		if (s->getChannel(name_chann)->isBanned(user->getNickname()))
 		{
-			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 474);
+			this->_msg->ERR_BANNEDFROMCHAN(user->get_fd(), name_chann);
+			//m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 474);
 			return ;
 		}
 		s->getChannel(name_chann)->addUser(user, user->get_fd());
