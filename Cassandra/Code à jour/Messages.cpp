@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 10:57:26 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 14:17:10 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	Messages::welcome(Client *user, int fd)
 
 void	Messages::ERR_NOSUCHNICK(std::string nick, int fd) // 401
 {
-	std::string msg = ":irc.com 401 ERR_NEEDMOREPARAMS " + nick + " :No such nick/channel\r\n";
+	std::string msg = ":irc.com 401 ERR_NOSUCHNICK " + nick + " :No such nick/channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -64,7 +64,7 @@ void	Messages::ERR_ERRONEUSNICKNAME(std::string nick, int fd) // 432
 
 void	Messages::ERR_NEEDMOREPARAMS(int fd) // 461
 {
-	std::string msg = ":irc.com 461 ERR_NEEDMOREPARAMS :Not enough parameters\r\n";
+	std::string msg = ":irc.com 461 ERR_NEEDMOREPARAMS :Not enough parameters given\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -128,7 +128,7 @@ void	Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 //erreur pour MODE (si le client n'est pas OP sur le chan)
 void	Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
 {
-	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :Not operator\r\n";
+	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :Not channel operator\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -237,13 +237,12 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 		type = " ERR_INVITEONLYCHAN ";
 		mode = "(+i)\r\n";
 	}
-	else if (err == 474)
-	{
-		type = " ERR_BANNEDFROMCHAN ";
-		mode = "(+b)\r\n";
-		//erreur: Cannot join to channel #ko (You are banned)
-
-	}
+	// else if (err == 474)
+	// {
+	// 	type = " ERR_BANNEDFROMCHAN ";
+	// 	mode = "(+b)\r\n";
+	// 	//erreur: Cannot join to channel #ko (You are banned)
+	// }
 	else if (err == 475)
 	{
 		type = " ERR_BADCHANNELKEY ";
@@ -304,3 +303,38 @@ void Messages::RPL_PRIVMSG(std::string nick, std::string channel, std::string ms
 	if(send(fd, msgg.c_str(), msgg.length(), 0) < 0)
 		errorMsg("failed send");
 }
+
+/*368 RPL_ENDOFBANLIST
+Paramètres : <chan>
+Réponse à : MODE 
+MESSAGE: -!- #ko End of Channel Ban List
+
+Cette réponse indique que tous les masques d'utilisateurs bannis du chan ont été indiqués.*/
+//affiche le message avec irc.com dans certain cas
+void	Messages::RPL_ENDOFBANLIST(std::string channel, int fd) //368
+{//ne doit pas afficher irc.com
+	std::string	msg = ":irc.com 368 RPL_ENDOFBANLIST " + channel + " :End of Channel Ban List\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+/*367 RPL_BANLIST
+Paramètres : <chan> <masque d'utilisateur banni>
+Réponse à : MODE
+
+Cette réponse indique un masque d'utilisateur qui est banni du chan.
+essaie sur serveur irssi:
+2 - #ko: ban Guest22028!*@* [by clecat!~clecat@157a-3894-3542-9a96-157a.129.62.ip, 14 
+          secs ago]
+-!- 1 - #ko: ban newuser!*@* [by clecat!~clecat@157a-3894-3542-9a96-157a.129.62.ip, 40 secs 
+          ago]
+-!- #ko End of Channel Ban List*/
+
+void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
+{
+	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + std::to_string(maskBanned) + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+	RPL_ENDOFBANLIST(channel, fd);
+}
+

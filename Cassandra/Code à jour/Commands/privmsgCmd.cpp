@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 16:19:57 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 11:17:23 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ std::string	Commands::joinMessages()
 		msg += " ";
 		it++;
 	}
-	//std::cout << msg << std::endl;
 	return(msg);
 }
 

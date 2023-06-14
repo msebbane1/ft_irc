@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/14 10:35:44 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 13:19:51 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@
 //												  0		1			2			  3			4
 // id a gerer: i, t, k, o, l; + to do the action, - to undo
 // gerer les multiple mode: /mode #chan +tns(channel en mode +t, +n, +s), cas possible : -b+i
-
+//
 void	Commands::modeOnChannel(){
 
-	verifModeParam();
+	if(verifModeParam() == 1)
+		return;
 	if(getIndice() == '\0')
 		return;
 	std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo(); //mettre ailleur sd car affiche message 2 fois
@@ -89,7 +90,26 @@ int	Commands::verifUser()
 		}
 		else if(option == 'b')
 		{
-			if(!this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]))//verif if user in chan for mode b/o
+			if(this->_line_cmd.size() == 3)
+			{
+				if(this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().size() == 0){
+					this->_msg->RPL_ENDOFBANLIST(this->_line_cmd[1], this->_fd_user);
+					return 1;
+				}
+				else
+				{
+					std::vector<std::string>::iterator	it = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().begin();
+					for(; it != this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().end(); it++)
+					{
+						int	maskbanned = this->_s->getClient(*it)->get_fd() ;
+						this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1], maskbanned);
+					}
+					return 1;
+				}
+			}
+			else if(this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]) && getIndice() == '+')
+				return 1;
+			else if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]))//verif if user in chan for mode b/o
 			{
 				this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
 				this->_msg->ERR_USERNOTINCHANNEL(this->_line_cmd[3], this->_line_cmd[1], this->_fd_user);

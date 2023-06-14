@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 10:50:00 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 12:48:11 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,6 @@ class Messages
 	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
 	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
 	void	ERR_BANNEDFROMCHAN(int fd, std::string channel);
+	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
+	void	RPL_BANLIST(int fd, std::string channel, int maskBanned);
 };

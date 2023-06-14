@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/14 10:38:24 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 13:04:31 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,3 +298,20 @@ void	Channel::unbanUser(std::string username)
 		}
 	}
 }
+
+std::vector<std::string>	Channel::getListUserBanned() const
+{
+	return this->_list_banned;
+}
+
+// int		Channel::getFdUserBan(std::string nickname)
+// {
+// 	std::vector<std::string>::iterator	it = this->_list_banned.begin();
+// 	for(; it != this->_list_banned.end(); it++)
+// 	{
+// 		if(nickname == it)
+// 		{
+// 			this._
+// 		}
+// 	}
+// }

@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/13 16:44:29 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 14:00:41 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,52 +34,53 @@ void	Commands::printListCmd()
 void	Commands::modeCmd(){
 
 	printListCmd();
-	if( this->_line_cmd.size() == 2)
+	if( this->_line_cmd.size() == 1)
 	{
-		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user); //cette erreur fonctionne
+		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		return;
 	}
-	if(this->_s->clientExist(this->_line_cmd[1])) //si _line_cmd[1] est un user
+	if( this->_line_cmd.size() == 2)
+		return;
+	if(this->_s->clientExist(this->_line_cmd[1]))
 		modeOnUser();
-	else if (chanExist(this->_line_cmd[1])) //si un channel
+	else if (chanExist(this->_line_cmd[1]))
 		modeOnChannel();
 }
 
-char	Commands::findIndice(){ // a faire plus propre
-
+char	Commands::findIndice()
+{
 	char	c = '\0';
 
 	if(this->_line_cmd[2].size() == 1)
-		return c; //std::cerr << "Missing Option or Indice" << std::endl;
+		return c;
 	else{
 		c = this->_line_cmd[2][0];
 		if(isalpha(c) || isdigit(c))
-			return '\0';//std::cerr << "Missing Indice" << std::endl; // voir l'erreur adéquat
+			return '\0';
 	}
 	return c;
 }
 
-void		Commands::splitOption(){
-	
-	//remplir optionList par toutes les options: gestion option multiple
+void		Commands::splitOption()
+{
 	for(int i = 0; i < (int)this->_line_cmd[2].size(); i++)
 	{
-		
 		if((i == 0 && (this->_line_cmd[2][0] == '+' || this->_line_cmd[2][0] == '-')))
 			continue;
 		this->_optionList.push_back(this->_line_cmd[2][i]);
 	}
 }
 
-int		Commands::ft_stoi( std::string & s ){
+int		Commands::ft_stoi( std::string & s )
+{
 	int i = 0;
 	std::istringstream(s) >> i;
 	return i;
 }
 
 //verifie les parametres
-int		Commands::verifModeParam(){
-
+int		Commands::verifModeParam()
+{
 	if(!chanExist(this->_line_cmd[1])) // check if chan exist
 		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 	if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user)) //user not on channel 
@@ -93,7 +94,7 @@ int		Commands::verifModeParam(){
 	}
 	this->setIndice(Indice);
 	splitOption();
-	if(!verifUser())
+	if(verifUser() == 1)
 		return 1;
 	return 0;
 }

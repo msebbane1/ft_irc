@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/14 10:34:03 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 13:04:42 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ class Channel
 		std::map<int, Client *>		_list_user_co;
 		std::map<int, Client *>		_list_operators;
 		std::vector<std::string>	_list_banned;
-		std::vector<std::string>	_listBannedNotParted;
 		std::string					_password;
 		int							_size_max;
 		bool						_i_only; //invite
@@ -46,11 +45,12 @@ class Channel
 	//--------------AJOUT Cassandra --------------/
 		void	unbanUser(std::string username);
 		bool	isBanned(std::string nickname);
+		bool	userIsInChan(std::string nickname); // ajouter pour mode
+		// int		getFdUserBan(std::string nickname); // avoir le fd pour RPL_BANLIST
 	//--------------------------------------------/
 		void	displayUsers();
 		void	displayOp();
 		bool	userIsInChann(int user);
-		bool	userIsInChan(std::string nickname); // ajouter pour mode
 		void	sendMsg(int user_talk, std::string msg);
 		bool	isOperator(int fd);
 		int		nbUserInChan();
@@ -82,5 +82,7 @@ class Channel
 
 		bool						getTopicProtected() const;
 		void						setTopicProtected(bool protect);
+
+		std::vector<std::string>	getListUserBanned() const;
 
 };
