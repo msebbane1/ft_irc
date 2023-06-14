@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/07 13:51:54 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 13:43:43 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,13 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 
 //====================CHANNELS===========//
 
+void	Messages::ERR_CANNOTSENDTOCHAN(std::string target, int fd) //404
+{
+	std::string msg = ":irc.com 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
 void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 {
 	std::string msg = ":irc.com 403 ERR_NOSUCHCHANNEL " + channel + " :No such channel\r\n";
@@ -125,35 +132,19 @@ void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 		errorMsg("failed send");
 }
 
-//====================REPLY================//
 
-void Messages::RPL_YOUREOPER(std::string nick, int fd) // 381
+void Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
 {
-	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
+	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :You're not channel operator\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
 
-void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
+void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd) // 441
 {
-	std::string msg = ":irc.com localhost 001 " + nick + "\r\n" 
-	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
-	+ "@localhost" + "\"" + "\r\n";
+	std::string msg = ":irc.com 441 ERR_USERNOTINCHANNEL " + nick + " " + channel + " :They aren't on that channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
-}
-
-void		Messages::errorMsg(std::string msg)
-{
-    std::cout << Red << msg << Color << std::endl;
-	exit(EXIT_FAILURE);
-}
-
-void		Messages::displayMsgOnServer(std::string const &buf, int user_talk)
-{
-	if (buf == "\n")
-		return;
-    std::cout << "|User: "<< user_talk << "| Message send :" << buf ;
 }
 
 //==============================================ERROR & REPLY JOIN==================================================///
@@ -168,6 +159,62 @@ void	Messages::RPL_NOTOPIC(Channel *c, int fd, std::string nickname) // 331
 void	Messages::RPL_TOPIC(Channel *c, int fd, std::string nickname) // 332
 {
 	std::string	msg = ":irc.com 332 " + nickname + " " + c->getName() + " :" + c->getTopic() + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_YOUREOPER(std::string nick, int fd) // 381
+{
+	std::string msg = ":irc.com 381 RPL_YOUREOPER " + nick + " :You are now an IRC operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+//INVITE
+void Messages::RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd)
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " 341 " + nick + " " + invited + " " + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd)
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " INVITE " + invited + " " + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+//QUIT
+void Messages::RPL_QUIT(std::string nick, std::string user, std::string reason, int fd)
+{
+	std::string msg = ":" + nick + "!" + user + "@localhost" + " QUIT :Quit: " + reason + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd)
+{
+	std::string msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	chan->sendMsg(fd, msgg);
+}
+
+void Messages::RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd)
+{
+	std::string	msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	if(send(fd, msgg.c_str(), msgg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+//PART
+void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd)
+{
+	std::string	msg = ":" +  nick + "!" + user + "@localhost " + "PART" + " :" + arg + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void Messages::RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd)
+{
+	std::string	msg = ":" +  nick + "!" + user + "@localhost" + " KICK " + channel + " " + kick +  " " + reason + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -236,4 +283,26 @@ void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) //
 	std::string	msg = ":irc.com 443 ERR_USERONCHANNEL " + chann + nick + " :is already on channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
+}
+
+void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
+{
+	std::string msg = ":irc.com localhost 001 " + nick + "\r\n" 
+	+ "\"Welcome to the Internet Relay Chat Network " + nick + "!" + user
+	+ "@localhost" + "\"" + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void		Messages::errorMsg(std::string msg)
+{
+    std::cout << Red << msg << Color << std::endl;
+	exit(EXIT_FAILURE);
+}
+
+void		Messages::displayMsgOnServer(std::string const &buf, int user_talk)
+{
+	if (buf == "\n")
+		return;
+    std::cout << "|User: "<< user_talk << "| Message send :" << buf ;
 }

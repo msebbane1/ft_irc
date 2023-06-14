@@ -6,13 +6,13 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/02 15:59:55 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:18:00 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server()
+Server::Server() : _passwordOper("password")
 {
 }
 
@@ -36,6 +36,11 @@ std::vector<int>		Server::getFdUsersDc()
 std::string				Server::getPassword()
 {
     return (this->_password);
+}
+
+std::string				Server::getPasswordOper()
+{
+	return (this->_passwordOper);
 }
 
 void					Server::setPassword(std::string pwd)
@@ -87,7 +92,7 @@ bool Server::clientExist(std::string nick)
 {
 	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
 	{
-		if (it->second->getNickname() == nick) // ou USER ??
+		if (it->second->getNickname() == nick)
 			return (true);
 	}
 	return (false);

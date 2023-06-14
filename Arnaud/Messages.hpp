@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/07 13:51:58 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 13:40:24 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,26 @@ class Messages
 
 	//============ERR CHANNELS=========///
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
+	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
+	void 	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd);
+	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
+	void	ERR_CANNOTSENDTOCHAN(std::string target, int fd);
 
 	//============REPLY=========///
 	void	RPL_YOUREOPER(std::string nick, int fd);
+	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
+	void 	RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd);
+	
 
-	//============ERR & RPL JOIN=========///
+	void	RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd);
+	void	RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd);
 	void	RPL_NOTOPIC(Channel *c, int fd, std::string nickname);
 	void	RPL_TOPIC(Channel *c, int fd, std::string nickname);
+	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
+	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
+	void	RPL_QUIT(std::string nick, std::string user, std::string reason, int fd);
+
+	//============ERR & RPL JOIN=========///
 	void	RPL_NAMREPLY(Channel *c, int fd);
 	void	RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname);
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);

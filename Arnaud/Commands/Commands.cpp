@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/06 13:07:11 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:22:47 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,27 +49,32 @@ void	Commands::exec_cmd()
 			privMsgCmd();	
     	else if (this->_line_cmd[0] == "JOIN")
 			joinCmd();
-		else if (this->_line_cmd[0] == "QUIT")
+		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC UN MSG
 			quitCmd();
-		else if (this->_line_cmd[0] == "NOTICE") // <pseudonyme> <texte>
+	  	else if (this->_line_cmd[0] == "NOTICE") // a verifier
 			privMsgCmd();
-    	else if (this->_line_cmd[0] == "OPER")
+    	else if (this->_line_cmd[0] == "OPER") // A FINIR
 			operCmd();
-    	else if (this->_line_cmd[0] == "KILL")
+    	else if (this->_line_cmd[0] == "KILL") // A FAIRE ?
 			killCmd();
-    	else if (this->_line_cmd[0] == "PART"){} //  <canal>{,< canal >}
-    	else if (this->_line_cmd[0] == "TOPIC"){} // <canal> [<sujet>]
-    	else if (this->_line_cmd[0] == "MODE"){} // <canal> {[+|-]|o|p|s|i|t|n|b|v} [<limite>] [<utilisateur>] [<masque de bannissement >]
-		else if (this->_line_cmd[0] == "LIST"){} // [<canal>{,<canal>} [<serveur>]]
-		else if (this->_line_cmd[0] == "INVITE") // <pseudonyme> <canal>
+		else if (this->_line_cmd[0] == "INVITE")
 			inviteCmd();
-		else if (this->_line_cmd[0] == "KICK"){} // <canal> <utilisateur> [<commentaire>]
+		else if (this->_line_cmd[0] == "PART")
+			partCmd();
+    	else if (this->_line_cmd[0] == "TOPIC")
+			topicCmd();
+		else if (this->_line_cmd[0] == "KICK")
+			kickCmd();
+    	else if (this->_line_cmd[0] == "MODE"){}
+			//modeCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{			
 			std::string msg = ":localhost PONG :localhost\r\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);
 		}
 		else if (this->_line_cmd[0] == "WHOIS")
+			return ;
+		else if (this->_line_cmd[0] == "WHO")
 			return ;
 		else if (this->_line_cmd[0] == "NAMES")
 			return ;
