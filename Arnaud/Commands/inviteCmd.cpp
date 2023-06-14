@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 12:07:35 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/07 11:09:08 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 12:04:51 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,22 @@ void	Commands::inviteCmd()
 		this->_msg->ERR_USERONCHANNEL(this->_fd_user, this->_line_cmd[1], this->_line_cmd[2]);
 		return ;
 	}
-	// a rajouter l'erreur pour le mode
+	if (this->_s->getChannel(this->_line_cmd[2])->isOperator(this->_fd_user))
+	{
+		this->_s->getChannel(this->_line_cmd[2])->addUser(this->_s->getClient(this->_line_cmd[1]), this->_s->getClient(this->_line_cmd[1])->get_fd());
+		this->_s->getChannel(this->_line_cmd[2])->addListInv(this->_s->getClient(this->_line_cmd[1])->getNickname());
+		this->_msg->RPL_INVITING(this->_user->getNickname(), this->_user->getUser(), this->_s->getClient(this->_line_cmd[1])->getNickname(), this->_line_cmd[2], this->_fd_user);
+		this->_msg->RPL_INVITE(this->_user->getNickname(), this->_user->getUser(), this->_s->getClient(this->_line_cmd[1])->getNickname(), this->_line_cmd[2], this->_s->getClient(this->_line_cmd[1])->get_fd());
 	
-	msg = ":irc.com 341 RPL_INVITING " + this->_user->getNickname() + " invites you to " + this->_line_cmd[2] + "\r\n";
-	if(send(this->_s->getClient(this->_line_cmd[1])->get_fd(), msg.c_str(), msg.length(), 0) < 0)
-		this->_msg->errorMsg("failed send");
-	msg2 = ":irc.com 341 RPL_INVITING " + this->_line_cmd[1] + " to " + this->_line_cmd[2] + "\r\n";
-	if(send(this->_fd_user, msg2.c_str(), msg2.length(), 0) < 0)
-		this->_msg->errorMsg("failed send");
-	msg3 = ":irc.com 341 RPL_INVITING " + this->_user->getNickname() + " :" + this->_line_cmd[2] + " invited " + this->_line_cmd[1] + " into the channel.\r\n";
-	this->_s->getChannel(this->_line_cmd[2])->sendMsg(-1, msg3);
+		msg = ":" + this->_s->getClient(this->_line_cmd[1])->getNickname() + " JOIN " + this->_line_cmd[2] + "\r\n";
+		this->_s->getChannel(this->_line_cmd[2])->sendMsg(-1, msg);
+		std::string msg2 = ":localhost 353 " + this->_user->getUser() + " = " + this->_line_cmd[2] + " :@" + _user->getNickname() + "\r\n";
+        send(this->_user->get_fd(), msg2.c_str(), msg2.length(), 0);
+	}
+	else
+	{
+		std::cout << "operator NOT" << std::endl;
+		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user);
+		return ;
+	}
 }

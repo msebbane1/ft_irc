@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/07 13:35:25 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 10:14:04 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,14 @@ void		Channel::setTopic(std::string topic)
 	this->_topic = topic;
 }
 
+bool		Channel::topicIsSet()
+{
+	if(this->_topic.empty())
+		return false;
+	else
+		return true;
+}
+
 /*---------------------------------------------------------------------*/
 
 std::string	Channel::getKey()
@@ -255,6 +263,16 @@ void		Channel::setKey(std::string key)
 int	Channel::getSizeMax()
 {
 	return (this->_size_max);
+}
+
+void	Channel::setSizeMax(int size)
+{
+	this->_size_max = size;
+}
+
+void	Channel::setInviteOnly(bool set){
+
+	this->_i_only = set;
 }
 
 /*---------------------------------------------------------------------*/

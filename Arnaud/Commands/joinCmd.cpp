@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/07 13:52:07 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/14 12:03:44 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,43 @@
 
 //---------------------JOIN-------------------//
 
-void	create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key)
+void	Commands::create_oa_join(std::string name_chann, std::string key)
 {
 	std::string	msg;
 	
-	if (cmd->chanExist(name_chann) == false)
+	if (chanExist(name_chann) == false)
 	{
 		Channel	*chan;
 		
 		if (!key.empty())
-			chan = new Channel(name_chann, user, key);
+			chan = new Channel(name_chann, this->_user, key);
 		else
-			chan = new Channel(name_chann, user);
-		s->addListChan(chan);
+			chan = new Channel(name_chann, this->_user);
+		this->_s->addListChan(chan);
 	}
 	else
 	{
-		if (!s->getChannel(name_chann)->getKey().empty() && key != s->getChannel(name_chann)->getKey())
-			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 475);
-		else if (s->getChannel(name_chann)->getSizeMax() != -1 && s->getChannel(name_chann)->nbUserInChan() >= s->getChannel(name_chann)->getSizeMax())
-			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 471);
-		else if (s->getChannel(name_chann)->isBanned(user->getNickname()))
-			m->ERR_CANNOTJOIN(user->get_fd(), name_chann, 474);
+		if (!this->_s->getChannel(name_chann)->getKey().empty() && key != this->_s->getChannel(name_chann)->getKey())
+			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 475);
+		else if (this->_s->getChannel(name_chann)->getSizeMax() != -1 && this->_s->getChannel(name_chann)->nbUserInChan() >= this->_s->getChannel(name_chann)->getSizeMax())
+			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 471);
+		else if (this->_s->getChannel(name_chann)->isBanned(this->_user->getNickname()))
+			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 474);
 		else
-			s->getChannel(name_chann)->addUser(user, user->get_fd());
+			this->_s->getChannel(name_chann)->addUser(this->_user, this->_user->get_fd());
 	}
-	if (!s->getChannel(name_chann)->userIsInChann(user->get_fd()))
+	if (!this->_s->getChannel(name_chann)->userIsInChann(this->_user->get_fd()))
 		return ;
-	Channel*	c = s->getChannel(name_chann);
+	Channel*	c = this->_s->getChannel(name_chann);
 	
-	msg = ":" + user->getNickname() + " JOIN " + name_chann + "\r\n";
+	msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
 	if (c->getTopic().size() < 1)
-		m->RPL_NOTOPIC(c, user->get_fd(), user->getNickname());
+		this->_msg->RPL_NOTOPIC(c, this->_user->get_fd(), this->_user->getNickname());
 	else
-		m->RPL_TOPIC(c, user->get_fd(), user->getNickname());
-	m->RPL_NAMREPLY(c, user->get_fd());
-	m->RPL_ENDOFNAMES(c, user->get_fd(), user->getNickname());
+		this->_msg->RPL_TOPIC(c, this->_user->get_fd(), this->_user->getNickname());
+	this->_msg->RPL_NAMREPLY(c, this->_user->get_fd());
+	this->_msg->RPL_ENDOFNAMES(c, this->_user->get_fd(), this->_user->getNickname());
 }
 
 void	Commands::joinCmd()
@@ -75,9 +75,9 @@ void	Commands::joinCmd()
 			else
 			{
 				if (!key_empty && !list_key[i].empty())
-					create_oa_join(list_chan[i], this, this->_s, this->_msg, this->_user, list_key[i]);
+					create_oa_join(list_chan[i], list_key[i]);
 				else
-					create_oa_join(list_chan[i], this, this->_s, this->_msg, this->_user, "");
+					create_oa_join(list_chan[i], "");
 			}
 			i++;
 		}
@@ -89,11 +89,9 @@ void	Commands::joinCmd()
 		else
 		{
 			if (!key_empty)
-			{
-				create_oa_join(this->_line_cmd[1], this, this->_s, this->_msg, this->_user, this->_line_cmd[2]);
-			}
+				create_oa_join(this->_line_cmd[1], this->_line_cmd[2]);
 			else
-				create_oa_join(this->_line_cmd[1], this, this->_s, this->_msg, this->_user, "");
+				create_oa_join(this->_line_cmd[1], "");
 		}
 	}
 }
