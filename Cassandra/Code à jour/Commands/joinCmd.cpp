@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   joinCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 10:52:25 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 17:39:26 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	Commands::create_oa_join(std::string name_chann, Commands *cmd, Server *s, 
 	if (cmd->chanExist(name_chann) == false)
 	{
 		Channel	*chan;
-		
 		if (!key_empty)
 			chan = new Channel(name_chann, user, key);
 		else
@@ -81,7 +80,7 @@ void	Commands::joinCmd()
 {
 	bool	is_empty = true;
 
-	if (!this->_line_cmd[2].empty())
+	if (this->_line_cmd[2].empty() == false) //modif pour ordi maison 
 			is_empty = false;
 	if (this->_line_cmd.size() == 1)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
@@ -125,8 +124,9 @@ void	Commands::joinCmd()
 			this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 			return;
 		}
-		if (!is_empty)
+		if (is_empty == true) //modif pour ordi maison 
 			create_oa_join(this->_line_cmd[1], this, this->_s, this->_msg, this->_user, this->_line_cmd[2]);
+
 		else
 			create_oa_join(this->_line_cmd[1], this, this->_s, this->_msg, this->_user, "");
 	}

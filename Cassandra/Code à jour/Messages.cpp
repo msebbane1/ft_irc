@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 14:17:10 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 17:34:20 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,9 +332,21 @@ essaie sur serveur irssi:
 
 void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
 {
-	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + std::to_string(maskBanned) + "\r\n";
+	std::cout << maskBanned << std::endl;
+	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + ft_tostring(maskBanned) + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 	RPL_ENDOFBANLIST(channel, fd);
+}
+
+std::string		Messages::ft_tostring(int num)
+{
+	std::string Result;          // string which will contain the result
+	std::ostringstream convert;   // stream used for the conversion
+
+	convert << num;      // insert the textual representation of 'Number' in the characters in the stream
+	Result = convert.str();
+	
+	return Result;
 }
 

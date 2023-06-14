@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 12:48:11 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 17:33:45 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,6 @@ class Messages
 	void	ERR_BANNEDFROMCHAN(int fd, std::string channel);
 	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
 	void	RPL_BANLIST(int fd, std::string channel, int maskBanned);
+	//utils
+	std::string					ft_tostring(int num);
 };
