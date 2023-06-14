@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 16:29:42 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 10:57:26 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,12 +250,19 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 		mode = "(+k)\r\n";
 	}
 	
-	std::string	msg = ":irc.com " + /*err +*/ type + chann + " :Cannot join channel " + mode;
+	std::string	msg = ":irc.com " + /*err +*/ type + chann + " :Cannot join channel " + mode; // to_string interdit c++98
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
 
 //========== ERROR ============//
+
+void	Messages::ERR_BANNEDFROMCHAN(int fd, std::string channel)
+{
+	std::string msg = ":localhost 474 ERR_BANNEDFROMCHAN :" + channel + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
 
 void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) //442
 {

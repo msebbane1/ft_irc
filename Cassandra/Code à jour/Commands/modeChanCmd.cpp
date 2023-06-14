@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/13 17:01:25 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 10:35:44 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	Commands::modeOnChannel(){
 				break;
 			
 			case 'b' :
-				banUser();//ban user : user can see ths channel but can't talk
+				banUser();
 				break;
 		
 			default:
@@ -153,11 +153,9 @@ void	Commands::banUser()
 	// faire fonction pour verifier si le user is in chan
 	if(this->getIndice() == '+'){
 		this->_s->getChannel(this->_line_cmd[1])->banUser(this->_line_cmd[3]);
-		this->_s->getChannel(this->_line_cmd[1])->addBanUserNotParted(this->_line_cmd[3]);
 	}
 	else if (this->getIndice() == '-'){
 		this->_s->getChannel(this->_line_cmd[1])->unbanUser(this->_line_cmd[3]);
-		this->_s->getChannel(this->_line_cmd[1])->removeBanUserNotParted(this->_line_cmd[3]);
 	}
 }
 //comportement a changer pour ban : le user ban doit recevoir les message mais ne peux plus les envoyer tant qu'il ne quitte pas le channel

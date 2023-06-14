@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 16:59:07 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/14 10:38:24 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	Channel::banUser(std::string username)
 	{
 		if (it->second->getUser() == username || it->second->getNickname() == username)
 		{
-			this->_list_user_co.erase(it->first);
+			//this->_list_user_co.erase(it->first);
 			this->_list_banned.push_back(it->second->getNickname());
 			std::cout << "User " << it->second->getNickname() << " has been ban from " << this->_name << std::endl; 
 			return ;
@@ -296,20 +296,5 @@ void	Channel::unbanUser(std::string username)
 				return ;
 			}
 		}
-	}
-}
-
-void	Channel::addBanUserNotParted(std::string nickname)
-{
-	this->_listBannedNotParted.push_back(nickname);
-}
-
-void	Channel::removeBanUserNotParted(std::string nickname)
-{
-	std::vector<std::string>::iterator	it = this->_listBannedNotParted.begin();
-	for(; it != this->_listBannedNotParted.begin(); it++)
-	{
-		if(*it == nickname)
-			this->_listBannedNotParted.erase(it);
 	}
 }
