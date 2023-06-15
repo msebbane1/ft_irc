@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:27:17 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/15 13:50:27 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,4 +313,9 @@ bool	Channel::isOperator(std::string nickname)
 			return true;
 	}
 	return false;
+}
+
+Client*	Channel::getCreator()
+{
+	return (this->_creator);
 }

@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:24:20 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/15 13:49:57 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,7 @@ class Channel
 		void						setTopicProtected(bool protect);
 
 		std::vector<std::string>	getListUserBanned() const;
+
+		Client*						getCreator();
 
 };
