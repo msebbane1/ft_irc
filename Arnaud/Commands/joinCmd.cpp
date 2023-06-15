@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 12:03:44 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:43:00 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	
 	msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
-	if (c->getTopic().size() < 1)
-		this->_msg->RPL_NOTOPIC(c, this->_user->get_fd(), this->_user->getNickname());
+	if (!c->topicIsSet())
+		this->_msg->RPL_NOTOPIC(c);
 	else
-		this->_msg->RPL_TOPIC(c, this->_user->get_fd(), this->_user->getNickname());
+		this->_msg->RPL_TOPIC(c);
 	this->_msg->RPL_NAMREPLY(c, this->_user->get_fd());
 	this->_msg->RPL_ENDOFNAMES(c, this->_user->get_fd(), this->_user->getNickname());
 }

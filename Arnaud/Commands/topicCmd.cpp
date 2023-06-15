@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:11 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 13:42:21 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:37:41 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ void	Commands::topicCmd()
 			_s->getChannel(this->_line_cmd[1])->setTopic(joinMessages());
 		}
 		if(_s->getChannel(this->_line_cmd[1])->topicIsSet() && this->_line_cmd[2] != "::")
-			this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1]), this->_fd_user, this->_user->getNickname()); // peut etre revoir le msg
+			this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1])); // peut etre revoir le msg
 		else
-			this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]), this->_fd_user, this->_user->getNickname());
+			this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
 	}
 	else
-		this->_msg->ERR_NOTONCHANNEL(this->_fd_user, this->_line_cmd[1]);
+		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);
 }
