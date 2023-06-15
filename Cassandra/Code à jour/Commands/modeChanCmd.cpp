@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/15 12:50:59 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/15 13:35:39 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void	Commands::setChanKey(){
 void	Commands::setChanOperator(){
 	// faire fonction pour verifier si le userr is in chan
 	if(this->getIndice() == '+')
-		this->_s->getChannel(this->_line_cmd[1])->addOperator(this->_user, this->_fd_user);// donner le Client et son fd;
+		this->_s->getChannel(this->_line_cmd[1])->addOperator(this->_s->getClient(this->_line_cmd[3]), this->_s->getClient(this->_line_cmd[3])->get_fd());// donner le Client et son fd;
 	else if (this->getIndice() == '-'){
 		if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // ERR_CHANOPRIVSNEEDED 482
 			this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user);
