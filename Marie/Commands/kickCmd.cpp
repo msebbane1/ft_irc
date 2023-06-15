@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:25 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 12:22:32 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:36:05 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	Commands::kickCmd()
 			if (_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user))
 			{
 				std::cout << "operator ok" << std::endl;
-				if (_s->clientExist(this->_line_cmd[2]) && _s->getChannel(this->_line_cmd[1])->userIsInChann(this->_s->getClient(this->_line_cmd[2])->get_fd()) == true && this->_fd_user != _user->get_fd()) // et qui est dans le chan
+				if (_s->clientExist(this->_line_cmd[2]) && _s->getChannel(this->_line_cmd[1])->userIsInChann(this->_s->getClient(this->_line_cmd[2])->get_fd()) == true) // et qui est dans le chan
 				{
 					std::cout << "operator ok22" << std::endl;
 					if(this->_line_cmd[2] == this->_s->getClient(this->_line_cmd[2])->getNickname()) //verifier a ce quíl ne se remove pas lui meme

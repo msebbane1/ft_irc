@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 12:21:12 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:32:41 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,13 @@
 	RPL_NAMREPLY (353)
 	RPL_ENDOFNAMES (366)
 */
+
 //---------------------JOIN-------------------//
 
 void	Commands::create_oa_join(std::string name_chann, std::string key)
 {
 	std::string	msg;
-	bool		key_empty = true;
 	
-	if (!key.empty())
-		key_empty = false;
 	if (chanExist(name_chann) == false)
 	{
 		Channel	*chan;
@@ -61,11 +59,10 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	
 	msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
-	if(_s->getChannel(this->_line_cmd[1])->topicIsSet())
-		this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1]));
+	if (!c->topicIsSet())
+		this->_msg->RPL_NOTOPIC(c);
 	else
-		this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
-
+		this->_msg->RPL_TOPIC(c);
 	this->_msg->RPL_NAMREPLY(c, this->_user->get_fd());
 	this->_msg->RPL_ENDOFNAMES(c, this->_user->get_fd(), this->_user->getNickname());
 }
@@ -112,3 +109,4 @@ void	Commands::joinCmd()
 		}
 	}
 }
+

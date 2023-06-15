@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 14:24:12 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:39:37 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	Commands::privMsgCmd()
 			}
 			else
 			{
-				this->_msg->ERR_CANNOTSENDTOCHAN(this->_line_cmd[1], this->_fd_user);
+				this->_msg->ERR_CANNOTSENDTOCHAN(this->_line_cmd[1], this->_fd_user); // a changer
 				return ;
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:11:23 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 12:29:33 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 13:09:50 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,22 @@ void	Commands::operCmd()
 {
 	if (this->_line_cmd.size() != 3)
 	{
-		_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
+		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		return;
 	}
 	if (this->_line_cmd[1] == this->_user->getNickname())
 	{
-		std::cout << "s===" << std::endl;
 		if (this->_line_cmd[2] != this->_s->getPasswordOper())
 		{
-			_msg->ERR_PASSWDMISMATCH(this->_fd_user);
+			this->_msg->ERR_PASSWDMISMATCH(this->_fd_user);
 			return;
 		}
 		else
-			_msg->RPL_YOUREOPER(_user->getNickname(), this->_fd_user);
-		/* a rajouter pour mode les acces operateur au client
-		if (getIrcOperator )
-			setIrcOperator
-		*/
+		{
+			if(this->_s->getClient(this->_line_cmd[1])->getIRCOperator() == false)
+				this->_s->getClient(this->_line_cmd[1])->setIRCOperator(true);
+			this->_msg->RPL_YOUREOPER(_user->getNickname(), this->_fd_user);
+		}
 	}
 	
 }
