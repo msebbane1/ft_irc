@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 12:07:35 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/13 14:50:30 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:58:53 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ void	Commands::inviteCmd()
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		return ;
 	}
+	if(_s->clientExist(this->_line_cmd[1]) == false)
+	{
+		this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
+		return ;
+	}
 	if (!chanExist(this->_line_cmd[2]))
 	{
 		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[2], this->_fd_user);
@@ -50,8 +55,6 @@ void	Commands::inviteCmd()
 	}
 	if (_s->getChannel(this->_line_cmd[2])->isOperator(this->_fd_user))
 	{
-		_s->getChannel(this->_line_cmd[2])->addUser(this->_s->getClient(this->_line_cmd[1]), this->_s->getClient(this->_line_cmd[1])->get_fd());
-		_s->getChannel(this->_line_cmd[2])->addListInv(this->_s->getClient(this->_line_cmd[1])->getNickname());
 		this->_msg->RPL_INVITING(_user->getNickname(), _user->getUser(), this->_s->getClient(this->_line_cmd[1])->getNickname(), this->_line_cmd[2], _fd_user);
 		this->_msg->RPL_INVITE(_user->getNickname(), _user->getUser(), this->_s->getClient(this->_line_cmd[1])->getNickname(), this->_line_cmd[2], this->_s->getClient(this->_line_cmd[1])->get_fd());
 	
@@ -59,6 +62,7 @@ void	Commands::inviteCmd()
 		_s->getChannel(this->_line_cmd[2])->sendMsg(-1, msg);
 		std::string msg2 = ":localhost 353 " + _user->getUser() + " = " + this->_line_cmd[2] + " :@" + _user->getNickname() + "\r\n";
         send(_user->get_fd(), msg2.c_str(), msg2.length(), 0);
+		_s->getChannel(this->_line_cmd[2])->addListInv(this->_s->getClient(this->_line_cmd[1])->getNickname());
 	}
 	else
 	{

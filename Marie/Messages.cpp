@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 14:39:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:13:31 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,34 +258,24 @@ void	Messages::RPL_TOPIC(Channel *c) // 332
 //==============================================JOIN==================================================///
 
 
-void	Messages::RPL_NAMREPLY(Channel *c) // 353
+void	Messages::RPL_NAMREPLY(Channel *c, int fd) // 353
 {
 	std::map<int, Client*>				map = c->getListUserCo();
-	int									i = 0;
 	
-	std::string	msg = ":irc.com 353 RPL_NAMREPLY " + c->getName() + " :[USERS " + c->getName() + "]\r\n";
+	std::string	msg = ":irc.com 353 " + c->getCreator()->getUser() + " = " + c->getName() + " :@" + c->getCreator()->getNickname() + " ";
 	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
-	{
-		std::string mode;
-		if (c->isOperator(it->first) == true)
-			mode = "+";
-		else
-			mode = " ";
-		msg += "[" + mode + it->second->getNickname() + "] ";
-		i++;
-		if (i % 4 == 0)
-			msg += "\r\n";
-	}
+		msg += it->second->getNickname() + " ";
 	msg += "\r\n";
-	c->sendMsg(-1, msg);
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
 }
 
-void	Messages::RPL_ENDOFNAMES(Channel *c) // 366
+void	Messages::RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname) // 366
 {
-	std::string	msg = ":irc.com 366 RPL_ENDOFNAMES " + c->getName() + " :End of /NAMES list\r\n";
-	c->sendMsg(-1, msg);
+	std::string	msg = ":irc.com 366 " + nickname + " " + c->getName() + " :End of /NAMES list\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
 }
-
 void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 474, 475
 {
 	std::string	mode;
@@ -331,3 +321,58 @@ void		Messages::displayMsgOnServer(std::string const &buf, int user_talk)
 		return;
     std::cout << "|User: "<< user_talk << "| Message send :" << buf ;
 }
+
+
+/*368 RPL_ENDOFBANLIST
+Paramètres : <chan>
+Réponse à : MODE 
+MESSAGE: -!- #ko End of Channel Ban List
+
+Cette réponse indique que tous les masques d'utilisateurs bannis du chan ont été indiqués.*/
+//affiche le message avec irc.com dans certain cas
+void	Messages::RPL_ENDOFBANLIST(std::string channel, int fd) //368
+{//ne doit pas afficher irc.com
+	std::string	msg = ":irc.com 368 RPL_ENDOFBANLIST " + channel + " :End of Channel Ban List\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+//unknown mode
+void	Messages::ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd) // 501
+{
+	std::string msg = ":irc.com 501 ERR_UMODUUNKNOWNFLAG " + cmd + " :Unknown mode\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+/*367 RPL_BANLIST
+Paramètres : <chan> <masque d'utilisateur banni>
+Réponse à : MODE
+
+Cette réponse indique un masque d'utilisateur qui est banni du chan.
+essaie sur serveur irssi:
+2 - #ko: ban Guest22028!*@* [by clecat!~clecat@157a-3894-3542-9a96-157a.129.62.ip, 14 
+          secs ago]
+-!- 1 - #ko: ban newuser!*@* [by clecat!~clecat@157a-3894-3542-9a96-157a.129.62.ip, 40 secs 
+          ago]
+-!- #ko End of Channel Ban List*/
+
+void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
+{
+	std::cout << maskBanned << std::endl;
+	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + ft_tostring(maskBanned) + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+	RPL_ENDOFBANLIST(channel, fd);
+}
+
+std::string		Messages::ft_tostring(int num)
+{
+	std::string Result;          // string which will contain the result
+	std::ostringstream convert;   // stream used for the conversion
+
+	convert << num;      // insert the textual representation of 'Number' in the characters in the stream
+	Result = convert.str();
+	
+	return Result;
+}
+

@@ -6,12 +6,14 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/12 11:05:58 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 10:23:00 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+# include <sstream>
+#include <cstring>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>

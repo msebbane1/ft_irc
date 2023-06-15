@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 12:35:35 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:20:09 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,24 +59,31 @@ class Commands
 		void						partCmd();
 		void						topicCmd();
 
-		//======================== Mode Command =====================//
-		/*
-		void						modeCmd(); // fonction dispatch option mode
+		//========================== MODE ==========================//
+		void						modeCmd(); // fonction dispatch for user or channel
+		void						modeOnUser(); // gestion mode on user
+		void						modeOnChannel(); // gestion mode on Channgel
+		//========================= MODE ON USER ==================//
+		void						setInvisibleMode();// mode on user
+		//========================= MODE ON CHANNEL================//
 		void						setChanInviteOnlyMode(); //i
 		void						setChanRestrictTopic();//t
 		void						setChanKey();//k
 		void						setChanOperator();//o
 		void						setChanLimit();//l
+		void						banUser();//b
 		int							verifModeParam(); // check param
 		int							countOption();//compte le nb d'optioin de mode
 		char						findIndice();
-		void						splitOption();
-		int							ft_stoi( std::string & s );
-		*/
+		void						splitOption(); //gestion multioption
+		int							ft_stoi( std::string & s ); //cast string en int
+		void						printListCmd();
+		int							verifUser();
+		
 		//======================== COMMANDS UTILS ======================//
 		
 		std::string					joinReason();
 		std::string					joinMessages();
 		void						leaveMultiChan();
-		void						create_oa_join(std::string name_chann, Commands *cmd, Server *s, Messages *m, Client *user, std::string key);
+		void						create_oa_join(std::string name_chann, std::string key);
 };

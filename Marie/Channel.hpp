@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/10 13:59:40 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:15:28 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channel
 		std::string					_password;
 		int							_size_max;
 		bool						_i_only;
+		bool						_topicProtected; //topic
 		std::vector<std::string>	_list_inv;
 		
 	public:
@@ -41,13 +42,19 @@ class Channel
 		Channel*	operator=(Channel const *c);
 
 		void	banUser(std::string username);
+			//--------------AJOUT Cassandra --------------/
+		void	unbanUser(std::string username);
+		bool	isBanned(std::string nickname);
+		bool	userIsInChan(std::string nickname); // ajouter pour mode
+		// int		getFdUserBan(std::string nickname); // avoir le fd pour RPL_BANLIST
+	//--------------------------------------------/
 		void	displayUsers();
 		void	displayOp();
 		bool	userIsInChann(int user);
 		void	sendMsg(int user_talk, std::string msg);
 		bool	isOperator(int fd);
 		int		nbUserInChan();
-		bool	isBanned(std::string nickname);
+		//bool	isBanned(std::string nickname);
 		bool	isInv(std::string nickname);
 
 		std::string					getName();
@@ -72,8 +79,16 @@ class Channel
 		void						setSizeMax(int size);
 
 		void						setInviteOnly(bool set);
+		bool						getInviteOnly() const;
 
 		std::vector<std::string>	getListInv();
 		void						addListInv(std::string nickname);
 		void						removeListInv(std::string nickname);
+
+		bool						getTopicProtected() const;
+		void						setTopicProtected(bool protect);
+
+		std::vector<std::string>	getListUserBanned() const;
+
+		Client*						getCreator();
 };

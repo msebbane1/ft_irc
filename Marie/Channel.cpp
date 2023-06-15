@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/10 13:59:32 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:14:59 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,10 +270,6 @@ void	Channel::setSizeMax(int size)
 	this->_size_max = size;
 }
 
-void	Channel::setInviteOnly(bool set){
-
-	this->_i_only = set;
-}
 
 /*---------------------------------------------------------------------*/
 
@@ -300,4 +296,66 @@ void						Channel::removeListInv(std::string nickname)
 			}
 		}
 	}
+}
+
+/*---------------------------------------------------------------------*/
+
+Client*	Channel::getCreator()
+{
+	return (this->_creator);
+}
+
+/*---------------------------------------------------------------------*/
+
+bool	Channel::getInviteOnly() const
+{
+	return this->_i_only;
+}
+
+void	Channel::setInviteOnly(bool set){
+
+	this->_i_only = set;
+}
+
+bool	Channel::getTopicProtected() const
+{
+	return this->_topicProtected;
+}
+
+void	Channel::setTopicProtected(bool protect)
+{
+	this->_topicProtected = protect;
+}
+
+bool	Channel::userIsInChan(std::string nickname)
+{
+	std::map<int, Client *>::iterator	it = this->_list_user_co.begin();
+	for(; it != this->_list_user_co.end(); it++)
+	{
+		if(nickname == it->second->getNickname())
+			return true;
+	}
+	return false;
+}
+
+void	Channel::unbanUser(std::string username)
+{
+	if(isBanned(username))
+	{
+		std::vector<std::string>::iterator	it = this->_list_banned.begin();
+		for(; it != this->_list_banned.end(); it++)
+		{
+			if(username == *it)
+			{
+				this->_list_banned.erase(it);
+				std::cout << "User " << username << " has been unban from " << this->_name << std::endl;
+				return ;
+			}
+		}
+	}
+}
+
+std::vector<std::string>	Channel::getListUserBanned() const
+{
+	return this->_list_banned;
 }

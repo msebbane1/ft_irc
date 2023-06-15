@@ -101,3 +101,27 @@ bool	Client::isConnected()
 	else
 		return false;
 }
+
+//========= For MODE Invisible ==========//
+
+bool	Client::getInvisible() const
+{
+	return this->_isInvisible;
+}
+
+void	Client::setInvisible(bool mode)
+{
+	this->_isInvisible = mode;
+}
+
+//========= For MODE Operator ==========//
+
+bool	Client::getIRCOperator() const
+{
+	return this->_isIRCOperator;
+}
+
+void	Client::setIRCOperator(bool ircop)
+{
+	this->_isIRCOperator = ircop;
+}

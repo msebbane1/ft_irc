@@ -6,13 +6,14 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:11:23 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 11:15:48 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:29:33 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
 /*
+	/connect localhost 8080 oui
 	ERR_NEEDMOREPARAMS (461)
 	ERR_PASSWDMISMATCH (464)
 	ERR_NOOPERHOST (491)
@@ -33,6 +34,7 @@ void	Commands::operCmd()
 	}
 	if (this->_line_cmd[1] == this->_user->getNickname())
 	{
+		std::cout << "s===" << std::endl;
 		if (this->_line_cmd[2] != this->_s->getPasswordOper())
 		{
 			_msg->ERR_PASSWDMISMATCH(this->_fd_user);

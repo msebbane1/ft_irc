@@ -6,13 +6,14 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:25 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 15:08:01 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:22:32 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
 /*
+	/connect localhost 8080 oui
 	ERR_NEEDMOREPARAMS (461)
 	ERR_NOSUCHCHANNEL (403)
 	ERR_NOTONCHANNEL (442)

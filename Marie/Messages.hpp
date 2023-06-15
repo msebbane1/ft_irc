@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 14:34:44 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:14:10 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ class Messages
 	void	RPL_YOUREOPER(std::string nick, int fd);
 	void	RPL_LEFTCHANNEL(std::string nick, std::string user, std::string arg, int fd);
 	void 	RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd);
-	
-
 	void	RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd);
 	void	RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd);
 	void	RPL_NOTOPIC(Channel *c);
@@ -71,12 +69,18 @@ class Messages
 	void	RPL_QUIT(std::string nick, std::string user, std::string reason, int fd);
 
 	//============ERR & RPL JOIN=========///
-	void	RPL_NAMREPLY(Channel *c);
-	void	RPL_ENDOFNAMES(Channel *c);
+	void	RPL_NAMREPLY(Channel *c, int fd);
+	void	RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname);
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
 
 	//============ERR & RPL INVITE=========///
 	void	ERR_NOTONCHANNEL(int fd, std::string chann);
 	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
+
+	void	ERR_BANNEDFROMCHAN(int fd, std::string channel);
+	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
+	void	RPL_BANLIST(int fd, std::string channel, int maskBanned);
+	//utils
+	std::string					ft_tostring(int num);
 
 };

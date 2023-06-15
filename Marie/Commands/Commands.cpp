@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 12:37:02 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 09:59:34 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ void	Commands::exec_cmd()
 			topicCmd();
 		else if (this->_line_cmd[0] == "KICK")
 			kickCmd();
-    	else if (this->_line_cmd[0] == "MODE"){}
-			//modeCmd();
+    	else if (this->_line_cmd[0] == "MODE")
+			modeCmd();
 		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
 		{
 			std::string msg = ":localhost PONG :localhost\r\n";
