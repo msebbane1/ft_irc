@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:25 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 13:41:45 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:08:27 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	Commands::kickCmd()
 			}
 		}
 		else
-			_msg->ERR_NOTONCHANNEL(this->_fd_user, this->_line_cmd[1]);
+			_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);
 	}
 	else
 		_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);

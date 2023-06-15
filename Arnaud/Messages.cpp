@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 13:43:43 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:39:26 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,6 @@ void Messages::ERR_NOTEXTTOSEND(int fd) // 412
 		errorMsg("failed send");
 }
 
-
-
 void Messages::ERR_UNKNOWNCOMMAND(std::string cmd, int fd) // 421
 {
 	std::string msg = ":irc.com 421 ERR_UNKNOWNCOMMAND " + cmd + " :Unknown command\r\n";
@@ -149,18 +147,16 @@ void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int f
 
 //==============================================ERROR & REPLY JOIN==================================================///
 
-void	Messages::RPL_NOTOPIC(Channel *c, int fd, std::string nickname) // 331
+void	Messages::RPL_NOTOPIC(Channel *c) // 331
 {
-	std::string	msg = ":irc.com 332 " + nickname + " " + c->getName() + " :No topic is set\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
+	std::string	msg = ":irc.com 331 RPL_NOTOPIC " + c->getName() + " :No topic is set\r\n";
+	c->sendMsg(-1, msg);
 }
 
-void	Messages::RPL_TOPIC(Channel *c, int fd, std::string nickname) // 332
+void	Messages::RPL_TOPIC(Channel *c) // 332
 {
-	std::string	msg = ":irc.com 332 " + nickname + " " + c->getName() + " :" + c->getTopic() + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
+	std::string	msg = ":irc.com 332 RPL_TOPIC " + c->getName() + " :" + c->getTopic() + "\r\n";
+	c->sendMsg(-1, msg);
 }
 
 void Messages::RPL_YOUREOPER(std::string nick, int fd) // 381
@@ -271,12 +267,13 @@ void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 4
 
 //==============================================ERROR & REPLY INVITE==================================================///
 
-void	Messages::ERR_NOTONCHANNEL(int fd, std::string chann) // 442
+void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) //442
 {
-	std::string	msg = ":irc.com 442 ERR_NOTONCHANNEL " + chann + " :You're not on that channel\r\n";
+	std::string msg = ":localhost 442 ERR_NOTONCHANNEL " + nick + " " + channel + " :You're not on that channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
+
 
 void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) // 443
 {

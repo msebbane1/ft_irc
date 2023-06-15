@@ -6,13 +6,13 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/14 10:18:00 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:28:38 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server() : _passwordOper("password")
+Server::Server()
 {
 }
 
@@ -33,6 +33,7 @@ std::vector<int>		Server::getFdUsersDc()
 }
 
 /*--------------------------------------------------------*/
+
 std::string				Server::getPassword()
 {
     return (this->_password);
@@ -46,6 +47,28 @@ std::string				Server::getPasswordOper()
 void					Server::setPassword(std::string pwd)
 {
     this->_password = pwd;
+}
+
+/*--------------------------------------------------------*/
+
+void	Server::setConfig(std::string param) 
+{
+	std::ifstream	ifs(param);
+	std::string		temp;
+	size_t			pos;
+
+	if (!ifs.is_open())
+	{
+		std::cout << "Error: cannot open file conf" << std::endl;
+		exit(1);
+	}
+	while (std::getline(ifs, temp))
+	{
+		if (temp.compare("password") == 0)
+			break;
+	}
+	pos = temp.find("=");
+	this->_passwordOper = temp.substr(pos + 2, temp.length());
 }
 
 /*--------------------------------------------------------*/

@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 12:07:35 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/14 12:04:51 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:44:19 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	Commands::inviteCmd()
 	}
 	if (!this->_s->getChannel(this->_line_cmd[2])->userIsInChann(this->_fd_user))
 	{
-		this->_msg->ERR_NOTONCHANNEL(this->_fd_user, this->_line_cmd[2]);
+		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[2], this->_fd_user);
 		return ;
 	}
 	if (this->_s->getChannel(this->_line_cmd[2])->userIsInChann(this->_s->getClient(this->_line_cmd[1])->get_fd()))

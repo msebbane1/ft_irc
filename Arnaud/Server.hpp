@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/14 10:21:03 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:28:56 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <fcntl.h>
 #include <vector>
+#include <fstream>
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "Messages.hpp"
@@ -59,6 +60,7 @@ class Server
 		int							received(char *buffer, int user_talk);
 		void						connectToClients(int user_talk, std::string buf);
 		void 						connect(int user_talk, std::string buf);
+		void						setConfig(std::string str);
 		
 		//==========================Utils===========================//
 		void						sendHistoric(int client_fd);
