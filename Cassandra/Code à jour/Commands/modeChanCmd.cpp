@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeChanCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/14 17:47:17 by student          ###   ########.fr       */
+/*   Updated: 2023/06/15 12:50:59 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ void	Commands::modeOnChannel(){
 
 	if(verifModeParam() == 1)
 		return;
-	std::cout << "after verif Mode Param" << std::endl;
-	std::cout << "indice: " << getIndice() <<std::endl;
 	if(getIndice() == '\0')
 		return;
 	std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo(); //mettre ailleur sd car affiche message 2 fois
@@ -60,7 +58,7 @@ void	Commands::modeOnChannel(){
 				break;
 			
 			case 'l' :
-				setChanLimit(); //mode/#ko [+l 30] by clecat
+				setChanLimit();
 				break;
 			
 			case 'b' :
@@ -77,28 +75,29 @@ void	Commands::modeOnChannel(){
 
 int		Commands::verifUser()
 {
-	//std::cout << "dans verifUser" << std::endl;
 	std::vector<char>::iterator	it = this->_optionList.begin();
 	for(; it != this->_optionList.end(); it++)
 	{
 		char	option = *it;
-		//std::cout << "option: " << option << std::endl;
 		if(option == 'o')
 		{
-			//std::cout << "dans le if o" <<std::endl;
 			if(this->_line_cmd.size() == 3) //ajouter condition si pas de user donner ignorer
 				return 1;
-			if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]))//verif if user in chan for mode b/o
+			if(getIndice() == '+' && this->_line_cmd.size() != 3)
 			{
-				this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
-				this->_msg->ERR_USERNOTINCHANNEL(this->_line_cmd[3], this->_line_cmd[1], this->_fd_user);
-				return 1;
+				std::cout << "isOperator: " << this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_line_cmd[3]) << std::endl;
+				if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]))//verif if user in chan for mode b/o
+				{
+					this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
+					this->_msg->ERR_USERNOTINCHANNEL(this->_line_cmd[3], this->_line_cmd[1], this->_fd_user);
+					return 1;
+				}
+				else if(this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]) && this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_line_cmd[3]) == true)
+					return 1;
 			}
 		}
 		else if(option == 'b')
 		{
-			// std::cout << "dans le if b" <<std::endl;
-			// std::cout << "size: " << this->_line_cmd.size() << std::endl;
 			if(this->_line_cmd.size() == 3)
 			{
 				if(this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().size() == 0){
@@ -110,8 +109,7 @@ int		Commands::verifUser()
 					std::vector<std::string>::iterator	it = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().begin();
 					for(; it != this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().end(); it++)
 					{
-						int	maskbanned = this->_s->getClient(*it)->get_fd() ;
-						this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1], maskbanned);
+						this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1]);
 					}
 					return 1;
 				}
