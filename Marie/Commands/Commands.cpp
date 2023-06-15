@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 09:59:34 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 13:43:38 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,16 @@ void	Commands::exec_cmd()
 			userCmd();
 		else if (this->_line_cmd[0] == "NICK")
 			nickCmd();
-		else if (this->_line_cmd[0] == "PRIVMSG") // a finir a cause d'un petit msg en plus
+		else if (this->_line_cmd[0] == "PRIVMSG")
 			privMsgCmd();	
     	else if (this->_line_cmd[0] == "JOIN")
 			joinCmd();
-		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC UN MSG
+		else if (this->_line_cmd[0] == "QUIT")
 			quitCmd();
-	  	else if (this->_line_cmd[0] == "NOTICE") // a verifier
+	  	else if (this->_line_cmd[0] == "NOTICE")
 			privMsgCmd();
-    	else if (this->_line_cmd[0] == "OPER") // A FINIR
+    	else if (this->_line_cmd[0] == "OPER")
 			operCmd();
-    	else if (this->_line_cmd[0] == "KILL") // A FAIRE ?
-			killCmd();
 		else if (this->_line_cmd[0] == "INVITE")
 			inviteCmd();
 		else if (this->_line_cmd[0] == "PART")
@@ -67,7 +65,9 @@ void	Commands::exec_cmd()
 			kickCmd();
     	else if (this->_line_cmd[0] == "MODE")
 			modeCmd();
-		else if (this->_line_cmd[0] == "PING") //<serveur1> [<serveur2>]
+		else if (this->_line_cmd[0] == "KILL") // A FAIRE ?
+			killCmd();
+		else if (this->_line_cmd[0] == "PING")
 		{
 			std::string msg = ":localhost PONG :localhost\r\n";
 			send(this->_fd_user, msg.c_str(), msg.size(), 0);

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 12:13:31 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 13:26:32 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 
 void	Messages::ERR_CANNOTSENDTOCHAN(std::string target, int fd) //404
 {
-	std::string msg = ":irc.com 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
+	std::string msg = ":localhost 404 ERR_CANNOTSENDTOCHAN " + target + " :Cannot send to channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
