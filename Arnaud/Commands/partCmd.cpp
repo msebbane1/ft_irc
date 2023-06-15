@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:03:01 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 13:42:41 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:07:52 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	Commands::leaveMultiChan()
 				this->_s->getChannel(channels[i])->removeUser(_user->getNickname());
 			}
 			else
-				this->_msg->ERR_NOTONCHANNEL(this->_fd_user, this->_line_cmd[1]); // verif sur vrai server le msg exact
+				this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user); // verif sur vrai server le msg exact
 		}
 		else
 		{
@@ -86,7 +86,7 @@ void	Commands::partCmd()
 			this->_s->getChannel(this->_line_cmd[1])->removeUser(_user->getNickname());
 		}
 		else
-			this->_msg->ERR_NOTONCHANNEL(this->_fd_user, this->_line_cmd[1]); // verif sur vrai server le msg exact
+			this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user); // verif sur vrai server le msg exact
 	}
 	else
 	{

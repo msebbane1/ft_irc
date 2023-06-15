@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 13:40:24 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:41:44 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ class Messages
 
 	void	RPL_INVITING(std::string nick, std::string user, std::string invited, std::string channel, int fd);
 	void	RPL_INVITE(std::string nick, std::string user, std::string invited, std::string channel, int fd);
-	void	RPL_NOTOPIC(Channel *c, int fd, std::string nickname);
-	void	RPL_TOPIC(Channel *c, int fd, std::string nickname);
+	void	RPL_NOTOPIC(Channel *c);
+	void	RPL_TOPIC(Channel *c);
 	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
 	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
 	void	RPL_QUIT(std::string nick, std::string user, std::string reason, int fd);
@@ -76,6 +76,6 @@ class Messages
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
 
 	//============ERR & RPL INVITE=========///
-	void	ERR_NOTONCHANNEL(int fd, std::string chann);
+	void	ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd);
 	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
 };
