@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 17:33:45 by student          ###   ########.fr       */
+/*   Updated: 2023/06/15 12:18:55 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class Messages
 	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
 	void	ERR_BANNEDFROMCHAN(int fd, std::string channel);
 	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
-	void	RPL_BANLIST(int fd, std::string channel, int maskBanned);
+	void	RPL_BANLIST(int fd, std::string channel/*, int maskBanned*/);
 	//utils
 	std::string					ft_tostring(int num);
 };

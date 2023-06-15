@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 17:34:20 by student          ###   ########.fr       */
+/*   Updated: 2023/06/15 12:14:42 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,10 +330,10 @@ essaie sur serveur irssi:
           ago]
 -!- #ko End of Channel Ban List*/
 
-void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
+void	Messages::RPL_BANLIST(int fd, std::string channel/*, int maskBanned*/) //367
 {
-	std::cout << maskBanned << std::endl;
-	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + ft_tostring(maskBanned) + "\r\n";
+	//std::cout << maskBann << std::endl;
+	std::string	msg = ":irc.com 367 RPL_BANLIST " + channel /*+ ft_tostring(maskBanned) */+ "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 	RPL_ENDOFBANLIST(channel, fd);
@@ -341,10 +341,10 @@ void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
 
 std::string		Messages::ft_tostring(int num)
 {
-	std::string Result;          // string which will contain the result
-	std::ostringstream convert;   // stream used for the conversion
+	std::string Result; // string which will contain the result
+	std::ostringstream convert; // stream used for the conversion
 
-	convert << num;      // insert the textual representation of 'Number' in the characters in the stream
+	convert << num; // insert the textual representation of 'Number' in the characters in the stream
 	Result = convert.str();
 	
 	return Result;
