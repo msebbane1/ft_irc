@@ -47,4 +47,7 @@ class Client
 
 		int 		get_fd();
 		void 		set_fd(int fd);
+
+		//===========BOT==========//
+		bool	containBanWord(std::string str);
 };

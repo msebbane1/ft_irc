@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 10:22:47 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:17:30 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Commands::~Commands()
 
 /*--------------------------------------------------------*/
 
-void	Commands::exec_cmd()
+void	Commands::exec_cmd(Client *bot)
 {
 	std::string	msg;
 
@@ -46,9 +46,9 @@ void	Commands::exec_cmd()
 			nickCmd();
 	//================================CMD CHANNEL OPERATION==============================//
 		else if (this->_line_cmd[0] == "PRIVMSG")
-			privMsgCmd();	
+			privMsgCmd(bot);
     	else if (this->_line_cmd[0] == "JOIN")
-			joinCmd();
+			joinCmd(bot);
 		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC UN MSG
 			quitCmd();
 	  	else if (this->_line_cmd[0] == "NOTICE") // a verifier

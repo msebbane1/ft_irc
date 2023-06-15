@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 11:43:00 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:20:29 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 //---------------------JOIN-------------------//
 
-void	Commands::create_oa_join(std::string name_chann, std::string key)
+void	Commands::create_oa_join(std::string name_chann, std::string key, Client *bot)
 {
 	std::string	msg;
 	
@@ -27,6 +27,8 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 		else
 			chan = new Channel(name_chann, this->_user);
 		this->_s->addListChan(chan);
+		this->_s->getChannel(name_chann)->addUser(bot, bot->get_fd());
+		this->_s->getChannel(name_chann)->addOperator(bot, bot->get_fd());
 	}
 	else
 	{
@@ -42,7 +44,7 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	if (!this->_s->getChannel(name_chann)->userIsInChann(this->_user->get_fd()))
 		return ;
 	Channel*	c = this->_s->getChannel(name_chann);
-	
+
 	msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
 	if (!c->topicIsSet())
@@ -53,7 +55,7 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	this->_msg->RPL_ENDOFNAMES(c, this->_user->get_fd(), this->_user->getNickname());
 }
 
-void	Commands::joinCmd()
+void	Commands::joinCmd(Client *bot)
 {
 	bool	key_empty = true;
 
@@ -75,9 +77,9 @@ void	Commands::joinCmd()
 			else
 			{
 				if (!key_empty && !list_key[i].empty())
-					create_oa_join(list_chan[i], list_key[i]);
+					create_oa_join(list_chan[i], list_key[i], bot);
 				else
-					create_oa_join(list_chan[i], "");
+					create_oa_join(list_chan[i], "", bot);
 			}
 			i++;
 		}
@@ -89,9 +91,9 @@ void	Commands::joinCmd()
 		else
 		{
 			if (!key_empty)
-				create_oa_join(this->_line_cmd[1], this->_line_cmd[2]);
+				create_oa_join(this->_line_cmd[1], this->_line_cmd[2], bot);
 			else
-				create_oa_join(this->_line_cmd[1], "");
+				create_oa_join(this->_line_cmd[1], "", bot);
 		}
 	}
 }

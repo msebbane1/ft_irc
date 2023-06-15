@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 13:33:05 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:18:46 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Commands
 		Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg);
 		~Commands();
 
-		void						exec_cmd();
+		void						exec_cmd(Client *bot);
 
 		bool						chanExist(std::string name_chan);
 		
@@ -51,8 +51,8 @@ class Commands
 		void						passCmd();
 		void						userCmd();
 		void						nickCmd();
-		void						privMsgCmd();
-		void						joinCmd();
+		void						privMsgCmd(Client *bot);
+		void						joinCmd(Client *bot);
 		void						quitCmd();
 		void						operCmd();
 		void						killCmd();
@@ -82,5 +82,5 @@ class Commands
 		std::string					joinReason();
 		std::string					joinMessages();
 		void						leaveMultiChan();
-		void						create_oa_join(std::string name_chann, std::string key);
+		void						create_oa_join(std::string name_chann, std::string key, Client *bot);
 };

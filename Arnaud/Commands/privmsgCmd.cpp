@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 11:52:40 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:31:07 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ std::string	Commands::joinMessages()
 	return(msg);
 }
 
-void	Commands::privMsgCmd()
+void	Commands::privMsgCmd(Client *bot)
 {
 	std::string	msg;
 
@@ -59,7 +59,16 @@ void	Commands::privMsgCmd()
 					return ;
 				}
 				else
-					this->_msg->RPL_PRIVMSGCHAN(this->_user->getNickname(), this->_line_cmd[1], joinMessages(), _s->getChannel(this->_line_cmd[1]), _fd_user);
+				{
+					msg = joinMessages();
+					if (bot->containBanWord(msg))
+					{
+						this->_s->getChannel(this->_line_cmd[1])->banUser(this->_user->getNickname());
+						std::cout << "Cheh " << this->_user->getNickname() << " est ban." << std::endl;
+						return ;
+					}
+					this->_msg->RPL_PRIVMSGCHAN(this->_user->getNickname(), this->_line_cmd[1], msg, _s->getChannel(this->_line_cmd[1]), _fd_user);
+				}
 			}
 			else
 			{

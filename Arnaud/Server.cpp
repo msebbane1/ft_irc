@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:28:38 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/15 15:26:51 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-void	Server::connectToClients(int user_talk, std::string buf)
+void	Server::connectToClients(int user_talk, std::string buf, Client *bot)
 {
 	Messages msg;
 	if (buf.find("\r\n") != std::string::npos)
@@ -219,13 +219,13 @@ void	Server::connectToClients(int user_talk, std::string buf)
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
-	cmd->exec_cmd();
+	cmd->exec_cmd(bot);
 	delete cmd;
 }
 
 /*--------------------------------------------------------*/
 
-void Server::connect(int user_talk, std::string buf)
+void Server::connect(int user_talk, std::string buf, Client *bot)
 {
 	std::string msg;
 	
@@ -237,7 +237,7 @@ void Server::connect(int user_talk, std::string buf)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	connectToClients(user_talk, buf);
+	connectToClients(user_talk, buf, bot);
 }
 
 /*--------------------------------------------------------*/
@@ -329,6 +329,14 @@ void	Server::channDisconnected()
 
 void	Server::serverIrc()
 {
+	Client*	bot = new Client();
+	bot->setNickname("John_Wick");
+	bot->setRealname("John Wick");
+	bot->setUser("jwick");
+	bot->setPassword();
+	bot->set_fd(100);
+	bot->setBot()
+	this->_list_client.insert(std::pair<int, Client*>(100, bot));
 	while (true)
 	{
 		Messages	msg;
@@ -353,7 +361,7 @@ void	Server::serverIrc()
 				if (strncmp(buffer, "", 1) != 0)
 				{
 					int	nb;
-					 
+					
 					msg.displayMsgOnServer(buffer, user_talk);
 					nb = countCharInString(buffer, '\n');
 					if (nb > 1)
@@ -364,12 +372,12 @@ void	Server::serverIrc()
 						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{
-							connect(user_talk, line[i]);
+							connect(user_talk, line[i], bot);
 							i++;
 						}
 					}
 					else
-						connect(user_talk, buffer);
+						connect(user_talk, buffer, bot);
 				}
 			}
 		}
