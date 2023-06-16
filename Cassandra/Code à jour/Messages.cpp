@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 17:34:20 by student          ###   ########.fr       */
+/*   Updated: 2023/06/15 14:08:00 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,32 +194,23 @@ void	Messages::RPL_TOPIC(Channel *c) // 332
 	c->sendMsg(-1, msg);
 }
 
-void	Messages::RPL_NAMREPLY(Channel *c) // 353
+void	Messages::RPL_NAMREPLY(Channel *c, int fd) // 353
 {
 	std::map<int, Client*>				map = c->getListUserCo();
-	int									i = 0;
 	
-	std::string	msg = ":irc.com 353 RPL_NAMREPLY " + c->getName() + " :[USERS " + c->getName() + "]\r\n";
+	std::string	msg = ":irc.com 353 " + c->getCreator()->getUser() + " = " + c->getName() + " :@" + c->getCreator()->getNickname() + " ";
 	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
-	{
-		std::string mode;
-		if (c->isOperator(it->first) == true)
-			mode = "+";
-		else
-			mode = " ";
-		msg += "[" + mode + it->second->getNickname() + "] ";
-		i++;
-		if (i % 4 == 0)
-			msg += "\r\n";
-	}
+		msg += it->second->getNickname() + " ";
 	msg += "\r\n";
-	c->sendMsg(-1, msg);
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
 }
 
-void	Messages::RPL_ENDOFNAMES(Channel *c) // 366
+void	Messages::RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname) // 366
 {
-	std::string	msg = ":irc.com 366 RPL_ENDOFNAMES " + c->getName() + " :End of /NAMES list\r\n";
-	c->sendMsg(-1, msg);
+	std::string	msg = ":irc.com 366 " + nickname + " " + c->getName() + " :End of /NAMES list\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
 }
 
 void	Messages::ERR_CANNOTJOIN(int fd, std::string chann, int err) // 471, 473, 474, 475
@@ -330,10 +321,10 @@ essaie sur serveur irssi:
           ago]
 -!- #ko End of Channel Ban List*/
 
-void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
+void	Messages::RPL_BANLIST(int fd, std::string channel) //367 // ajouter un nbbanni (afficher en mode décroissant)
 {
-	std::cout << maskBanned << std::endl;
-	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + ft_tostring(maskBanned) + "\r\n";
+	//msg = num + channel + "ban" + nickname + "\r\n";
+	std::string	msg = "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 	RPL_ENDOFBANLIST(channel, fd);
@@ -341,10 +332,10 @@ void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
 
 std::string		Messages::ft_tostring(int num)
 {
-	std::string Result;          // string which will contain the result
-	std::ostringstream convert;   // stream used for the conversion
+	std::string Result; // string which will contain the result
+	std::ostringstream convert; // stream used for the conversion
 
-	convert << num;      // insert the textual representation of 'Number' in the characters in the stream
+	convert << num; // insert the textual representation of 'Number' in the characters in the stream
 	Result = convert.str();
 	
 	return Result;

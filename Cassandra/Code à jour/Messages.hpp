@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/14 17:33:45 by student          ###   ########.fr       */
+/*   Updated: 2023/06/15 14:02:47 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ class Messages
 	//============ERR & RPL JOIN=========///
 	void	RPL_NOTOPIC(Channel *c);
 	void	RPL_TOPIC(Channel *c);
-	void	RPL_NAMREPLY(Channel *c);
-	void	RPL_ENDOFNAMES(Channel *c);
+	void	RPL_NAMREPLY(Channel *c, int fd);
+	void	RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname);
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
 
 	//============ERR & RPL INVITE=========///
@@ -73,8 +73,8 @@ class Messages
 	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
 	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
 	void	ERR_BANNEDFROMCHAN(int fd, std::string channel);
-	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
-	void	RPL_BANLIST(int fd, std::string channel, int maskBanned);
+	void	RPL_ENDOFBANLIST(std::string channel, int fd); //end of ban list
+	void	RPL_BANLIST(int fd, std::string channel); //show ban list
 	//utils
 	std::string					ft_tostring(int num);
 };

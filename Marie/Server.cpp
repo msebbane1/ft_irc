@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/10 09:29:39 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:48:22 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,13 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("CAP");
 	this->_command_list.push_back("WHOIS");
 	this->_command_list.push_back("KICK");
-	this->_command_list.push_back("AUTHENTICATE");
 	this->_command_list.push_back("INVITE");
 	this->_command_list.push_back("TOPIC");
 	this->_command_list.push_back("MODE");
-	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
 	this->_command_list.push_back("PART");
+	this->_command_list.push_back("OPER");
+	this->_command_list.push_back("WHO");
 	
 	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		msg.errorMsg("socket failed");

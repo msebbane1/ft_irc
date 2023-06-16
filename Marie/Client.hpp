@@ -18,6 +18,8 @@ class Client
 		std::string	_nickname;
 		std::string	_user;
 		std::string _real_name;
+		bool		_isInvisible;
+		bool		_isIRCOperator;
 		//std::string	_mode;
 
     public :
@@ -47,4 +49,10 @@ class Client
 
 		int 		get_fd();
 		void 		set_fd(int fd);
+
+		bool		getInvisible() const;
+		void		setInvisible(bool mode);
+
+		bool		getIRCOperator() const;
+		void		setIRCOperator(bool ircop);
 };

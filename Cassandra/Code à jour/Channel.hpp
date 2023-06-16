@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/14 13:04:42 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/15 13:49:57 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Channel
 		void	unbanUser(std::string username);
 		bool	isBanned(std::string nickname);
 		bool	userIsInChan(std::string nickname); // ajouter pour mode
-		// int		getFdUserBan(std::string nickname); // avoir le fd pour RPL_BANLIST
+		bool	isOperator(std::string nickname);
 	//--------------------------------------------/
 		void	displayUsers();
 		void	displayOp();
@@ -84,5 +84,7 @@ class Channel
 		void						setTopicProtected(bool protect);
 
 		std::vector<std::string>	getListUserBanned() const;
+
+		Client*						getCreator();
 
 };
