@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:58:17 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/13 14:46:53 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 14:29:25 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	Commands::quitCmd()
 		_msg->RPL_QUIT(_user->getNickname(), _user->getUser(), joinMessages() , this->_fd_user);
 	this->_s->setFdUsersDc(this->_fd_user);
 	if (this->_user->nicknameIsSet() == false)
-		std::cout << "Client " << this->_fd_user << " has been disconnected." << std::endl;
+		std::cout << " >> " << RED << "Client " << this->_fd_user << " has been disconnected." << Color << std::endl;
 	else
-		std::cout << this->_user->getNickname() << " has been disconnected." << std::endl;
+		std::cout << " >> " << RED << this->_user->getNickname() << " has been disconnected." << Color << std::endl;
 }
 

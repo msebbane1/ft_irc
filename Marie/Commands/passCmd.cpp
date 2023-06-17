@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:08:45 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 12:57:52 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 14:30:52 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,17 @@ void	Commands::passCmd()
 		else if (this->_line_cmd[1] == this->_s->getPassword())
 		{
 			this->_user->setPassword();
-			std::cout << "====== Good password! ======\n";
+			std::cout << " >> " << GREEN << "Correct password." << Color << std::endl;
 		}
 		else
 		{
 			this->_msg->ERR_PASSWDMISMATCH(this->_fd_user);
 			this->_user->increment_pass_try();
+			std::cout << " >> " << RED << "Incorrect password..." << Color << std::endl;
 			if (this->_user->get_pass_try() == 3)
 			{
 				this->_s->setFdUsersDc(this->_fd_user);
-				std::cout << "Client: " << this->_fd_user << " has been disconnected." << std::endl;
+				std::cout << " >> " <<  RED << "Client: " << this->_fd_user << " has been disconnected." << Color << std::endl;
 			}
 		}
 	}

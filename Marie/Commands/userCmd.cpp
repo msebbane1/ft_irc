@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:58:20 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/08 15:30:36 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 14:18:49 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void	Commands::userCmd()
 				this->_user->setRealname(realname);
 			}
 			this->_user->setUser(this->_line_cmd[1]);
-			std::cout << "====== Realname is set ===== :" << this->_user->getRealname() << "\n";
-			std::cout << "====== USER is set ===== :" << this->_user->getUser() << "\n";
+			std::cout << " >> " << GREEN << "Realname: " << this->_user->getRealname() << Color <<"\n";
+			std::cout << " >> " << GREEN << "User: " << this->_user->getUser() << Color <<"\n";
 		}
 	}
 	else if(_line_cmd[0] == "USER" && this->_user->realnameIsSet())

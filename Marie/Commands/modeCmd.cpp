@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/14 17:33:59 by student          ###   ########.fr       */
+/*   Updated: 2023/06/17 14:08:20 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ void	Commands::printListCmd()
 	std::vector<std::string>::iterator	it = this->_line_cmd.begin();
 	for(; it != this->_line_cmd.end(); it++)
 	{
-		std::cout << *it << std::endl;
+		//std::cout << *it << std::endl;
+		std::cout << "[Server] Command sent from server << " << CYAN << *it << Color << std::endl;
 	}
 }
 

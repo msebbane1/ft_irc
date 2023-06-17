@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 12:32:41 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 15:06:39 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 //---------------------JOIN-------------------//
 
-void	Commands::create_oa_join(std::string name_chann, std::string key)
+void	Commands::create_oa_join(std::string name_chann, std::string key, Client *bot)
 {
 	std::string	msg;
 	
@@ -41,6 +41,10 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 		else
 			chan = new Channel(name_chann, this->_user);
 		this->_s->addListChan(chan);
+		this->_s->getChannel(name_chann)->addUser(bot, bot->get_fd());
+		this->_s->getChannel(name_chann)->addOperator(bot, bot->get_fd());
+		std::cout << " >> " << YELLOW << "Be careful John Wick is here..." << Color << std::endl;
+		std::cout << " >> " << YELLOW << "Channel named " << name_chann << " has been created by " << this->_s->getChannel(name_chann)->getCreator()->getNickname() << Color << std::endl;
 	}
 	else
 	{
@@ -49,16 +53,23 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 		else if (this->_s->getChannel(name_chann)->getSizeMax() != -1 && this->_s->getChannel(name_chann)->nbUserInChan() >= this->_s->getChannel(name_chann)->getSizeMax())
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 471);
 		else if (this->_s->getChannel(name_chann)->isBanned(this->_user->getNickname()))
+		{
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 474);
+			//return ;
+		}
 		else
+		{
 			this->_s->getChannel(name_chann)->addUser(this->_user, this->_user->get_fd());
+			std::cout << " >> " << YELLOW << this->_user->getNickname() << " has join " << name_chann << Color <<"\n";
+		}
 	}
 	if (!this->_s->getChannel(name_chann)->userIsInChann(this->_user->get_fd()))
 		return ;
 	Channel*	c = this->_s->getChannel(name_chann);
 	
-	msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
-	c->sendMsg(-1, msg);
+	//msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
+	//c->sendMsg(-1, msg);
+	_msg->RPL_JOIN(this->_user->getNickname(), this->_user->getUser(), name_chann, c);
 	if (!c->topicIsSet())
 		this->_msg->RPL_NOTOPIC(c);
 	else
@@ -67,7 +78,7 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	this->_msg->RPL_ENDOFNAMES(c, this->_user->get_fd(), this->_user->getNickname());
 }
 
-void	Commands::joinCmd()
+void	Commands::joinCmd(Client *bot)
 {
 	bool	key_empty = true;
 
@@ -89,9 +100,9 @@ void	Commands::joinCmd()
 			else
 			{
 				if (!key_empty && !list_key[i].empty())
-					create_oa_join(list_chan[i], list_key[i]);
+					create_oa_join(list_chan[i], list_key[i], bot);
 				else
-					create_oa_join(list_chan[i], "");
+					create_oa_join(list_chan[i], "", bot);
 			}
 			i++;
 		}
@@ -103,9 +114,9 @@ void	Commands::joinCmd()
 		else
 		{
 			if (!key_empty)
-				create_oa_join(this->_line_cmd[1], this->_line_cmd[2]);
+				create_oa_join(this->_line_cmd[1], this->_line_cmd[2], bot);
 			else
-				create_oa_join(this->_line_cmd[1], "");
+				create_oa_join(this->_line_cmd[1], "", bot);
 		}
 	}
 }

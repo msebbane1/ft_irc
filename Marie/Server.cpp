@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:48:22 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:30:56 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,13 @@
 
 Server::Server() : _passwordOper("password")
 {
+	std::cout << Blue << "Waiting for connections..." << Color << std::endl;
 }
 
-Server::~Server(){}
+Server::~Server()
+{
+	std::cout << RED << "Server shutting down..." << Color << std::endl;
+}
 
 /*--------------------------------------------------------*/
 
@@ -39,6 +43,28 @@ std::string				Server::getPasswordOper(){
 
 void					Server::setPassword(std::string pwd){
     this->_password = pwd;
+}
+
+/*--------------------------------------------------------*/
+
+void	Server::setConfig(std::string param) 
+{
+	std::ifstream	ifs(param);
+	std::string		temp;
+	size_t			pos;
+
+	if (!ifs.is_open())
+	{
+		std::cout << "Error: cannot open file conf" << std::endl;
+		exit(1);
+	}
+	while (std::getline(ifs, temp))
+	{
+		if (temp.compare("password") == 0)
+			break;
+	}
+	pos = temp.find("=");
+	this->_passwordOper = temp.substr(pos + 2, temp.length());
 }
 
 /*--------------------------------------------------------*/
@@ -86,13 +112,30 @@ bool Server::clientExist(std::string nick) {
 	return (false);
 }
 
+
 /*--------------------------------------------------------*/
 
 void		Server::createServ(int port)
 {
 	Messages msg;
 	int	opt = 1;
-
+	
+	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+		msg.errorMsg("socket failed");
+	
+	if (setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+		msg.errorMsg("setsockopt");
+	this->_addr.sin_family = AF_INET;
+	this->_addr.sin_addr.s_addr = INADDR_ANY;
+	this->_addr.sin_port = htons(port);
+	
+	if (bind(this->_fd_server, (struct sockaddr*) &this->_addr, sizeof(this->_addr)) < 0)
+		msg.errorMsg("bind failed");
+	this->_addr_len = sizeof(this->_addr);
+	
+	if (listen(this->_fd_server, 500) < 0)
+		msg.errorMsg("listen");
+	
 	this->_command_list.push_back("PASS");
 	this->_command_list.push_back("NICK");
 	this->_command_list.push_back("USER");
@@ -111,21 +154,6 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("OPER");
 	this->_command_list.push_back("WHO");
 	
-	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		msg.errorMsg("socket failed");
-	
-	if (setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		msg.errorMsg("setsockopt");
-	this->_addr.sin_family = AF_INET;
-	this->_addr.sin_addr.s_addr = INADDR_ANY;
-	this->_addr.sin_port = htons(port);
-	
-	if (bind(this->_fd_server, (struct sockaddr*) &this->_addr, sizeof(this->_addr)) < 0)
-		msg.errorMsg("bind failed");
-	this->_addr_len = sizeof(this->_addr);
-	
-	if (listen(this->_fd_server, 500) < 0)
-		msg.errorMsg("listen");
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
 
@@ -177,7 +205,7 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-void	Server::connectToClients(int user_talk, std::string buf)
+void	Server::connectToClients(int user_talk, std::string buf, Client *bot)
 {
 	Messages msg;
 	if (buf.find("\r\n") != std::string::npos)
@@ -186,13 +214,13 @@ void	Server::connectToClients(int user_talk, std::string buf)
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
-	cmd->exec_cmd();
+	cmd->exec_cmd(bot);
 	delete cmd;
 }
 
 /*--------------------------------------------------------*/
 
-void Server::connect(int user_talk, std::string buf)
+void Server::connect(int user_talk, std::string buf, Client *bot)
 {
 	std::string msg;
 	
@@ -204,7 +232,7 @@ void Server::connect(int user_talk, std::string buf)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	connectToClients(user_talk, buf);
+	connectToClients(user_talk, buf, bot);
 }
 
 /*--------------------------------------------------------*/
@@ -240,10 +268,8 @@ void	Server::acceptUser()
 		this->_list_client[new_user]->set_fd(new_user);
 
 		std::cout << std::endl;
-		std::cout << "===================================" << std::endl;
-		std::cout << Colored <<" [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
-		std::cout << "===================================" << std::endl;
-	}
+		std::cout << " >> " << GREEN << " [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
+		}
 }
 
 /*--------------------------------------------------------*/
@@ -293,10 +319,22 @@ void	Server::channDisconnected()
 	}
 }
 
+void Server::setBot(Client *bot)
+{
+	bot->setNickname("John_Wick");
+	bot->setRealname("John Wick");
+	bot->setUser("BOT");
+	bot->setPassword();
+	bot->set_fd(100);
+	this->_list_client.insert(std::pair<int, Client*>(100, bot));
+}
 /*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {
+	
+	Client*	bot = new Client();
+	setBot(bot);
 	while (true)
 	{
 		Messages msg;
@@ -316,7 +354,7 @@ void	Server::serverIrc()
 				if(bytes_recv <= 0)
 				{
 					this->_fd_users_dc.push_back(user_talk);
-					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+					std::cout << RED << "Client " << user_talk << " has been disconnected." << Color << std::endl;
 				}
 				if (strncmp(buffer, "", 1) != 0)
 				{
@@ -332,12 +370,13 @@ void	Server::serverIrc()
 						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{
-							connect(user_talk, line[i]);
+							msg.displayMsgOnServer(line[i], user_talk);
+							connect(user_talk, line[i], bot);
 							i++;
 						}
 					}
 					else
-						connect(user_talk, buffer);
+						connect(user_talk, buffer, bot);
 				}
 			}
 		}

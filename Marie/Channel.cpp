@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:14:59 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 15:43:41 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ void	Channel::banUser(std::string username)
 	{
 		if (it->second->getNickname() == username)
 		{
-			this->removeUser(username);
 			this->_list_banned.push_back(it->second->getNickname());
-			std::cout << "User " << it->second->getNickname() << " has been ban from " << this->_name << std::endl; 
+			this->removeUser(username);
+			std::cout << " >> " << RED << "User " << it->second->getNickname() << " has been ban from " << this->_name << Color << std::endl; 
 			return ;
 		}
 	}

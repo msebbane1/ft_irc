@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:25 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 12:36:05 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:28:58 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ std::string	Commands::joinReason()
 
 void	Commands::kickCmd()
 {
+	std::string reason;
 	if (this->_line_cmd.size() < 3)
 	{
 		_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
@@ -50,16 +51,22 @@ void	Commands::kickCmd()
 		{
 			if (_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user))
 			{
-				std::cout << "operator ok" << std::endl;
+				std::cout << " >> " << GREEN << "Accepted : channel operator" << Color << std::endl;
 				if (_s->clientExist(this->_line_cmd[2]) && _s->getChannel(this->_line_cmd[1])->userIsInChann(this->_s->getClient(this->_line_cmd[2])->get_fd()) == true) // et qui est dans le chan
 				{
-					std::cout << "operator ok22" << std::endl;
-					if(this->_line_cmd[2] == this->_s->getClient(this->_line_cmd[2])->getNickname()) //verifier a ce quíl ne se remove pas lui meme
+					if(this->_line_cmd[2] == this->_s->getClient(this->_line_cmd[2])->getNickname()) //verifier a ce quíl ne se remove pas lui meme ?
 					{
-						std::cout << "operator ok33" << std::endl;
+						if(joinMessages() == ": ")
+							reason = ":no reason send";
+						else
+							reason = joinReason();
 						std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
 						for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++)
-							_msg->RPL_KICK(_user->getNickname(), _user->getUser(), this->_line_cmd[1], this->_s->getClient(this->_line_cmd[2])->getNickname(), joinReason(), it->first);
+						{
+							_msg->RPL_KICK(_user->getNickname(), _user->getUser(), this->_line_cmd[1], this->_s->getClient(this->_line_cmd[2])->getNickname(), reason, it->first);
+							return ;
+						}
+						std::cout << " >> " << RED << _user->getNickname() << " is kicked from channel " << this->_line_cmd[1] << Color << std::endl;
 						this->_s->getChannel(this->_line_cmd[1])->removeUser(this->_s->getClient(this->_line_cmd[2])->getNickname());
 					}
 				}
@@ -71,7 +78,7 @@ void	Commands::kickCmd()
 			}
 			else
 			{
-				std::cout << "operator NOT" << std::endl;
+				std::cout << " >> " << RED << "Denied : not channel operator" << Color << std::endl;
 				_msg->ERR_CHANOPRIVSNEEDED(this->_user->getNickname(), this->_line_cmd[1], _fd_user);
 				return ;
 			}

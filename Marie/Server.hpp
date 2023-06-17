@@ -6,13 +6,14 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 10:23:00 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 14:43:03 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 # include <sstream>
+#include <fstream>
 #include <cstring>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -59,8 +60,10 @@ class Server
 		void						createServ(int port);
 		void						acceptUser();
 		int							received(char *buffer, int user_talk);
-		void						connectToClients(int user_talk, std::string buf);
-		void 						connect(int user_talk, std::string buf);
+		void						connectToClients(int user_talk, std::string buf, Client *bot);
+		void 						connect(int user_talk, std::string buf, Client *bot);
+		void						setConfig(std::string str);
+		void						setBot(Client *bot);
 		
 		//==========================Utils===========================//
 		void						sendHistoric(int client_fd);

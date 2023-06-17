@@ -6,13 +6,14 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 13:43:06 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 15:59:09 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 
 /*
+/connect localhost 8080 oui
 	ERR_NORECIPIENT (411)
 	ERR_NOTEXTTOSEND (412)
 	ERR_NOSUCHNICK (401)
@@ -40,10 +41,8 @@ std::string	Commands::joinMessages()
 	return(msg);
 }
 
-void	Commands::privMsgCmd()
+void	Commands::privMsgCmd(Client *bot)
 {
-	std::string	msg;
-
 	if (this->_line_cmd.size() < 3)
 		_msg->ERR_NORECIPIENT(this->_fd_user); 
 	else if(this->_line_cmd.size() > 2)
@@ -53,13 +52,20 @@ void	Commands::privMsgCmd()
 			if (chanExist(this->_line_cmd[1]) == true && this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) == true 
 				&& this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_user->getNickname()) == false)
 			{
+				std::string msg = joinMessages();
+				if (bot->containBanWord(msg))
+				{
+					this->_s->getChannel(this->_line_cmd[1])->banUser(this->_user->getNickname());
+					std::cout << " >> " << RED << this->_user->getNickname() << " is banned from the bot John Wick :) " << std::endl;
+					return ;
+				}
 				if (joinMessages() == ": ")
 				{
 					this->_msg->ERR_NOTEXTTOSEND(this->_fd_user);
 					return ;
 				}
 				else
-					this->_msg->RPL_PRIVMSGCHAN(this->_user->getNickname(), this->_line_cmd[1], joinMessages(), _s->getChannel(this->_line_cmd[1]), _fd_user);
+					this->_msg->RPL_PRIVMSGCHAN(this->_user->getNickname(), this->_line_cmd[1], msg, _s->getChannel(this->_line_cmd[1]), _fd_user);
 			}
 			else
 			{
@@ -79,5 +85,7 @@ void	Commands::privMsgCmd()
 		}
 		else
 			this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
+		if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
+       		this->_s->channDisconnected();
 	}
 }

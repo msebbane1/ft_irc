@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 13:26:32 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 14:17:00 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,6 +254,13 @@ void	Messages::RPL_TOPIC(Channel *c) // 332
 	std::string	msg = ":irc.com 332 RPL_TOPIC " + c->getName() + " :" + c->getTopic() + "\r\n";
 	c->sendMsg(-1, msg);
 }
+//JOIN
+void	Messages::RPL_JOIN(std::string nick, std::string user, std::string channel, Channel *c) 
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " JOIN " + channel + "\r\n";
+	c->sendMsg(-1, msg);
+}
+	
 
 //==============================================JOIN==================================================///
 
@@ -319,7 +326,7 @@ void		Messages::displayMsgOnServer(std::string const &buf, int user_talk)
 {
 	if (buf == "\n")
 		return;
-    std::cout << "|User: "<< user_talk << "| Message send :" << buf ;
+    std::cout << "[Client] Msg send from client "<< user_talk << " >> " << BLUE << buf << Color << std::endl;
 }
 
 

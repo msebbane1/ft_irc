@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:49:06 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/02 14:13:02 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 14:18:56 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	Commands::nickCmd()
 					_msg->errorMsg("failed send");
 			}
 			this->_user->setNickname(this->_line_cmd[1]);
-			std::cout << "======nickname is set=====: " << this->_user->getNickname() << std::endl;
+			std::cout << " >> " << GREEN << "Nickname: " << this->_user->getNickname() << Color <<"\n";
 		}
 		else
 			this->_msg->ERR_ERRONEUSNICKNAME(this->_line_cmd[1], this->_fd_user);
