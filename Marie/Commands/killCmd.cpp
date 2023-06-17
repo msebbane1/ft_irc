@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 15:09:18 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/12 11:07:09 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:53:33 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,15 @@ void	Commands::killCmd()
 		_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		return;
 	}
-	/*
-	if(client est operator) /// isoperator client
+	if (this->_s->getClient(this->_line_cmd[1])->getIRCOperator() == false)
 	{
-		if()
+		//error / 481
+		std::cout << "not operator" << std::endl;
+		return ;
 	}
-	*/
+	else
+	{
+		this->_s->setFdUsersDc(this->_fd_user);
+	}
+
 }

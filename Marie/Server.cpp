@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/17 16:30:56 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/17 16:51:20 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,7 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("PART");
 	this->_command_list.push_back("OPER");
 	this->_command_list.push_back("WHO");
+	this->_command_list.push_back("KILL");
 	
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
