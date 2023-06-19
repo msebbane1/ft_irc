@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeChanCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/15 13:35:39 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/19 10:45:27 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,11 @@ int		Commands::verifUser()
 				}
 				else
 				{
-					std::vector<std::string>::iterator	it = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().begin();
-					for(; it != this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().end(); it++)
+					std::vector<std::string>::iterator	ite = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().end();
+					for(; ite != this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().begin(); ite--)
 					{
-						this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1]);
+						int num = ft_stoi(*ite); //a changer possiblement par this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().size()--
+						this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1], *ite, num);
 					}
 					return 1;
 				}

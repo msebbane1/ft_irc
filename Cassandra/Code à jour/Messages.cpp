@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 14:08:00 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/19 10:41:43 by student          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,10 +321,10 @@ essaie sur serveur irssi:
           ago]
 -!- #ko End of Channel Ban List*/
 
-void	Messages::RPL_BANLIST(int fd, std::string channel) //367 // ajouter un nbbanni (afficher en mode décroissant)
+void	Messages::RPL_BANLIST(int fd, std::string channel, std::string name, int num) //367 // ajouter un nbbanni (afficher en mode décroissant)
 {
 	//msg = num + channel + "ban" + nickname + "\r\n";
-	std::string	msg = "\r\n";
+	std::string	msg = "- " + ft_tostring(num) + " -" + channel + ": ban " + name + "\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 	RPL_ENDOFBANLIST(channel, fd);
