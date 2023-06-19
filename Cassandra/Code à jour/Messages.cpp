@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 10:41:43 by student          ###   ########.fr       */
+/*   Updated: 2023/06/19 13:55:52 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,7 @@ MESSAGE: -!- #ko End of Channel Ban List
 Cette réponse indique que tous les masques d'utilisateurs bannis du chan ont été indiqués.*/
 //affiche le message avec irc.com dans certain cas
 void	Messages::RPL_ENDOFBANLIST(std::string channel, int fd) //368
-{//ne doit pas afficher irc.com
+{
 	std::string	msg = ":irc.com 368 RPL_ENDOFBANLIST " + channel + " :End of Channel Ban List\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
@@ -320,15 +320,14 @@ essaie sur serveur irssi:
 -!- 1 - #ko: ban newuser!*@* [by clecat!~clecat@157a-3894-3542-9a96-157a.129.62.ip, 40 secs 
           ago]
 -!- #ko End of Channel Ban List*/
-
-void	Messages::RPL_BANLIST(int fd, std::string channel, std::string name, int num) //367 // ajouter un nbbanni (afficher en mode décroissant)
-{
-	//msg = num + channel + "ban" + nickname + "\r\n";
-	std::string	msg = "- " + ft_tostring(num) + " -" + channel + ": ban " + name + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-	RPL_ENDOFBANLIST(channel, fd);
-}
+// void	Messages::RPL_BANLIST(int fd, std::string channel, std::string name, int num) //367 // ajouter un nbbanni (afficher en mode décroissant)
+// {
+// 	std::string	msg = ":irc.com 367 RPL_BANLIST " + name + channel + ft_tostring(num) + "\r\n";
+// 	//": -" + ft_tostring(num) + "- " + channel + ": ban " + name + "!\r\n";
+// 	std::cout << "message a envoyé: " << msg << "fd to send: " << fd << std::endl;
+// 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+// 		errorMsg("failed send");
+// }
 
 std::string		Messages::ft_tostring(int num)
 {

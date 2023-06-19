@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/14 17:33:59 by student          ###   ########.fr       */
+/*   Updated: 2023/06/19 13:42:35 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ int		Commands::ft_stoi( std::string & s )
 //verifie les parametres
 int		Commands::verifModeParam()
 {
-	std::cout << "dans verif Mode Param" << std::endl;
 	if(!chanExist(this->_line_cmd[1])) // check if chan exist
 		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 	if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user)) //user not on channel 

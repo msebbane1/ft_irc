@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeChanCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/19 10:45:27 by student          ###   ########.fr       */
+/*   Updated: 2023/06/19 14:09:25 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,10 @@ int		Commands::verifUser()
 		char	option = *it;
 		if(option == 'o')
 		{
-			if(this->_line_cmd.size() == 3) //ajouter condition si pas de user donner ignorer
+			if(this->_line_cmd.size() == 3) //si pas de user donner ignorer
 				return 1;
 			if(getIndice() == '+' && this->_line_cmd.size() != 3)
 			{
-				std::cout << "isOperator: " << this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_line_cmd[3]) << std::endl;
 				if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]))//verif if user in chan for mode b/o
 				{
 					this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
@@ -106,12 +105,15 @@ int		Commands::verifUser()
 				}
 				else
 				{
-					std::vector<std::string>::iterator	ite = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().end();
-					for(; ite != this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().begin(); ite--)
-					{
-						int num = ft_stoi(*ite); //a changer possiblement par this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().size()--
-						this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1], *ite, num);
-					}
+				// 	// int size = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().size();
+				// 	// std::vector<std::string>::iterator	ite = this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().end() - 1;
+				// 	// for(; ite >= this->_s->getChannel(this->_line_cmd[1])->getListUserBanned().begin() && size > 0; ite--)
+				// 	// {
+				// 	// 	std::cout << "dans la boucle + ite: " << *ite << " + size: " << size << std::endl;
+				// 	// 	int num = --size;
+				// 	// 	this->_msg->RPL_BANLIST(this->_fd_user, this->_line_cmd[1], *ite, num);
+				// 	// }
+				// 	// this->_msg->RPL_ENDOFBANLIST(this->_line_cmd[1], this->_fd_user);
 					return 1;
 				}
 			}
