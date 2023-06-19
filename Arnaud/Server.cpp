@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 11:36:16 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:33:09 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,12 +292,12 @@ void	Server::clientDisconnected()
 
 void	Server::channDisconnected()
 {
-	std::map<std::string, Channel*> map = this->_list_chan;
-	std::map<std::string, Channel*>::iterator it = map.begin();
+	std::map<std::string, Channel*>				map = this->_list_chan;
+	std::map<std::string, Channel*>::iterator	it = map.begin();
 	
 	while (it != map.end())
 	{
-		if (it->second->getListUserCo().empty())
+		if (it->second->getListUserCo().size() == 1)
 		{
 			this->_list_chan.erase(it->first);
 			delete it->second;
@@ -306,13 +306,32 @@ void	Server::channDisconnected()
 	}
 }
 
-void Server::setBot(Client *bot)
+void	Server::setBot(Client *bot)
 {
-	bot->setNickname("John_Wick");
+	bot->setNickname("John_Wick(bot)");
 	bot->setRealname("John Wick");
 	bot->setUser("BOT");
 	bot->setPassword();
 	bot->set_fd(100);
+}
+
+void	Server::addIfBotNotIn(Client *bot)
+{
+	std::map<std::string, Channel*>				list_c = this->_list_chan;
+	std::map<std::string, Channel*>::iterator	it = list_c.begin();
+	std::string									msg;
+
+	while (it != list_c.end())
+	{
+		if (!it->second->userIsInChann(bot->get_fd()))
+		{
+			it->second->addUser(bot, bot->get_fd());
+			it->second->addOperator(bot, bot ->get_fd());
+			msg = ":" + bot->getNickname() + " JOIN " + it->second->getName() + "\r\n";
+			it->second->sendMsg(-1, msg);
+		}
+		it++;
+	}
 }
 /*--------------------------------------------------------*/
 
@@ -364,6 +383,8 @@ void	Server::serverIrc()
 				}
 			}
 		}
+		if (!this->_list_chan.empty())
+			addIfBotNotIn(bot);
 		if (!this->_fd_users_dc.empty())
 			clientDisconnected();
 		if (!this->_list_chan.empty())

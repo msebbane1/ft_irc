@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 15:18:46 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:14:23 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ class Commands
 		void						userCmd();
 		void						nickCmd();
 		void						privMsgCmd(Client *bot);
-		void						joinCmd(Client *bot);
+		void						joinCmd();
 		void						quitCmd();
 		void						operCmd();
 		void						killCmd();
@@ -82,5 +82,5 @@ class Commands
 		std::string					joinReason();
 		std::string					joinMessages();
 		void						leaveMultiChan();
-		void						create_oa_join(std::string name_chann, std::string key, Client *bot);
+		void						create_oa_join(std::string name_chann, std::string key);
 };

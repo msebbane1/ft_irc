@@ -6,30 +6,26 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 11:44:57 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 12:59:17 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
-Channel::Channel(std::string name, Client* c, Client* bot): _name(name), _creator(c), _key(),
+Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_topic(), _list_user_co(), _list_operators(),
 											_list_banned(), _password(), _size_max(10),
 											_i_only(false), _list_inv()
 {
-	this->addUser(bot, bot->get_fd());
-	this->addOperator(bot, bot->get_fd());
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
 }
 
-Channel::Channel(std::string name,  Client* c, std::string key, Client* bot): _name(name), _creator(c), _key(key),
+Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
 																_topic(), _list_user_co(), _list_operators(),
 																_list_banned(), _password(), _size_max(10),
 																_i_only(false), _list_inv()
 {
-	this->addUser(bot, bot->get_fd());
-	this->addOperator(bot, bot->get_fd());
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
 }
