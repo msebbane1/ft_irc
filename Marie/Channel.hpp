@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:15:28 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:27:50 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Channel
 		void	unbanUser(std::string username);
 		bool	isBanned(std::string nickname);
 		bool	userIsInChan(std::string nickname); // ajouter pour mode
-		// int		getFdUserBan(std::string nickname); // avoir le fd pour RPL_BANLIST
+		bool	isOperator(std::string nickname);
 	//--------------------------------------------/
 		void	displayUsers();
 		void	displayOp();
@@ -54,7 +54,6 @@ class Channel
 		void	sendMsg(int user_talk, std::string msg);
 		bool	isOperator(int fd);
 		int		nbUserInChan();
-		//bool	isBanned(std::string nickname);
 		bool	isInv(std::string nickname);
 
 		std::string					getName();
@@ -68,14 +67,14 @@ class Channel
 		void						addOperator(Client *cl, int fd_cl);
 		void						removeOperator(std::string username);
 
-		std::string					getTopic();
+		std::string					getTopic() const;
 		void						setTopic(std::string topic);
 		bool						topicIsSet();
 
-		std::string					getKey();
+		std::string					getKey() const;
 		void						setKey(std::string key);
 
-		int							getSizeMax();
+		int							getSizeMax() const;
 		void						setSizeMax(int size);
 
 		void						setInviteOnly(bool set);

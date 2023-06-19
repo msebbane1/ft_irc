@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 13:16:31 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:41:06 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	Messages::welcomeMsg(std::string user, std::string nick, int fd)
 
 void	Messages::ERR_NOSUCHNICK(std::string nick, int fd) // 401
 {
-	std::string msg = ":irc.com 401 ERR_NEEDMOREPARAMS " + nick + " :No such nick/channel\r\n";
+	std::string msg = ":irc.com 401 ERR_NOSUCHNICK " + nick + " :No such nick/channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -73,7 +73,7 @@ void	Messages::ERR_ERRONEUSNICKNAME(std::string nick, int fd) // 432
 
 void	Messages::ERR_NEEDMOREPARAMS(int fd) // 461
 {
-	std::string msg = ":irc.com 461 ERR_NEEDMOREPARAMS :Not enough parameters\r\n";
+	std::string msg = ":irc.com 461 ERR_NEEDMOREPARAMS :Not enough parameters given\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -133,17 +133,23 @@ void	Messages::ERR_CANNOTSENDTOCHAN(std::string target, int fd) //404
 		errorMsg("failed send");
 }
 
+
 void Messages::ERR_NOSUCHCHANNEL(std::string channel, int fd) // 403
 {
 	std::string msg = ":irc.com 403 ERR_NOSUCHCHANNEL " + channel + " :No such channel\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
-
-//erreur pour MODE (si le client n'est pas OP sur le chan)
-void Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
+//ERR DIFFERENT
+void Messages::ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd) // 482
 {
-	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :Unknown command\r\n";
+	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + nick + " " + channel + " :You're not channel operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+void	Messages::ERR_CHANOPRIVSNEEDED(std::string cmd, int fd) // 482
+{
+	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + cmd + " :Not channel operator\r\n";
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -162,12 +168,6 @@ void	Messages::ERR_USERONCHANNEL(int fd, std::string nick, std::string chann) //
 		errorMsg("failed send");
 }
 
-void Messages::ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd) // 482
-{
-	std::string msg = ":irc.com 482 ERR_CHANOPRIVSNEEDED " + nick + " " + channel + " :You're not channel operator\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-}
 
 void Messages::ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd) // 441
 {
@@ -290,12 +290,18 @@ void	Messages::RPL_ERROR(std::string nick, std::string user, std::string reason,
 
 void	Messages::RPL_NAMREPLY(Channel *c, int fd) // 353
 {
-	std::map<int, Client*>				map = c->getListUserCo();
-	
-	std::string	msg = ":irc.com 353 " + c->getCreator()->getUser() + " = " + c->getName() + " :@" + c->getCreator()->getNickname() + " ";
+	std::map<int, Client*>	map = c->getListUserCo();
+	(void) fd;
+	std::string	msg = ":irc.com 353 " + c->getCreator()->getUser() + " = " + c->getName() + " :";
 	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
-		msg += it->second->getNickname() + " ";
+	{
+		if (c->isOperator(it->first))
+			msg += "@" + it->second->getNickname() + " ";
+		else
+			msg += it->second->getNickname() + " ";
+	}
 	msg += "\r\n";
+	//std::cout << "___" << msg << "___" << std::endl;
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }
@@ -385,15 +391,6 @@ essaie sur serveur irssi:
 -!- 1 - #ko: ban newuser!*@* [by clecat!~clecat@157a-3894-3542-9a96-157a.129.62.ip, 40 secs 
           ago]
 -!- #ko End of Channel Ban List*/
-
-void	Messages::RPL_BANLIST(int fd, std::string channel, int maskBanned) //367
-{
-	std::cout << maskBanned << std::endl;
-	std::string	msg = ":localhost 367 RPL_BANLIST " + channel + ft_tostring(maskBanned) + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
-	RPL_ENDOFBANLIST(channel, fd);
-}
 
 std::string		Messages::ft_tostring(int num)
 {

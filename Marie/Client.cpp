@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(): _pass_try(0), _password(false), _isBot(false){}
+Client::Client(): _pass_try(0), _password(false){}
 
 Client::~Client(){}
 
@@ -37,6 +37,13 @@ void	Client::setNickname(std::string nickname)
 {
 	this->_nickname = nickname;
 }
+bool	Client::nicknameIsSet()
+{
+	if (this->_nickname.empty())
+		return false;
+	else
+		return true;
+}
 
 //======REALNAME=====///
 std::string Client::getRealname()
@@ -57,15 +64,15 @@ bool	Client::realnameIsSet()
 		return true;
 }
 
-
+//======USERNAME=====///
 std::string Client::getUser()
 {
 	return (this->_user);
 }
 
-void	Client::setUser(std::string realname)
+void	Client::setUser(std::string user)
 {
-	this->_user = realname;
+	this->_user = user;
 }
 
 bool	Client::userIsSet()
@@ -75,23 +82,15 @@ bool	Client::userIsSet()
 	else
 		return true;
 }
-
+//======FD=====///
 int Client::get_fd()
 {
-	return (_fd);
+	return (this->_fd);
 }
 
 void Client::set_fd(int fd) 
 {
-	_fd = fd;
-}
-
-bool	Client::nicknameIsSet()
-{
-	if (this->_nickname.empty())
-		return false;
-	else
-		return true;
+	this->_fd = fd;
 }
 
 bool	Client::isConnected()

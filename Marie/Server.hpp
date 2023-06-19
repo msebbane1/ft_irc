@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/17 14:43:03 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:52:52 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ class Server
 		void 						connect(int user_talk, std::string buf, Client *bot);
 		void						setConfig(std::string str);
 		void						setBot(Client *bot);
+		void						addIfBotNotIn(Client *bot);
+		void						destroyChannIfEmpty();
 		
 		//==========================Utils===========================//
 		void						sendHistoric(int client_fd);

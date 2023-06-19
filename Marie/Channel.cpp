@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/17 15:43:41 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:26:30 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ void					Channel::removeOperator(std::string username)
 
 /*---------------------------------------------------------------------*/
 
-std::string	Channel::getTopic()
+std::string	Channel::getTopic() const
 {
 	return (this->_topic);
 }
@@ -248,7 +248,7 @@ bool		Channel::topicIsSet()
 
 /*---------------------------------------------------------------------*/
 
-std::string	Channel::getKey()
+std::string	Channel::getKey() const
 {
 	return (this->_key);
 }
@@ -260,7 +260,7 @@ void		Channel::setKey(std::string key)
 
 /*---------------------------------------------------------------------*/
 
-int	Channel::getSizeMax()
+int	Channel::getSizeMax() const
 {
 	return (this->_size_max);
 }
@@ -358,4 +358,15 @@ void	Channel::unbanUser(std::string username)
 std::vector<std::string>	Channel::getListUserBanned() const
 {
 	return this->_list_banned;
+}
+
+bool	Channel::isOperator(std::string nickname)
+{
+	std::map<int, Client *>::iterator	it = this->_list_operators.begin();
+	for(; it != this->_list_operators.end(); it++)
+	{
+		if(nickname == it->second->getNickname())
+			return true;
+	}
+	return false;
 }

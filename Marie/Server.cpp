@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 13:43:16 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:52:21 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,55 +24,41 @@ Server::~Server()
 
 /*--------------------------------------------------------*/
 
-void					Server::setFdUsersDc(int fdUsersDc){
+void					Server::setFdUsersDc(int fdUsersDc)
+{
 	this->_fd_users_dc.push_back(fdUsersDc);
 }
 
-std::vector<int>		Server::getFdUsersDc(){
+std::vector<int>		Server::getFdUsersDc()
+{
 	return (this->_fd_users_dc);
 }
 
 /*--------------------------------------------------------*/
-std::string				Server::getPassword(){
+std::string				Server::getPassword()
+{
     return (this->_password);
 }
 
-std::string				Server::getPasswordOper(){
+std::string				Server::getPasswordOper()
+{
     return (this->_passwordOper);
 }
 
-void					Server::setPassword(std::string pwd){
+void					Server::setPassword(std::string pwd)
+{
     this->_password = pwd;
 }
 
 /*--------------------------------------------------------*/
 
-void	Server::setConfig(std::string param) 
+std::map<int, Client*>	Server::getListClient()
 {
-	std::ifstream	ifs(param);
-	std::string		temp;
-	size_t			pos;
-
-	if (!ifs.is_open())
-	{
-		std::cout << "Error: cannot open file conf" << std::endl;
-		exit(1);
-	}
-	while (std::getline(ifs, temp))
-	{
-		if (temp.compare("password") == 0)
-			break;
-	}
-	pos = temp.find("=");
-	this->_passwordOper = temp.substr(pos + 2, temp.length());
-}
-
-/*--------------------------------------------------------*/
-std::map<int, Client*>	Server::getListClient(){
 	return (this->_list_client);
 }
 
-Client *Server::getClient(std::string nick) {
+Client *Server::getClient(std::string nick) 
+{
 	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
 	{
 		if (it->second->getNickname() == nick)
@@ -81,7 +67,8 @@ Client *Server::getClient(std::string nick) {
 	return (NULL);
 }
 
-void		Server::setListClient(int fd, Client *user){
+void		Server::setListClient(int fd, Client *user)
+{
 	this->_list_client.insert(std::pair<int, Client*>(fd, user));
 }
 
@@ -103,7 +90,8 @@ void							Server::addListChan(Channel *c)
 
 /*--------------------------------------------------------*/
 
-bool Server::clientExist(std::string nick) {
+bool Server::clientExist(std::string nick) 
+{
 	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
 	{
 		if (it->second->getNickname() == nick)
@@ -111,14 +99,34 @@ bool Server::clientExist(std::string nick) {
 	}
 	return (false);
 }
+/*--------------------------------------------------------*/
+void	Server::setConfig(std::string param) 
+{
+	std::ifstream	ifs(param);
+	std::string		temp;
+	size_t			pos;
+
+	if (!ifs.is_open())
+	{
+		std::cout << "Error: cannot open file conf" << std::endl;
+		exit(1);
+	}
+	while (std::getline(ifs, temp))
+	{
+		if (temp.compare("password") == 0)
+			break;
+	}
+	pos = temp.find("=");
+	this->_passwordOper = temp.substr(pos + 2, temp.length());
+}
 
 
 /*--------------------------------------------------------*/
 
 void		Server::createServ(int port)
 {
-	Messages msg;
-	int	opt = 1;
+	Messages	msg;
+	int			opt = 1;
 	
 	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		msg.errorMsg("socket failed");
@@ -152,9 +160,9 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("NAMES");
 	this->_command_list.push_back("PART");
 	this->_command_list.push_back("OPER");
+	this->_command_list.push_back("WHO");
 	this->_command_list.push_back("KILL");
 	this->_command_list.push_back("kill");
-	this->_command_list.push_back("WHO");
 	
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
@@ -163,7 +171,7 @@ void		Server::createServ(int port)
 
 bool	Server::isCommandIrc(std::string str)
 {
-	
+
 	for (unsigned int i = 0; i < this->_command_list.size(); i++)
 	{
 		if (this->_command_list[i] + '\n' == str || this->_command_list[i] == str)
@@ -312,7 +320,7 @@ void	Server::channDisconnected()
 	
 	while (it != map.end())
 	{
-		if (it->second->getListUserCo().empty())
+		if (it->second->getListUserCo().size() == 1)
 		{
 			this->_list_chan.erase(it->first);
 			delete it->second;
@@ -321,20 +329,38 @@ void	Server::channDisconnected()
 	}
 }
 
-void Server::setBot(Client *bot)
+void	Server::setBot(Client *bot)
 {
-	bot->setNickname("John_Wick");
+	bot->setNickname("John_Wick(bot)");
 	bot->setRealname("John Wick");
 	bot->setUser("BOT");
 	bot->setPassword();
 	bot->set_fd(100);
-	this->_list_client.insert(std::pair<int, Client*>(100, bot));
+}
+
+void	Server::addIfBotNotIn(Client *bot)
+{
+	std::map<std::string, Channel*>				list_c = this->_list_chan;
+	std::map<std::string, Channel*>::iterator	it = list_c.begin();
+	std::string									msg;
+
+	while (it != list_c.end())
+	{
+		if (!it->second->userIsInChann(bot->get_fd()))
+		{
+			it->second->addUser(bot, bot->get_fd());
+			it->second->addOperator(bot, bot ->get_fd());
+			msg = ":" + bot->getNickname() + " JOIN " + it->second->getName() + "\r\n";
+			it->second->sendMsg(-1, msg);
+		}
+		it++;
+	}
 }
 /*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {
-	
+
 	Client*	bot = new Client();
 	setBot(bot);
 	while (true)
@@ -382,9 +408,12 @@ void	Server::serverIrc()
 				}
 			}
 		}
+		if (!this->_list_chan.empty())
+			addIfBotNotIn(bot);
 		if (!this->_fd_users_dc.empty())
 			clientDisconnected();
 		if (!this->_list_chan.empty())
 			channDisconnected();
 	}
+	delete bot;
 }

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 13:18:31 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:31:21 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,11 @@ class Messages
 	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
 	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
 	void	ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd);
+	void	ERR_NOTONCHANNEL(int fd, std::string chann);
 	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
 	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
 	void	ERR_CANNOTSENDTOCHAN(std::string target, int fd);
+	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
 
 	//============REPLY=========///
 	void	RPL_YOUREOPER(std::string nick, int fd);
@@ -71,18 +73,17 @@ class Messages
 	void	RPL_JOIN(std::string nick, std::string user, std::string channel, Channel *c);
 	void	RPL_KILL(std::string nick, std::string user, std::string user_killed, std::string comment, int fd);
 	void	RPL_ERROR(std::string nick, std::string user, std::string reason, int fd);
+	
 	//============ERR & RPL JOIN=========///
 	void	RPL_NAMREPLY(Channel *c, int fd);
 	void	RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname);
 	void	ERR_CANNOTJOIN(int fd, std::string chann, int err);
 
 	//============ERR & RPL INVITE=========///
-	void	ERR_NOTONCHANNEL(int fd, std::string chann);
-	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
+
 
 	void	ERR_BANNEDFROMCHAN(int fd, std::string channel);
 	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
-	void	RPL_BANLIST(int fd, std::string channel, int maskBanned);
 	//utils
 	std::string					ft_tostring(int num);
 
