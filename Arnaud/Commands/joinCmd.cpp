@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/16 12:00:05 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 11:52:39 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,17 @@
 void	Commands::create_oa_join(std::string name_chann, std::string key, Client *bot)
 {
 	std::string	msg;
+	bool		chanExist = this->chanExist(name_chann);
 	
-	if (chanExist(name_chann) == false)
+	if (!chanExist)
 	{
 		Channel	*chan;
 		
 		if (!key.empty())
-			chan = new Channel(name_chann, this->_user, key);
+			chan = new Channel(name_chann, this->_user, key, bot);
 		else
-			chan = new Channel(name_chann, this->_user);
+			chan = new Channel(name_chann, this->_user, bot);
 		this->_s->addListChan(chan);
-		this->_s->getChannel(name_chann)->addUser(bot, bot->get_fd());
-		this->_s->getChannel(name_chann)->addOperator(bot, bot->get_fd());
 	}
 	else
 	{
@@ -40,13 +39,19 @@ void	Commands::create_oa_join(std::string name_chann, std::string key, Client *b
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 474);
 		else
 			this->_s->getChannel(name_chann)->addUser(this->_user, this->_user->get_fd());
+		if (!this->_s->getChannel(name_chann)->userIsInChann(this->_user->get_fd()))
+			return ;
 	}
-	if (!this->_s->getChannel(name_chann)->userIsInChann(this->_user->get_fd()))
-		return ;
 	Channel*	c = this->_s->getChannel(name_chann);
 
 	msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
 	c->sendMsg(-1, msg);
+	if (!chanExist)
+	{
+		usleep(500);
+		msg = ":" + bot->getNickname() + " JOIN " + name_chann + "\r\n";
+		c->sendMsg(-1, msg);
+	}
 	if (!c->topicIsSet())
 		this->_msg->RPL_NOTOPIC(c);
 	else

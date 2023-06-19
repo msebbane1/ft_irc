@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 11:39:26 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/16 14:58:09 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,12 +217,18 @@ void Messages::RPL_KICK(std::string nick, std::string user, std::string channel,
 
 void	Messages::RPL_NAMREPLY(Channel *c, int fd) // 353
 {
-	std::map<int, Client*>				map = c->getListUserCo();
+	std::map<int, Client*>	map = c->getListUserCo();
 	
-	std::string	msg = ":irc.com 353 " + c->getCreator()->getUser() + " = " + c->getName() + " :@" + c->getCreator()->getNickname() + " ";
+	std::string	msg = ":irc.com 353 " + c->getCreator()->getUser() + " = " + c->getName() + " :";
 	for (std::map<int, Client*>::iterator it = map.begin(); it != map.end(); it++)
-		msg += it->second->getNickname() + " ";
+	{
+		if (c->isOperator(it->first))
+			msg += "@" + it->second->getNickname() + " ";
+		else
+			msg += it->second->getNickname() + " ";
+	}
 	msg += "\r\n";
+	std::cout << "___" << msg << "___" << std::endl;
 	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
 		errorMsg("failed send");
 }

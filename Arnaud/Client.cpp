@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(): _pass_try(0), _password(false), _isBot(false)
+Client::Client(): _pass_try(0), _password(false)
 {
 }
 

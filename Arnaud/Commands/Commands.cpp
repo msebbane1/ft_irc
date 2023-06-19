@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/15 15:17:30 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/16 13:19:08 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	Commands::exec_cmd(Client *bot)
 		else if (this->_line_cmd[0] == "QUIT") // A FINIR AVEC UN MSG
 			quitCmd();
 	  	else if (this->_line_cmd[0] == "NOTICE") // a verifier
-			privMsgCmd();
+			privMsgCmd(bot);
     	else if (this->_line_cmd[0] == "OPER") // A FINIR
 			operCmd();
     	else if (this->_line_cmd[0] == "KILL") // A FAIRE ?

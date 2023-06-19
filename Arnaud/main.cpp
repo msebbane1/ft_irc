@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 12:25:06 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:48:42 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int main(int argc, char **argv)
         msg.errorMsg("Error: port [not valid] range betwen 0 and 65535");
     irc.createServ(atoi(argv[1]));
 	irc.setPassword(std::string(argv[2]));
-    irc.setConfig("ircserv.conf");
     std::cout << Blue << "Waiting for connections..." << Color << std::endl;
 	irc.serverIrc();
 }

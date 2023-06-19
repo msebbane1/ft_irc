@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = ircserv
 
-SRC = Client.cpp Server.cpp main.cpp Channel.cpp Messages.cpp \
+SRC = Client.cpp Server.cpp main.cpp Channel.cpp Messages.cpp Bot.cpp \
 		Commands/Commands.cpp Commands/joinCmd.cpp Commands/nickCmd.cpp \
 		Commands/passCmd.cpp Commands/privmsgCmd.cpp Commands/quitCmd.cpp \
 		Commands/userCmd.cpp Commands/killCmd.cpp Commands/operCmd.cpp \

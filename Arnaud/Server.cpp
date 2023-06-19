@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 15:26:51 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 11:36:16 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Server::Server()
 
 Server::~Server()
 {
+	std::cout << RED << "Server shutting down..." << Color << std::endl;
 }
 
 /*--------------------------------------------------------*/
@@ -47,28 +48,6 @@ std::string				Server::getPasswordOper()
 void					Server::setPassword(std::string pwd)
 {
     this->_password = pwd;
-}
-
-/*--------------------------------------------------------*/
-
-void	Server::setConfig(std::string param) 
-{
-	std::ifstream	ifs(param);
-	std::string		temp;
-	size_t			pos;
-
-	if (!ifs.is_open())
-	{
-		std::cout << "Error: cannot open file conf" << std::endl;
-		exit(1);
-	}
-	while (std::getline(ifs, temp))
-	{
-		if (temp.compare("password") == 0)
-			break;
-	}
-	pos = temp.find("=");
-	this->_passwordOper = temp.substr(pos + 2, temp.length());
 }
 
 /*--------------------------------------------------------*/
@@ -126,7 +105,7 @@ bool Server::clientExist(std::string nick)
 void		Server::createServ(int port)
 {
 	Messages	msg;
-	int	opt = 1;
+	int			opt = 1;
 	
 	if ((this->_fd_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		msg.errorMsg("socket failed");
@@ -154,12 +133,16 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("CAP");
 	this->_command_list.push_back("WHOIS");
 	this->_command_list.push_back("KICK");
-	this->_command_list.push_back("AUTHENTICATE");
 	this->_command_list.push_back("INVITE");
 	this->_command_list.push_back("TOPIC");
 	this->_command_list.push_back("MODE");
-	this->_command_list.push_back("LIST");
 	this->_command_list.push_back("NAMES");
+	this->_command_list.push_back("PART");
+	this->_command_list.push_back("OPER");
+	this->_command_list.push_back("WHO");
+	this->_command_list.push_back("KILL");
+	this->_command_list.push_back("kill");
+
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
 
@@ -169,7 +152,7 @@ bool	Server::isCommandIrc(std::string str)
 {	
 	for (unsigned int i = 0; i < this->_command_list.size(); i++)
 	{
-		if (this->_command_list[i] + '\n' == str || this->_command_list[i] == str)
+		if (this->_command_list[i] == str)
 			return (true);
 	}
 	return (false);
@@ -273,9 +256,7 @@ void	Server::acceptUser()
 		this->_list_client[new_user]->set_fd(new_user);
 
 		std::cout << std::endl;
-		std::cout << "===================================" << std::endl;
-		std::cout << Colored <<" [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
-		std::cout << "===================================" << std::endl;
+		std::cout << " >> " << GREEN << " [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
 	}
 }
 
@@ -325,18 +306,20 @@ void	Server::channDisconnected()
 	}
 }
 
+void Server::setBot(Client *bot)
+{
+	bot->setNickname("John_Wick");
+	bot->setRealname("John Wick");
+	bot->setUser("BOT");
+	bot->setPassword();
+	bot->set_fd(100);
+}
 /*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {
 	Client*	bot = new Client();
-	bot->setNickname("John_Wick");
-	bot->setRealname("John Wick");
-	bot->setUser("jwick");
-	bot->setPassword();
-	bot->set_fd(100);
-	bot->setBot()
-	this->_list_client.insert(std::pair<int, Client*>(100, bot));
+	setBot(bot);
 	while (true)
 	{
 		Messages	msg;
@@ -356,7 +339,7 @@ void	Server::serverIrc()
 				if(bytes_recv <= 0)
 				{
 					this->_fd_users_dc.push_back(user_talk);
-					std::cout << "Client " << user_talk << " has been disconnected." << std::endl;
+					std::cout << RED << "Client " << user_talk << " has been disconnected." << Color << std::endl;
 				}
 				if (strncmp(buffer, "", 1) != 0)
 				{
@@ -386,4 +369,5 @@ void	Server::serverIrc()
 		if (!this->_list_chan.empty())
 			channDisconnected();
 	}
+	delete bot;
 }

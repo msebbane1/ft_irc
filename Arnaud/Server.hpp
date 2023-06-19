@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 15:23:11 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:46:57 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 #include <fcntl.h>
 #include <vector>
 #include <fstream>
+#include <cstring>
+#include <sstream>
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "Messages.hpp"
@@ -61,6 +63,7 @@ class Server
 		void						connectToClients(int user_talk, std::string buf, Client *bot);
 		void 						connect(int user_talk, std::string buf, Client *bot);
 		void						setConfig(std::string str);
+		void						setBot(Client *bot);
 		
 		//==========================Utils===========================//
 		void						sendHistoric(int client_fd);
@@ -70,7 +73,6 @@ class Server
 		void						clientDisconnected();
 		void						channDisconnected();
 		bool						isCommandIrc(std::string str);
-		void						chanExist(std::string name);
 		bool 						clientExist(std::string nick);
 		
 		//==========================GETTER && SETTER===========================//
