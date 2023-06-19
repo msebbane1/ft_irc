@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 14:17:00 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:16:31 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,15 @@ void	Messages::ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd) /
 		errorMsg("failed send");
 }
 
+//==========================================OPERATOR=========================================//
+void	Messages::ERR_NOPRIVILEGES(std::string nick, int fd) // 481
+{
+	std::string msg = "481 " + nick + " :Permission Denied- You're not an IRC operator\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+	
+
 //==============================================REPLY==================================================///
 
 void Messages::RPL_YOUREOPER(std::string nick, int fd) // 403
@@ -206,11 +215,10 @@ void Messages::RPL_INVITE(std::string nick, std::string user, std::string invite
 		errorMsg("failed send");
 }
 //QUIT
-void Messages::RPL_QUIT(std::string nick, std::string user, std::string reason, int fd)
+void Messages::RPL_QUIT(std::string nick, std::string user, std::string reason, Channel *c)
 {
 	std::string msg = ":" + nick + "!" + user + "@localhost" + " QUIT :Quit: " + reason + "\r\n";
-	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
-		errorMsg("failed send");
+	c->sendMsg(-1, msg);
 }
 
 
@@ -259,6 +267,21 @@ void	Messages::RPL_JOIN(std::string nick, std::string user, std::string channel,
 {
 	std::string	msg = ":" + nick + "!" + user + "@localhost" + " JOIN " + channel + "\r\n";
 	c->sendMsg(-1, msg);
+}
+//KILL
+
+void	Messages::RPL_KILL(std::string nick, std::string user, std::string user_killed, std::string comment, int fd)
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " KILL " + user_killed + " " + comment + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
+}
+
+void	Messages::RPL_ERROR(std::string nick, std::string user, std::string reason, int fd)
+{
+	std::string	msg = ":" + nick + "!" + user + "@localhost" + " ERROR :" + reason + "\r\n";
+	if(send(fd, msg.c_str(), msg.length(), 0) < 0)
+		errorMsg("failed send");
 }
 	
 

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/17 16:51:20 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:43:16 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 Server::Server() : _passwordOper("password")
 {
-	std::cout << Blue << "Waiting for connections..." << Color << std::endl;
 }
 
 Server::~Server()
 {
 	std::cout << RED << "Server shutting down..." << Color << std::endl;
+	return ;
 }
 
 /*--------------------------------------------------------*/
@@ -152,8 +152,9 @@ void		Server::createServ(int port)
 	this->_command_list.push_back("NAMES");
 	this->_command_list.push_back("PART");
 	this->_command_list.push_back("OPER");
-	this->_command_list.push_back("WHO");
 	this->_command_list.push_back("KILL");
+	this->_command_list.push_back("kill");
+	this->_command_list.push_back("WHO");
 	
 	std::cout << Blue << "Listen to port : " << port << Color << std::endl;
 }
@@ -355,7 +356,7 @@ void	Server::serverIrc()
 				if(bytes_recv <= 0)
 				{
 					this->_fd_users_dc.push_back(user_talk);
-					std::cout << RED << "Client " << user_talk << " has been disconnected." << Color << std::endl;
+					std::cout << ">>" << RED << "Client " << user_talk << " has been disconnected." << Color << std::endl;
 				}
 				if (strncmp(buffer, "", 1) != 0)
 				{

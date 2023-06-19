@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 13:20:59 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:18:31 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ class Messages
 	void	ERR_NOTEXTTOSEND(int fd);
 	void	ERR_UNKNOWNCOMMAND(std::string cmd, int fd);
 	void	ERR_NOTREGISTERED(int fd);
-
+	//============ERR OPERATOR=========///
+	void	ERR_NOPRIVILEGES(std::string nick, int fd);
 	//============ERR CHANNELS=========///
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
 	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
@@ -66,9 +67,10 @@ class Messages
 	void	RPL_TOPIC(Channel *c);
 	void	RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::string msg, Channel *chan, int fd);
 	void	RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd);
-	void	RPL_QUIT(std::string nick, std::string user, std::string reason, int fd);
+	void	RPL_QUIT(std::string nick, std::string user, std::string reason, Channel *c);
 	void	RPL_JOIN(std::string nick, std::string user, std::string channel, Channel *c);
-
+	void	RPL_KILL(std::string nick, std::string user, std::string user_killed, std::string comment, int fd);
+	void	RPL_ERROR(std::string nick, std::string user, std::string reason, int fd);
 	//============ERR & RPL JOIN=========///
 	void	RPL_NAMREPLY(Channel *c, int fd);
 	void	RPL_ENDOFNAMES(Channel *c, int fd, std::string nickname);

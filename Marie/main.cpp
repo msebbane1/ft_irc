@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 18:56:14 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/17 16:34:20 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:47:29 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ int main(int argc, char **argv)
     irc.createServ(atoi(argv[1]));
 	irc.setPassword(std::string(argv[2]));
 	irc.setConfig("ircserv.conf");
+	std::cout << Blue << "Waiting for connections..." << Color << std::endl;
 	irc.serverIrc();
 }

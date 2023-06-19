@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:03:01 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 14:49:22 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:03:27 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ void	Commands::leaveMultiChan()
 	
 	for(unsigned int i = 0; i < channels.size(); i++)
 	{
-		//std::cout << "goooo1 = " << channels[i][0] << "et = " << chanExist(channels[i]) << std::endl;
-		if ((channels[i][0] == '#' || channels[i][0] == '&') && chanExist(channels[i]) == true) // a verifier sur nc
+		if ((channels[i][0] == '#' || channels[i][0] == '&') && chanExist(channels[i]) == true)
 		{
 			std::map<int, Client*> UserCo = this->_s->getChannel(channels[i])->getListUserCo();
 			if(this->_s->getChannel(channels[i])->userIsInChann(this->_fd_user) == true)
@@ -45,10 +44,10 @@ void	Commands::leaveMultiChan()
 					this->_msg->RPL_LEFTCHANNEL(this->_user->getNickname(), this->_user->getUser(), channels[i], it->first);
 				}
 				this->_s->getChannel(channels[i])->removeUser(_user->getNickname());
-				std::cout << " >> " << RED << _user->getNickname() << " has left channel " << channels[i] << Color << std::endl;
+				std::cout << " >> " << RED << this->_user->getNickname() << " has left channel " << channels[i] << Color << std::endl;
 			}
 			else
-				this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), channels[i], this->_fd_user); // verif sur vrai server le msg exact
+				this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), channels[i], this->_fd_user);
 		}
 		else
 		{
@@ -80,7 +79,7 @@ void	Commands::partCmd()
 			{
 				this->_msg->RPL_LEFTCHANNEL(this->_user->getNickname(), this->_user->getUser(), this->_line_cmd[1], it->first);
 			}
-			this->_s->getChannel(this->_line_cmd[1])->removeUser(_user->getNickname());
+			this->_s->getChannel(this->_line_cmd[1])->removeUser(this->_user->getNickname());
 			std::cout << " >> " << RED << _user->getNickname() << " has left channel " << this->_line_cmd[1] << Color << std::endl;
 		}
 		else

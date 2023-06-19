@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 11:18:30 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:59:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	Commands::exec_cmd(Client *bot)
 
 	if (this->_s->isCommandIrc(this->_line_cmd[0]) == false)
 	{
+		std::cout << "dff" << std::endl;
 		this->_msg->ERR_UNKNOWNCOMMAND(this->_line_cmd[0], this->_fd_user);
 		return ;
 	}
@@ -65,7 +66,7 @@ void	Commands::exec_cmd(Client *bot)
 			kickCmd();
     	else if (this->_line_cmd[0] == "MODE")
 			modeCmd();
-		else if (this->_line_cmd[0] == "KILL") // A FAIRE ?
+		else if (this->_line_cmd[0] == "KILL" || this->_line_cmd[0] == "kill") // A FAIRE ?
 			killCmd();
 		else if (this->_line_cmd[0] == "PING")
 		{

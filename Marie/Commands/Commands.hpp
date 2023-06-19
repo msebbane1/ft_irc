@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 11:20:43 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:07:45 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ class Commands
 		int							verifUser();
 		
 		//======================== COMMANDS UTILS ======================//
-		
-		std::string					joinReason();
-		std::string					joinMessages();
+		Channel *					rplToAllChan();
+		//std::string					joinReason();
+		std::string					joinMessages(int line);
 		void						leaveMultiChan();
 		void						create_oa_join(std::string name_chann, std::string key, Client *bot);
 };

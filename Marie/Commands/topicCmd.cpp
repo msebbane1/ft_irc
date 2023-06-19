@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:11 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/10 15:17:09 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:05:18 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ void	Commands::topicCmd()
 {
 	if (this->_line_cmd.size() == 1)
 	{
-		_msg->ERR_NEEDMOREPARAMS(_fd_user);
+		this->_msg->ERR_NEEDMOREPARAMS(_fd_user);
 		return ;
 	}
 	if ((this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&') && chanExist(this->_line_cmd[1]) == false)
 	{
-		_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);
+		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);
 		return;
 	}
 	if (this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user))
@@ -51,9 +51,9 @@ void	Commands::topicCmd()
 			std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
 			for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
 			{
-				std::string msg = ":" + _user->getNickname() + "!" + _user->getUser() + "@localhost TOPIC :" + this->_line_cmd[1] + "\r\n";
+				std::string msg = ":" + this->_user->getNickname() + "!" + this->_user->getUser() + "@localhost TOPIC :" + this->_line_cmd[1] + "\r\n";
 				if(send(it->second->get_fd(), msg.c_str(), msg.length(), 0) < 0)
-					_msg->errorMsg("failed send");
+					this->_msg->errorMsg("failed send");
 			}
 			return ;
 		}
@@ -62,16 +62,16 @@ void	Commands::topicCmd()
 			std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
 			for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
 			{
-				std::string msg = ":" + it->second->getNickname() + "!" + it->second->getUser() + "@localhost TOPIC #" + this->_line_cmd[1] + " :" + joinMessages() + "\r\n";
+				std::string msg = ":" + it->second->getNickname() + "!" + it->second->getUser() + "@localhost TOPIC #" + this->_line_cmd[1] + " :" + joinMessages(2) + "\r\n";
 				if(send(it->second->get_fd(), msg.c_str(), msg.length(), 0) < 0)
 					_msg->errorMsg("failed send");
 			}
-			_s->getChannel(this->_line_cmd[1])->setTopic(joinMessages());
+			this->_s->getChannel(this->_line_cmd[1])->setTopic(joinMessages(2));
 		}
-		if(_s->getChannel(this->_line_cmd[1])->topicIsSet() && this->_line_cmd[2] != "::")
-			this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1])); // peut etre revoir le msg
+		if(this->_s->getChannel(this->_line_cmd[1])->topicIsSet() && this->_line_cmd[2] != "::")
+			this->_msg->RPL_TOPIC(this->_s->getChannel(this->_line_cmd[1]));
 		else
-			this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
+			this->_msg->RPL_NOTOPIC(this->_s->getChannel(this->_line_cmd[1]));
 	}
 	else
 		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);

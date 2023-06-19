@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:25 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 16:28:58 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/19 13:08:28 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 	Parameters: <channel> <user> *( "," <user> ) [<comment>]
 */
 
+/*
 std::string	Commands::joinReason()
 {
 	std::string msg;
@@ -36,6 +37,7 @@ std::string	Commands::joinReason()
 	}
 	return(msg);
 }
+*/
 
 void	Commands::kickCmd()
 {
@@ -56,10 +58,10 @@ void	Commands::kickCmd()
 				{
 					if(this->_line_cmd[2] == this->_s->getClient(this->_line_cmd[2])->getNickname()) //verifier a ce quíl ne se remove pas lui meme ?
 					{
-						if(joinMessages() == ": ")
+						if(joinMessages(3) == ": ")
 							reason = ":no reason send";
 						else
-							reason = joinReason();
+							reason = joinMessages(3);
 						std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
 						for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++)
 						{
@@ -79,15 +81,15 @@ void	Commands::kickCmd()
 			else
 			{
 				std::cout << " >> " << RED << "Denied : not channel operator" << Color << std::endl;
-				_msg->ERR_CHANOPRIVSNEEDED(this->_user->getNickname(), this->_line_cmd[1], _fd_user);
+				this->_msg->ERR_CHANOPRIVSNEEDED(this->_user->getNickname(), this->_line_cmd[1], _fd_user);
 				return ;
 			}
 		}
 		else
-			_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], _fd_user);
+			this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], _fd_user);
 	}
 	else
-		_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);
+		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], _fd_user);
 	if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
        this->_s->channDisconnected();
 }
