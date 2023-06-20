@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/20 10:31:49 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/20 13:52:50 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,9 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	std::string	msg;
 	
 	bool		chanExist = this->chanExist(name_chann);
-	std::cout << "chanexist: " << std::endl;
 	
 	if (chanExist == false)
 	{
-		std::cout << "dans create oa join if " <<std::endl;
 		Channel	*chan;
 		if (!key.empty())
 			chan = new Channel(name_chann, this->_user, key);
@@ -49,7 +47,6 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	}
 	else
 	{
-		std::cout << "dans create oa join else " <<std::endl;
 		if (!this->_s->getChannel(name_chann)->getKey().empty() && key != this->_s->getChannel(name_chann)->getKey())
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 475);
 		else if (this->_s->getChannel(name_chann)->getSizeMax() != -1 && this->_s->getChannel(name_chann)->nbUserInChan() >= this->_s->getChannel(name_chann)->getSizeMax())
@@ -81,7 +78,7 @@ void	Commands::joinCmd()
 {
 	bool	key_empty = true;
 
-	if (this->_line_cmd[2].empty() != 0)
+	if (this->_line_cmd.size() > 2 && this->_line_cmd[2].empty() != 0)
 			key_empty = false;
 	if (this->_line_cmd.size() == 1)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
@@ -91,7 +88,6 @@ void	Commands::joinCmd()
 		std::vector<std::string>	list_key = this->_s->splitCustom(this->_line_cmd[2], ',');
 		
 		unsigned long long			i = 0;
-
 		while (i < list_chan.size())
 		{
 			if (list_chan[i][0] != '#')
