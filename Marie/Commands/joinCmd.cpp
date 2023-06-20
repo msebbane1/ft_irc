@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 14:13:50 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/20 10:31:58 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	Commands::joinCmd()
 {
 	bool	key_empty = true;
 
-	if (!this->_line_cmd[2].empty())
+	if (this->_line_cmd[2].empty() != 0)
 			key_empty = false;
 	if (this->_line_cmd.size() == 1)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
@@ -118,3 +118,8 @@ void	Commands::joinCmd()
 	}
 }
 
+//envoie de fichier : command: /dcc <mot clé> <target> chemin fichier
+// pour envoyé : <mot clé> = send, pour recevoir <mot clé> = get 
+//message reçu sur page du user : 17:30 [localhost] DCC SEND request sent to newuser: Server.hpp 
+//message envoyé au serveur: PRIVMSG newuser :DCC SEND Server.hpp 2130706433 37851 3197
+//lien doc: https://irssi.org/documentation/help/dcc/

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 13:06:21 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/20 10:38:27 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,18 @@ void	Commands::privMsgCmd(Client *bot)
 				return ;
 			}
 			else
+			{
+				std::cout << "ddd2" << std::endl;
 				this->_msg->RPL_PRIVMSG(this->_user->getNickname(), this->_line_cmd[1], joinMessages(2), this->_s->getClient(this->_line_cmd[1])->get_fd());
+				return ;
+			}
+			std::cout << "ddd" << std::endl;
 		}
 		else
+		{
 			this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
+			return ;
+		}
 		if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
        		this->_s->channDisconnected();
 	}

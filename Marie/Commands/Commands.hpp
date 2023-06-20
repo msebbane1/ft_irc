@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 14:09:37 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/20 11:44:17 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,5 @@ class Commands
 		std::string					joinMessages(int line);
 		void						leaveMultiChan();
 		void						create_oa_join(std::string name_chann, std::string key);
+		bool						userOnChannel();
 };
