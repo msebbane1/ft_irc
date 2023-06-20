@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 16:26:14 by student          ###   ########.fr       */
+/*   Updated: 2023/06/20 10:29:58 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,9 +231,13 @@ void Messages::RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::strin
 
 void Messages::RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd)
 {
+	std::cout << "dans RPL_PRIVMSG" << std::endl;
 	std::string	msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
+	std::cout << "msg: " << msg << std::endl;
+	std::cout << "fd: " << fd << std::endl;
 	if(send(fd, msgg.c_str(), msgg.length(), 0) < 0)
 		errorMsg("failed send");
+	std::cout << "1.1" << std::endl;
 }
 
 //PART

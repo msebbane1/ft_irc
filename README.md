@@ -27,6 +27,8 @@
 #	https://www.geeksforgeeks.org/socket-programming-cc/
 	*Lien qui va nous servir (juste de rien enfaite)
 #	https://emmanuel-delahaye.developpez.com/tutoriels/c/notes-reseaux-c/#LII-B-1
+	*Lien transfert de fichier
+#	https://debian-facile.org/doc:reseau:irc-fichiers
 
 # Details du Sujet :
 

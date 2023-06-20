@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   joinCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 17:36:13 by student          ###   ########.fr       */
+/*   Updated: 2023/06/20 10:31:49 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,12 @@ void	Commands::joinCmd()
 {
 	bool	key_empty = true;
 
-	std::cout << "dans join Cmd" <<std::endl;
-	std::cout << ".empty(): " << this->_line_cmd[2].empty() << std::endl;
 	if (this->_line_cmd[2].empty() != 0)
 			key_empty = false;
 	if (this->_line_cmd.size() == 1)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 	if (this->_line_cmd[1].find(',') != std::string::npos)
 	{
-		std::cout << "dans join Cmd if" <<std::endl;
 		std::vector<std::string>	list_chan = this->_s->splitCustom(this->_line_cmd[1], ',');
 		std::vector<std::string>	list_key = this->_s->splitCustom(this->_line_cmd[2], ',');
 		
@@ -111,19 +108,14 @@ void	Commands::joinCmd()
 	}
 	else
 	{
-		std::cout << "dans join Cmd else" <<std::endl;
 		if (this->_line_cmd[1][0] != '#')
 			this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 		else
 		{
-			if (key_empty == false){
-				std::cout << "dans join Cmd if key empty = false" <<std::endl;
+			if (key_empty == false)
 				create_oa_join(this->_line_cmd[1], this->_line_cmd[2]);
-			}
-			else{
-				std::cout << "dans join Cmd else keyempty" <<std::endl;
+			else
 				create_oa_join(this->_line_cmd[1], "");
-			}
 		}
 	}
 }
@@ -134,4 +126,6 @@ void	Commands::joinCmd()
 //message reçu sur page du user : 17:30 [localhost] DCC SEND request sent to newuser: Server.hpp 
 //message envoyé au serveur: PRIVMSG newuser :DCC SEND Server.hpp 2130706433 37851 3197
 //lien doc: https://irssi.org/documentation/help/dcc/
+//message reçu par le user target:  DCC SEND from clecat [0.0.196.233 port 2934]: printf.c 2130706433 [0B]
+//segfault envoie commande: /dcc send newuser /Users/clecat/Desktop/Exam42/Exam_rk03/printf.c
 
