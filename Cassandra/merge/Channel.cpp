@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 14:26:30 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:40:44 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,11 +159,8 @@ std::map<int, Client*>	Channel::getListUserCo()
 
 void					Channel::addUser(Client *cl, int fd_cl)
 {
-	if (this->_i_only)
-	{
-		// do verif
+	if (this->_i_only && !this->isInv(cl->getNickname()))
 		return ;
-	}
 	for (unsigned long i = 0; i < this->_list_banned.size(); i++)
 	{
 		if (this->_list_banned[i] == cl->getUser())
