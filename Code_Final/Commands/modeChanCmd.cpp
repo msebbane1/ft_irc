@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeChanCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/19 14:23:15 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 16:50:48 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,12 @@ void	Commands::modeOnChannel(){
 	{
 		for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
 		{
-			std::string msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
-			if(send(it->first, msg.c_str(), msg.length(), 0) < 0)
-				this->_msg->errorMsg("failed send");
+			std::string	msg;
+			if(this->_line_cmd.size() == 3)
+				msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + "\r\n";
+			else if (this->_line_cmd.size() == 4)
+				msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
+			send(it->first, msg.c_str(), msg.length(), 0);
 		}
 	}
 	std::vector<char>::iterator	it = this->_optionList.begin();
@@ -41,19 +44,20 @@ void	Commands::modeOnChannel(){
 		char option = *it;
 		switch (option)
 		{
-			case 'i':
+			case 'i': // OK
 				setChanInviteOnlyMode();
 				break;
 
-			case 't' :
+			case 't' : // OK
 				setChanRestrictTopic();
 				break;
 
-			case 'k' :
+			case 'k' : // OK
 				setChanKey();
 				break;
 
 			case 'o' :
+				std::cout << "switch o" << std::endl;
 				setChanOperator();
 				break;
 			
@@ -108,6 +112,8 @@ int		Commands::verifUser()
 			}
 			else if(this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]) && getIndice() == '+')
 				return 1;
+			else if(getIndice() == '-' && this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]) == false)
+				return 1;
 			else if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChan(this->_line_cmd[3]))//verif if user in chan for mode b/o
 			{
 				this->_msg->ERR_NOSUCHNICK(this->_line_cmd[3], this->_fd_user);
@@ -150,11 +156,34 @@ void	Commands::setChanOperator(){
 	// faire fonction pour verifier si le userr is in chan
 	if(this->getIndice() == '+')
 		this->_s->getChannel(this->_line_cmd[1])->addOperator(this->_s->getClient(this->_line_cmd[3]), this->_s->getClient(this->_line_cmd[3])->get_fd());// donner le Client et son fd;
-	else if (this->getIndice() == '-'){
-		if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // ERR_CHANOPRIVSNEEDED 482
-			this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user);
-		this->_s->getChannel(this->_line_cmd[1])->removeOperator(this->_line_cmd[3]);
+	std::map<int, Client *>::iterator it = this->_s->getChannel(this->_line_cmd[1])->getListOp().begin();
+	std::cout << "fd: " << this->_s->getClient(this->_line_cmd[3])->get_fd() << "nickname: " << this->_s->getClient(this->_line_cmd[3])->getNickname() << std::endl;
+	for(; it != this->_s->getChannel(this->_line_cmd[1])->getListOp().end(); it++)
+	{
+		std::cout << "||" << "fd" << it->first << "nickname:" << it->second->getNickname() << "||" << std::endl;
 	}
+	// else if (this->getIndice() == '-'){
+	// 	std::cout << "in get indice == -" << std::endl;
+	// 	if(this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == false) // ERR_CHANOPRIVSNEEDED 482
+	// 		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user);
+	// 	else if(this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == true)
+	// 	{
+	// 		std::map<int, Client *>::iterator it = this->_s->getChannel(this->_line_cmd[1])->getListOp().begin();
+	// 		for(; it != this->_s->getChannel(this->_line_cmd[1])->getListOp().end(); it++)
+	// 		{
+	// 			std::cout << "||" << it->first << "||" << std::endl;
+	// 		}
+	// 		std::cout << "1" << std::endl;
+	// 		this->_s->getChannel(this->_line_cmd[1])->removeOperator(this->_line_cmd[3]);
+	// 		std::cout << "2" << std::endl;
+	// 		it = this->_s->getChannel(this->_line_cmd[1])->getListOp().begin();
+	// 		for(; it != this->_s->getChannel(this->_line_cmd[1])->getListOp().begin(); it++)
+	// 		{
+	// 			std::cout << "||" << it->first << "||" << std::endl;
+	// 		}
+	// 	}
+		
+	//}
 }
 
 // l : Set/remove the user limit to channel (param needed) /mode #cool +l 20 (limite le channel #cool à 20 utilisateurs)

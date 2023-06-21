@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   partCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:03:01 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 13:03:27 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 15:24:57 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ void	Commands::partCmd()
 			{
 				this->_msg->RPL_LEFTCHANNEL(this->_user->getNickname(), this->_user->getUser(), this->_line_cmd[1], it->first);
 			}
-			this->_s->getChannel(this->_line_cmd[1])->removeUser(this->_user->getNickname());
 			std::cout << " >> " << RED << _user->getNickname() << " has left channel " << this->_line_cmd[1] << Color << std::endl;
+			this->_s->getChannel(this->_line_cmd[1])->removeUser(this->_user->getNickname());
 		}
 		else
 			this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user); // verif sur vrai server le msg exact
@@ -91,5 +91,5 @@ void	Commands::partCmd()
 		return ;
 	}
 	if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
-       this->_s->channDisconnected();
+		this->_s->channDisconnected();
 }

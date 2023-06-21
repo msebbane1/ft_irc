@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   modeCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/21 13:53:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 14:41:31 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Commands.hpp"
 //installer irssi sur ordi maison 
 //irssi : /connect localhost 8080 irc
-// vrai serveur : CONNECT irc.dal.net 6667
+// vrai serveur : /CONNECT irc.dal.net 6667
 
 //change the channels mode : parametre attendu : /mode <channel> <+ | -> <mode> [parametres]
 //												 cmd / name_chan / indicateur / option / optionnel(username for operator, etc)
