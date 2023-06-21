@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   inviteCmd.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 12:07:35 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/15 11:58:53 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 12:58:14 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,12 @@ void	Commands::inviteCmd()
 	}
 	if (_s->getChannel(this->_line_cmd[2])->isOperator(this->_fd_user))
 	{
+		//Inviting ne fonctionne pas
 		this->_msg->RPL_INVITING(_user->getNickname(), _user->getUser(), this->_s->getClient(this->_line_cmd[1])->getNickname(), this->_line_cmd[2], _fd_user);
 		this->_msg->RPL_INVITE(_user->getNickname(), _user->getUser(), this->_s->getClient(this->_line_cmd[1])->getNickname(), this->_line_cmd[2], this->_s->getClient(this->_line_cmd[1])->get_fd());
 	
-		msg = ":" + this->_s->getClient(this->_line_cmd[1])->getNickname() + " JOIN " + this->_line_cmd[2] + "\r\n";
-		_s->getChannel(this->_line_cmd[2])->sendMsg(-1, msg);
+		// msg = ":" + this->_s->getClient(this->_line_cmd[1])->getNickname() + " JOIN " + this->_line_cmd[2] + "\r\n";
+		//_s->getChannel(this->_line_cmd[2])->sendMsg(-1, msg);
 		std::string msg2 = ":localhost 353 " + _user->getUser() + " = " + this->_line_cmd[2] + " :@" + _user->getNickname() + "\r\n";
         send(_user->get_fd(), msg2.c_str(), msg2.length(), 0);
 		_s->getChannel(this->_line_cmd[2])->addListInv(this->_s->getClient(this->_line_cmd[1])->getNickname());
