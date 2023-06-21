@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/19 14:29:04 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:53:10 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	Commands::printListCmd()
 	std::vector<std::string>::iterator	it = this->_line_cmd.begin();
 	for(; it != this->_line_cmd.end(); it++)
 	{
-		//std::cout << *it << std::endl;
 		std::cout << "[Server] Command sent from server << " << CYAN << *it << Color << std::endl;
 	}
 }
@@ -46,6 +45,8 @@ void	Commands::modeCmd(){
 		modeOnUser();
 	else if (chanExist(this->_line_cmd[1]))
 		modeOnChannel();
+	else
+		this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
 }
 
 char	Commands::findIndice()

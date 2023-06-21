@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/20 12:52:36 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 12:57:18 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void		Server::createServ(int port)
 		msg.errorMsg("bind failed");
 	this->_addr_len = sizeof(this->_addr);
 	
-	if (listen(this->_fd_server, 2) < 0)
+	if (listen(this->_fd_server, 500) < 0)
 		msg.errorMsg("listen");
 	
 	this->_command_list.push_back("PASS");
@@ -215,7 +215,7 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-void	Server::connectToClients(int user_talk, std::string buf, Client *bot)
+void	Server::connectToClients(int user_talk, std::string buf)
 {
 	Messages msg;
 	if (buf.find("\r\n") != std::string::npos)
@@ -224,13 +224,13 @@ void	Server::connectToClients(int user_talk, std::string buf, Client *bot)
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
-	cmd->exec_cmd(bot);
+	cmd->exec_cmd();
 	delete cmd;
 }
 
 /*--------------------------------------------------------*/
 
-void Server::connect(int user_talk, std::string buf, Client *bot)
+void Server::connect(int user_talk, std::string buf)
 {
 	std::string msg;
 	
@@ -242,7 +242,7 @@ void Server::connect(int user_talk, std::string buf, Client *bot)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	connectToClients(user_talk, buf, bot);
+	connectToClients(user_talk, buf);
 }
 
 /*--------------------------------------------------------*/
@@ -320,7 +320,7 @@ void	Server::channDisconnected()
 	
 	while (it != map.end())
 	{
-		if (it->second->getListUserCo().size() == 1)
+		if (it->second->getListUserCo().size() == 0)
 		{
 			this->_list_chan.erase(it->first);
 			delete it->second;
@@ -329,40 +329,13 @@ void	Server::channDisconnected()
 	}
 }
 
-void	Server::setBot(Client *bot)
-{
-	bot->setNickname("John_Wick(bot)");
-	bot->setRealname("John Wick");
-	bot->setUser("BOT");
-	bot->setPassword();
-	bot->set_fd(100);
-}
-
-void	Server::addIfBotNotIn(Client *bot)
-{
-	std::map<std::string, Channel*>				list_c = this->_list_chan;
-	std::map<std::string, Channel*>::iterator	it = list_c.begin();
-	std::string									msg;
-
-	while (it != list_c.end())
-	{
-		if (!it->second->userIsInChann(bot->get_fd()))
-		{
-			it->second->addUser(bot, bot->get_fd());
-			it->second->addOperator(bot, bot ->get_fd());
-			msg = ":" + bot->getNickname() + " JOIN " + it->second->getName() + "\r\n";
-			it->second->sendMsg(-1, msg);
-		}
-		it++;
-	}
-}
 /*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {
 
-	Client*	bot = new Client();
-	setBot(bot);
+	//Client*	bot = new Client();
+	//setBot(bot);
 	while (true)
 	{
 		Messages msg;
@@ -399,21 +372,19 @@ void	Server::serverIrc()
 						while (i < nb)
 						{
 							msg.displayMsgOnServer(line[i], user_talk);
-							connect(user_talk, line[i], bot);
+							connect(user_talk, line[i]);
 							i++;
 						}
 					}
 					else
-						connect(user_talk, buffer, bot);
+						connect(user_talk, buffer);
 				}
 			}
 		}
-		if (!this->_list_chan.empty())
-			addIfBotNotIn(bot);
 		if (!this->_fd_users_dc.empty())
 			clientDisconnected();
 		if (!this->_list_chan.empty())
 			channDisconnected();
 	}
-	delete bot;
+	//delete bot;
 }

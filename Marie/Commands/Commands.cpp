@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 14:16:37 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 12:21:30 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Commands::~Commands(){}
 
 /*--------------------------------------------------------*/
 
-void	Commands::exec_cmd(Client *bot)
+void	Commands::exec_cmd()
 {
 	std::string	msg;
 
@@ -46,13 +46,13 @@ void	Commands::exec_cmd(Client *bot)
 		else if (this->_line_cmd[0] == "NICK")
 			nickCmd();
 		else if (this->_line_cmd[0] == "PRIVMSG")
-			privMsgCmd(bot);	
+			privMsgCmd();	
     	else if (this->_line_cmd[0] == "JOIN")
 			joinCmd();
 		else if (this->_line_cmd[0] == "QUIT")
 			quitCmd();
 	  	else if (this->_line_cmd[0] == "NOTICE")
-			privMsgCmd(bot);
+			privMsgCmd();
     	else if (this->_line_cmd[0] == "OPER")
 			operCmd();
 		else if (this->_line_cmd[0] == "INVITE")

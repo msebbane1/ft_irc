@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:11:23 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 12:58:49 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 11:44:26 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	Commands::operCmd()
 	{
 		if (this->_line_cmd[2] != this->_s->getPasswordOper())
 		{
+			std::cout << "line = " << this->_line_cmd[2] << " et password = " << this->_s->getPasswordOper() <<std::endl;
 			this->_msg->ERR_PASSWDMISMATCH(this->_fd_user);
 			std::cout << " >> " << RED << " Password incorrect for Operator.. " << Color << std::endl;
 			return;

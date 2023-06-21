@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/20 11:44:17 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 12:21:15 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Commands
 		Commands(Server *s, Client *c, int fd_c, std::vector<std::string> linecmd, Messages msg);
 		~Commands();
 
-		void						exec_cmd(Client *bot);
+		void						exec_cmd();
 		bool						chanExist(std::string name_chan);
 		void						cmdToConnect();
 		
@@ -48,7 +48,7 @@ class Commands
 		void						passCmd();
 		void						userCmd();
 		void						nickCmd();
-		void						privMsgCmd(Client *bot);
+		void						privMsgCmd();
 		void						joinCmd();
 		void						quitCmd();
 		void						operCmd();

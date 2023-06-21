@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 10:32:50 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:50:46 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	if (!chanExist)
 	{
 		Channel	*chan;
-		
 		if (!key.empty())
 			chan = new Channel(name_chann, this->_user, key);
 		else
@@ -54,9 +53,11 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 471);
 		else if (this->_s->getChannel(name_chann)->isBanned(this->_user->getNickname()))
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 474);
+		else if (this->_s->getChannel(name_chann)->getInviteOnly() == true && this->_s->getChannel(name_chann)->isInv(this->_user->getNickname()) == false)
+			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 473);
 		else
 		{
-			this->_s->getChannel(name_chann)->addUser(this->_user, this->_user->get_fd());
+			this->_s->getChannel(name_chann)->addUser(this->_user, this->_fd_user);
 			std::cout << " >> " << YELLOW << this->_user->getNickname() << " has join " << name_chann << Color <<"\n";
 		}
 	}
@@ -64,9 +65,13 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 		return ;
 	Channel*	c = this->_s->getChannel(name_chann);
 	
-	//msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";
-	//c->sendMsg(-1, msg);
-	_msg->RPL_JOIN(this->_user->getNickname(), this->_user->getUser(), name_chann, c);
+	this->_msg->RPL_JOIN(this->_user->getNickname(), this->_user->getUser(), name_chann, c);
+	/*
+	if(_s->getChannel(this->_line_cmd[1])->topicIsSet())
+ 		this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1]));
+	else
+ 		this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
+	*/
 	if (!c->topicIsSet())
 		this->_msg->RPL_NOTOPIC(c);
 	else
@@ -89,7 +94,6 @@ void	Commands::joinCmd()
 		std::vector<std::string>	list_key = this->_s->splitCustom(this->_line_cmd[2], ',');
 		
 		unsigned long long			i = 0;
-
 		while (i < list_chan.size())
 		{
 			if (list_chan[i][0] != '#')
