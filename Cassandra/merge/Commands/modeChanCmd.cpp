@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeChanCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/19 14:23:15 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 12:29:58 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,17 @@ void	Commands::modeOnChannel(){
 		return;
 	if(getIndice() == '\0')
 		return;
-	std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo(); //mettre ailleur sd car affiche message 2 fois
+	std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo();
 	if(this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) == true)
 	{
 		for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
 		{
-			std::string msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
-			if(send(it->first, msg.c_str(), msg.length(), 0) < 0)
-				this->_msg->errorMsg("failed send");
+			std::string	msg;
+			if(this->_line_cmd.size() == 3)
+				msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + "\r\n";
+			else if (this->_line_cmd.size() == 4)
+				msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
+			send(it->first, msg.c_str(), msg.length(), 0);
 		}
 	}
 	std::vector<char>::iterator	it = this->_optionList.begin();

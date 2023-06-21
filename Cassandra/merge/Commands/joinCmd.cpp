@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/20 13:52:50 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/21 13:15:03 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,20 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 471);
 		else if (this->_s->getChannel(name_chann)->isBanned(this->_user->getNickname()))
 			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 474);
+		else if (this->_s->getChannel(name_chann)->getInviteOnly() == true && this->_s->getChannel(name_chann)->isInv(this->_user->getNickname()) == false)
+			this->_msg->ERR_CANNOTJOIN(this->_user->get_fd(), name_chann, 473);
 		else
 		{
+			std::cout << "||" << this->_s->getChannel(name_chann)->isInv(this->_user->getNickname()) << "||" << std::endl;
 			this->_s->getChannel(name_chann)->addUser(this->_user, this->_user->get_fd());
 			std::cout << " >> " << YELLOW << this->_user->getNickname() << " has join " << name_chann << Color <<"\n";
 		}
 	}
 	if (!this->_s->getChannel(name_chann)->userIsInChann(this->_user->get_fd()))
+	{
+		std::cout << "1111" << std::endl;
 		return ;
+	}
 	Channel*	c = this->_s->getChannel(name_chann);
 	
 	//msg = ":" + this->_user->getNickname() + " JOIN " + name_chann + "\r\n";

@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/20 14:29:30 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/21 12:29:27 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	Commands::printListCmd()
 	std::vector<std::string>::iterator	it = this->_line_cmd.begin();
 	for(; it != this->_line_cmd.end(); it++)
 	{
-		//std::cout << *it << std::endl;
 		std::cout << "[Server] Command sent from server << " << CYAN << *it << Color << std::endl;
 	}
 }
@@ -46,6 +45,8 @@ void	Commands::modeCmd(){
 		modeOnUser();
 	else if (chanExist(this->_line_cmd[1]))
 		modeOnChannel();
+	else
+		this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
 }
 
 char	Commands::findIndice()
@@ -82,7 +83,7 @@ int		Commands::ft_stoi( std::string & s )
 //verifie les parametres
 int		Commands::verifModeParam()
 {
-	if(chanExist(this->_line_cmd[1]) == false) // check if chan exist
+	if(!chanExist(this->_line_cmd[1]))
 		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
 	if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user)) //user not on channel 
 		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);

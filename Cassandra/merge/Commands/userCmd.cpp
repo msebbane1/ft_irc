@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   userCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:58:20 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/17 14:18:49 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 12:07:09 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ void	Commands::userCmd()
 		if (this->_line_cmd[4][0] == ':' && this->_line_cmd[4].size() >= 2)
 		{
 			this->_line_cmd[4] = this->_line_cmd[4].substr(1, this->_line_cmd[4].size() - 1);
-			if(this->_line_cmd.size() == 4)
+			if(this->_line_cmd.size() == 5)
 			{
 				std::string realname = this->_line_cmd[4];
 				this->_user->setRealname(realname);
 			}
-			else if(this->_line_cmd.size() >= 2)
+			else if(this->_line_cmd.size() >= 2 && this->_line_cmd.size() != 5)
 			{
 				std::string realname = this->_line_cmd[4] + " " + this->_line_cmd[5];
 				this->_user->setRealname(realname);
@@ -52,5 +52,4 @@ void	Commands::userCmd()
 	}
 	else if(_line_cmd[0] == "USER" && this->_user->realnameIsSet())
 		this->_msg->ERR_ALREADYREGISTRED(this->_fd_user);
-		
 }
