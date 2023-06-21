@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 14:52:21 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/20 12:52:36 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void		Server::createServ(int port)
 		msg.errorMsg("bind failed");
 	this->_addr_len = sizeof(this->_addr);
 	
-	if (listen(this->_fd_server, 500) < 0)
+	if (listen(this->_fd_server, 2) < 0)
 		msg.errorMsg("listen");
 	
 	this->_command_list.push_back("PASS");

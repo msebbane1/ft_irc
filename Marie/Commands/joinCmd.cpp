@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/20 10:31:58 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 10:32:50 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	Commands::joinCmd()
 {
 	bool	key_empty = true;
 
-	if (this->_line_cmd[2].empty() != 0)
+	if (this->_line_cmd.size() > 2 && this->_line_cmd[2].empty() != 0)
 			key_empty = false;
 	if (this->_line_cmd.size() == 1)
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);

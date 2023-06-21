@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/20 10:38:27 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 10:39:39 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string	Commands::joinMessages(int line)
 void	Commands::privMsgCmd(Client *bot)
 {
 	if (this->_line_cmd.size() < 3)
-		_msg->ERR_NORECIPIENT(this->_fd_user); 
+		this->_msg->ERR_NORECIPIENT(this->_fd_user); 
 	else if(this->_line_cmd.size() > 2)
 	{
 		if ((this->_line_cmd[1][0] == '#' || this->_line_cmd[1][0] == '&')) // POUR CHANNEL
@@ -65,7 +65,7 @@ void	Commands::privMsgCmd(Client *bot)
 					return ;
 				}
 				else
-					this->_msg->RPL_PRIVMSGCHAN(this->_user->getNickname(), this->_line_cmd[1], msg, _s->getChannel(this->_line_cmd[1]), _fd_user);
+					this->_msg->RPL_PRIVMSGCHAN(this->_user->getNickname(), this->_line_cmd[1], msg, this->_s->getChannel(this->_line_cmd[1]), this->_fd_user);
 			}
 			else
 			{
@@ -82,11 +82,9 @@ void	Commands::privMsgCmd(Client *bot)
 			}
 			else
 			{
-				std::cout << "ddd2" << std::endl;
 				this->_msg->RPL_PRIVMSG(this->_user->getNickname(), this->_line_cmd[1], joinMessages(2), this->_s->getClient(this->_line_cmd[1])->get_fd());
 				return ;
 			}
-			std::cout << "ddd" << std::endl;
 		}
 		else
 		{
