@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 12:29:31 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:57:43 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ class Server
 		int							received(char *buffer, int user_talk);
 		void						connectToClients(int user_talk, std::string buf);
 		void 						connect(int user_talk, std::string buf);
-		void						setConfig(std::string str);
 		void						destroyChannIfEmpty();
 		
 		//==========================Utils===========================//

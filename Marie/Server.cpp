@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 12:57:18 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 13:57:37 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,27 +99,6 @@ bool Server::clientExist(std::string nick)
 	}
 	return (false);
 }
-/*--------------------------------------------------------*/
-void	Server::setConfig(std::string param) 
-{
-	std::ifstream	ifs(param);
-	std::string		temp;
-	size_t			pos;
-
-	if (!ifs.is_open())
-	{
-		std::cout << "Error: cannot open file conf" << std::endl;
-		exit(1);
-	}
-	while (std::getline(ifs, temp))
-	{
-		if (temp.compare("password") == 0)
-			break;
-	}
-	pos = temp.find("=");
-	this->_passwordOper = temp.substr(pos + 2, temp.length());
-}
-
 
 /*--------------------------------------------------------*/
 
