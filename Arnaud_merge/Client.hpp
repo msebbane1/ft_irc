@@ -20,6 +20,7 @@ class Client
 		std::string _real_name;
 		bool		_isInvisible;
 		bool		_isIRCOperator;
+		bool		_isBot;
 		//std::string	_mode;
 
     public :
@@ -55,4 +56,7 @@ class Client
 
 		bool		getIRCOperator() const;
 		void		setIRCOperator(bool ircop);
+
+		//===========BOT==========//
+		bool	containBanWord(std::string str);
 };

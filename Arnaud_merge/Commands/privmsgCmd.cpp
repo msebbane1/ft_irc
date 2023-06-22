@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   privmsgCmd.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 13:48:15 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 07:37:28 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ std::string	Commands::joinMessages(int line)
 		msg += " ";
 		it++;
 	}
-	//std::cout << msg << std::endl;
 	return(msg);
 }
 
@@ -53,10 +52,11 @@ void	Commands::privMsgCmd()
 				&& this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_user->getNickname()) == false)
 			{
 				std::string msg = joinMessages(2);
-				if (this->_s->getChannel(this->_line_cmd[1])->userIsInChan("Bot") && this->_s->getChannel(this->_line_cmd[1])->containBanWord(msg))
+				
+				if (this->_s->getChannel(this->_line_cmd[1])->containBanWord(msg))
 				{
 					this->_s->getChannel(this->_line_cmd[1])->banUser(this->_user->getNickname());
-					std::cout << " >> " << YELLOW << "User " << this->_user->getNickname() << " has been ban from the channel " << this->_line_cmd[1] << Color << std::endl;
+					std::cout << " >> " << RED << "User " << this->_user->getNickname() << " has been ban from the channel " << this->_line_cmd[1] << Color << std::endl;
 					return ;
 				}
 				if (msg == ": ")
@@ -91,7 +91,7 @@ void	Commands::privMsgCmd()
 			this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
 			return ;
 		}
-		if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
-       		this->_s->channDisconnected();
+		//if (this->_s->getChannel(this->_line_cmd[1])->getListUserCo().empty())
+       	//	this->_s->channDisconnected();
 	}
 }

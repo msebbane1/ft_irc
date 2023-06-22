@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 14:40:17 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 13:17:11 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 07:14:33 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,15 @@ class Messages;
 class Server
 {
 	private:
-		struct sockaddr_in				_addr;
-		int								_addr_len;
-		int								_fd_server;
-		fd_set							_fds;
-		std::string						_password;
-		std::string						_passwordOper;
-		std::vector<std::string>		_command_list;
-		std::vector<int>				_fd_users_dc;
-		std::map<int, Client*>			_list_client;
+		struct sockaddr_in			_addr;
+		int							_addr_len;
+		int							_fd_server;
+		fd_set						_fds;
+		std::string					_password;
+		std::string					_passwordOper;
+		std::vector<std::string>	_command_list;
+		std::vector<int>			_fd_users_dc;
+		std::map<int, Client*>		_list_client;
 		std::map<std::string, Channel*>	_list_chan;
 		
 	public:
@@ -62,6 +62,7 @@ class Server
 		int							received(char *buffer, int user_talk);
 		void						connectToClients(int user_talk, std::string buf);
 		void 						connect(int user_talk, std::string buf);
+		void						destroyChannIfEmpty();
 		
 		//==========================Utils===========================//
 		void						sendHistoric(int client_fd);

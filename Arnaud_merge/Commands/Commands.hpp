@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:46 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 13:17:35 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 07:33:45 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class Commands
 		Messages*					_msg;
 		Server* 					_s;
 		Client*						_user;
+		Client*						_bot;
 		int							_fd_user;
 		std::vector<std::string>	_line_cmd;
 		char						_indice;
@@ -86,4 +87,6 @@ class Commands
 		void						leaveMultiChan();
 		void						create_oa_join(std::string name_chann, std::string key);
 		bool						userOnChannel();
+
+		void 						setBot();
 };

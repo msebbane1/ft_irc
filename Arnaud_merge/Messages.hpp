@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 14:31:21 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 09:15:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,10 @@ class Messages
 	//============ERR CHANNELS=========///
 	void	ERR_NOSUCHCHANNEL(std::string channel, int fd);
 	void	ERR_CHANOPRIVSNEEDED(std::string cmd, int fd); //user effectue une commande operateur
+	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
 	void	ERR_UMODUUNKNOWNFLAG(std::string cmd, int fd); //un mode inconnue 
 	void	ERR_NOTONCHANNEL(std::string nick, std::string channel, int fd);
 	void	ERR_NOTONCHANNEL(int fd, std::string chann);
-	void 	ERR_CHANOPRIVSNEEDED(std::string nick, std::string channel, int fd);
 	void	ERR_USERNOTINCHANNEL(std::string nick, std::string channel, int fd);
 	void	ERR_CANNOTSENDTOCHAN(std::string target, int fd);
 	void	ERR_USERONCHANNEL(int fd, std::string nick, std::string chann);
@@ -86,5 +86,8 @@ class Messages
 	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
 	//utils
 	std::string					ft_tostring(int num);
+
+
+	bool						checkFdBot(int fd_bot);
 
 };
