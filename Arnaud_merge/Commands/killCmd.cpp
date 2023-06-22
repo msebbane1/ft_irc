@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 15:09:18 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/19 13:37:25 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 12:04:21 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	Commands::killCmd()
 	if (this->_s->getClient(this->_user->getNickname())->getIRCOperator() == false)
 	{
 		this->_msg->ERR_NOPRIVILEGES(this->_user->getNickname(), this->_fd_user);
-		std::cout << " >> " << RED << "Denied : not channel operator" << Color << std::endl;
+		std::cout << " >> " << RED << "Denied : not server operator" << Color << std::endl;
 		return ;
 	}
 	if(this->_s->clientExist(this->_line_cmd[1]))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Messages.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/22 13:30:39 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:30:43 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,21 @@ void	Messages::ERR_NONICKNAMEGIVEN(int fd) // 431
 {
 	std::string msg = ":irc.com 431 ERR_NONICKNAMEGIVEN :No nickname given\r\n";
 	send(fd, msg.c_str(), msg.length(), 0);
+	return ;
 }
 
 void	Messages::ERR_NICKNAMEINUSE(std::string nick, int fd) // 433
 {
 	std::string msg = ":irc.com 433 ERR_NICKNAMEINUSE " + nick + " :Nickname is already in use\r\n";
 	send(fd, msg.c_str(), msg.length(), 0);
+	return ;
 }
 
 void	Messages::ERR_ERRONEUSNICKNAME(std::string nick, int fd) // 432
 {
 	std::string msg = ":irc.com 432 ERR_ERRONEUSNICKNAME " + nick + " :Erroneus nickname\r\n";
 	send(fd, msg.c_str(), msg.length(), 0);
+	return ;
 }
 
 //==============================================ERROR PASSWORD && USER==================================================///
@@ -97,6 +100,7 @@ void Messages::ERR_NOTREGISTERED(int fd) // 451
 {
 	std::string msg = ":irc.com 451 ERR_NOTREGISTERED :You have not registered\r\n";
 	send(fd, msg.c_str(), msg.length(), 0);
+	return;
 }
 
 //==============================================CHANNEL==================================================///
@@ -208,6 +212,7 @@ void Messages::RPL_LEFTCHANNEL(std::string nick, std::string user, std::string a
 void Messages::RPL_KICK(std::string nick, std::string user, std::string channel, std::string kick, std::string reason, int fd)
 {
 	std::string	msg = ":" +  nick + "!" + user + "@localhost" + " KICK " + channel + " " + kick +  " " + reason + "\r\n";
+
 	send(fd, msg.c_str(), msg.length(), 0);
 }
 //TOPIC

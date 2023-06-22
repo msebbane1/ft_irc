@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 12:46:33 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 17:46:22 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,8 @@ void	Server::connectToClients(int user_talk, std::string buf)
 	Messages msg;
 	if (buf.find("\r\n") != std::string::npos)
         buf = buf.substr(0, buf.length() - 1);
-    buf = buf.substr(0, buf.length() - 1);
+	if (buf.size() > 1)
+    	buf = buf.substr(0, buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
@@ -290,6 +291,8 @@ void	Server::clientDisconnected()
 	}
 	this->_fd_users_dc.clear();
 }
+
+
 
 void	Server::channDisconnected()
 {
