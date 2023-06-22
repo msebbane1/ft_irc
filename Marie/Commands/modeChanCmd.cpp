@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/22 11:59:49 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:06:07 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,11 @@ int		Commands::verifUser()
 				}
 				else
 					return 1;
+			}
+			else if (getIndice() == '+' && this->_s->getChannel(this->_line_cmd[1])->getCreator()->getNickname() == this->_line_cmd[3])
+			{
+				std::cout << " >> " << YELLOW << "Can't ban the channel's owner" << Color << std::endl;
+				return (1);
 			}
 			else if(this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]) && getIndice() == '+')
 				return 1;

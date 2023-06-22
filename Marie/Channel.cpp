@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 09:00:12 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:07:54 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,13 @@ void						Channel::setBot()
 
 }
 
-bool						Channel::isBot()
-{
-	if(this->_bot)
-		return true;
-	return false;
-
-}
 void	Channel::banUser(std::string username)
 {
+	if (username == this->_creator->getNickname())
+	{
+		std::cout << " >> " << YELLOW << "Can't ban the channel's owner" << Color << std::endl;
+		return ;
+	}
 	for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
 	{
 		if (it->second->getNickname() == username)

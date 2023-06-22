@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 07:15:52 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:08:44 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,7 +300,7 @@ void	Server::channDisconnected()
 	
 	while (it != map.end())
 	{
-		if (it->second->getListUserCo().size() == 0)
+		if (it->second->getListUserCo().size() == 1)
 		{
 			this->_list_chan.erase(it->first);
 			delete it->second;
