@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/22 12:22:59 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:30:57 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,6 @@ void	Commands::privMsgCmd()
 				if (this->_s->getChannel(this->_line_cmd[1])->containBanWord(msg))
 				{
 					this->_s->getChannel(this->_line_cmd[1])->banUser(this->_user->getNickname());
-					std::map<int, Client*> UserCo = this->_s->getChannel(this->_line_cmd[1])->getListUserCo(); //mettre ailleur sd car affiche message 2 fois
-					if(this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) == true)
-					{
-						for (std::map<int, Client*>::iterator it = UserCo.begin(); it != UserCo.end(); it++) 
-						{
-							std::string	msg;
-							msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
-							send(it->first, msg.c_str(), msg.length(), 0);
-						}
-					}
 					std::cout << " >> " << RED << "User " << this->_user->getNickname() << " has been ban from the channel " << this->_line_cmd[1] << Color << std::endl;
 					return ;
 				}
