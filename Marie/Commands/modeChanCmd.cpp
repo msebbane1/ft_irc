@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/22 11:35:12 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:37:25 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ void	Commands::modeOnChannel()
 			else if (this->_line_cmd.size() == 4)
 				msg = ":" + this->_user->getNickname() + " " + this->_line_cmd[0] + " " + this->_line_cmd[1] + " " + this->_line_cmd[2] + " " + this->_line_cmd[3] + "\r\n"; // : utilisateurduchann + " COMMANDE " + ARG
 			if(this->_msg->checkFdBot(it->first) == false)
-				if(send(it->first, msg.c_str(), msg.length(), 0) < 0)
-					this->_msg->errorMsg("failed send");
+				send(it->first, msg.c_str(), msg.length(), 0);
 		}
 	}
 	std::vector<char>::iterator	it = this->_optionList.begin();
