@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:30 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/22 09:15:51 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:59:29 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,5 @@ class Messages
 	void	RPL_ENDOFBANLIST(std::string channel, int fd); //forban
 	//utils
 	std::string					ft_tostring(int num);
-
-
-	bool						checkFdBot(int fd_bot);
 
 };

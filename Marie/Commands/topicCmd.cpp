@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 11:02:11 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/22 08:43:18 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:50:51 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ void	Commands::topicCmd()
 	if (this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) && this->_s->getChannel(this->_line_cmd[1])->getTopicProtected() == true)
 	{
 		if(this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == false)
+		{
 			this->_msg->ERR_CHANOPRIVSNEEDED(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);
+			return ;
+		}
 		else
 		{
 			if (this->_line_cmd[2] == "::")
@@ -68,7 +71,7 @@ void	Commands::topicCmd()
 				this->_msg->RPL_NOTOPIC(this->_s->getChannel(this->_line_cmd[1]));
 		}
 	}
-	if (this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) && this->_s->getChannel(this->_line_cmd[1])->getTopicProtected() == false)
+	else if (this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user) && this->_s->getChannel(this->_line_cmd[1])->getTopicProtected() == false)
 	{
 		if (this->_line_cmd[2] == "::")
 		{
