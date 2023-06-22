@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 07:15:52 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 12:46:33 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,8 +291,6 @@ void	Server::clientDisconnected()
 	this->_fd_users_dc.clear();
 }
 
-
-
 void	Server::channDisconnected()
 {
 	std::map<std::string, Channel*> map = this->_list_chan;
@@ -300,7 +298,7 @@ void	Server::channDisconnected()
 	
 	while (it != map.end())
 	{
-		if (it->second->getListUserCo().size() == 0)
+		if (it->second->getListUserCo().size() == 1)
 		{
 			this->_list_chan.erase(it->first);
 			delete it->second;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 09:00:12 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 12:13:26 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ void						Channel::setBot()
 	this->_bot->setRealname("Boti Bot");
 	this->_bot->setPassword();
 	this->_bot->set_fd(0);
-
 }
 
 bool						Channel::isBot()
@@ -71,10 +70,15 @@ bool						Channel::isBot()
 	if(this->_bot)
 		return true;
 	return false;
-
 }
+
 void	Channel::banUser(std::string username)
 {
+	if (username == this->_creator->getNickname())
+	{
+		std::cout << " >> " << YELLOW << "Can't ban the channel's owner" << Color << std::endl;
+		return ;
+	}
 	for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
 	{
 		if (it->second->getNickname() == username)
