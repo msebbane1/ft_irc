@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 14:17:57 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:07:54 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,13 +63,7 @@ void						Channel::setBot()
 	this->_bot->setRealname("Boti Bot");
 	this->_bot->setPassword();
 	this->_bot->set_fd(0);
-}
 
-bool						Channel::isBot()
-{
-	if(this->_bot)
-		return true;
-	return false;
 }
 
 void	Channel::banUser(std::string username)
@@ -120,7 +114,7 @@ bool	Channel::userIsInChann(int user)
 void	Channel::sendMsg(int user_talk, std::string msg)
 {
 	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
-		if (it->first != user_talk && it->first != 0)
+		if (it->first != user_talk)
 			send(it->first, msg.c_str(), msg.size(), 0);
 }
 
