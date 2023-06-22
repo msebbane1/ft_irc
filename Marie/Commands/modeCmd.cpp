@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/21 13:53:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 10:58:44 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,22 @@ void	Commands::printListCmd()
 void	Commands::modeCmd(){
 
 	printListCmd();
-	if( this->_line_cmd.size() == 1)
+	if (this->_line_cmd.size() == 1)
 	{
 		this->_msg->ERR_NEEDMOREPARAMS(this->_fd_user);
 		return;
 	}
-	if( this->_line_cmd.size() == 2)
+	if (this->_line_cmd.size() == 2)
 		return;
-	if(this->_s->clientExist(this->_line_cmd[1]))
+	if (this->_s->clientExist(this->_line_cmd[1]))
 		modeOnUser();
 	else if (chanExist(this->_line_cmd[1]))
 		modeOnChannel();
 	else
+	{
 		this->_msg->ERR_NOSUCHNICK(this->_line_cmd[1], this->_fd_user);
+		return ;
+	}
 }
 
 char	Commands::findIndice()
@@ -55,7 +58,8 @@ char	Commands::findIndice()
 
 	if(this->_line_cmd[2].size() == 1)
 		return c;
-	else{
+	else
+	{
 		c = this->_line_cmd[2][0];
 		if(isalpha(c) || isdigit(c))
 			return '\0';
