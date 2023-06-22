@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/30 13:09:13 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/22 12:15:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 13:30:43 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ void Messages::RPL_PRIVMSGCHAN(std::string nick, std::string channel, std::strin
 void Messages::RPL_PRIVMSG(std::string nick, std::string channel, std::string msg, int fd)
 {
 	std::string	msgg = ":" + nick + " PRIVMSG " + channel + " " + msg + "\r\n";
-	send(fd, msg.c_str(), msg.length(), 0);
+	send(fd, msgg.c_str(), msgg.length(), 0);
 }
 
 //PART
