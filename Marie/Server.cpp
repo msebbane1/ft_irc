@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 13:08:44 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 18:16:20 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,8 +198,9 @@ void	Server::connectToClients(int user_talk, std::string buf)
 {
 	Messages msg;
 	if (buf.find("\r\n") != std::string::npos)
-        buf = buf.substr(0, buf.length() - 1);
-    buf = buf.substr(0, buf.length() - 1);
+		buf = buf.substr(0, buf.length() - 1);
+	if (buf.length() > 1) 
+		buf = buf.substr(0, buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
@@ -241,10 +242,9 @@ void	Server::acceptUser()
 	{
 		fd_user = it->first;
 		FD_SET(fd_user, &this->_fds);
-		fcntl(fd_user, O_NONBLOCK);
+		fcntl(fd_user, F_SETFL, O_NONBLOCK);
 		max_fd = std::max(max_fd, fd_user);
 	}
-	
 	if (select(max_fd + 1, &this->_fds, NULL, NULL, NULL) < 0)
 		msg.errorMsg("select");
 	if (FD_ISSET(this->_fd_server, &this->_fds))
@@ -254,10 +254,9 @@ void	Server::acceptUser()
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
 		this->_list_client[new_user]->set_fd(new_user);
-
 		std::cout << std::endl;
 		std::cout << " >> " << GREEN << " [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
-		}
+	}
 }
 
 /*--------------------------------------------------------*/
@@ -337,14 +336,12 @@ void	Server::serverIrc()
 				if (strncmp(buffer, "", 1) != 0)
 				{
 					int	nb;
-					 
 					msg.displayMsgOnServer(buffer, user_talk);
 					nb = countCharInString(buffer, '\n');
 					if (nb > 1)
 					{
 						std::vector<std::string>	line;
 						int							i = 0;
-
 						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{

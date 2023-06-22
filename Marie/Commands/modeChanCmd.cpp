@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeChanCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/22 13:06:07 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 16:26:25 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 //
 void	Commands::modeOnChannel()
 {
-	
 	if(verifModeParam() == 1)
 		return;
 	if(getIndice() == '\0')
