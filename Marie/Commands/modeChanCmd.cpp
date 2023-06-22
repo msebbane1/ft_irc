@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/22 11:16:55 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:35:12 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,6 @@
 void	Commands::modeOnChannel()
 {
 	
-	if (this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == false)
-	{
-		this->_msg->ERR_CHANOPRIVSNEEDED(_user->getNickname(), this->_line_cmd[1], this->_fd_user);
-		std::cout << " >> " << RED << this->_s->getClient(this->_line_cmd[3])->getNickname() << " not operator channel " << Color << std::endl;
-		return ;
-	}
 	if(verifModeParam() == 1)
 		return;
 	if(getIndice() == '\0')

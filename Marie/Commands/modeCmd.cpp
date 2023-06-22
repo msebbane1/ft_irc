@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/22 11:27:27 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:35:05 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ int		Commands::verifModeParam()
 	if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // verif if user isOperator in chan
 	{
 		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user); // ERR_CHANOPRIVSNEEDED 482
+		std::cout << " >> " << RED << this->_user->getNickname() << " not operator channel " << Color << std::endl;
 		return 1;
 	}
 	char Indice = findIndice();
