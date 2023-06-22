@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 11:11:37 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/21 13:53:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:18:05 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,20 @@ int		Commands::ft_stoi( std::string & s )
 //verifie les parametres
 int		Commands::verifModeParam()
 {
-	if(!chanExist(this->_line_cmd[1])) // check if chan exist
+	if(!chanExist(this->_line_cmd[1])){
 		this->_msg->ERR_NOSUCHCHANNEL(this->_line_cmd[1], this->_fd_user);
+		return 1;
+	}
 	if(!this->_s->getChannel(this->_line_cmd[1])->userIsInChann(this->_fd_user)) //user not on channel 
+	{
 		this->_msg->ERR_NOTONCHANNEL(this->_user->getNickname(), this->_line_cmd[1], this->_fd_user);
+		return 1;
+	}
 	if(!this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user)) // verif if user isOperator in chan
+	{
 		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user); // ERR_CHANOPRIVSNEEDED 482
+		return 1;
+	}
 	char Indice = findIndice();
 	if( Indice != '+' && Indice != '-'){
 		setIndice('\0');
