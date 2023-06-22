@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeUserCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:22 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/22 10:48:21 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 11:19:45 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ void	Commands::modeOnUser(){
 		char option = this->_optionList[*it];
 		switch (option)
 		{
-			case 'i': //+i : invisible, on ne te verra pas en faisant un /NAMES ou un /WHO sur un channel.
-				setInvisibleMode();
-				break;
+			//case 'i': //+i : invisible, on ne te verra pas en faisant un /NAMES ou un /WHO sur un channel.
+				//setChanInviteOnlyMode();
+				//break;
 
 			default:
 				this->_msg->ERR_UMODUUNKNOWNFLAG(this->_line_cmd[1], this->_fd_user); //checker l'option(mode) i, t, k, o, l; 
