@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 13:25:20 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 07:15:52 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ std::map<int, Client*>	Server::getListClient()
 }
 
 Client *Server::getClient(std::string nick) 
-{
-	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
+{	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
 	{
 		if (it->second->getNickname() == nick)
 			return (it->second);
 	}
 	return (NULL);
 }
+
 
 void		Server::setListClient(int fd, Client *user)
 {
@@ -120,7 +120,7 @@ void		Server::createServ(int port)
 		msg.errorMsg("bind failed");
 	this->_addr_len = sizeof(this->_addr);
 	
-	if (listen(this->_fd_server, 100) < 0)
+	if (listen(this->_fd_server, 500) < 0)
 		msg.errorMsg("listen");
 	
 	this->_command_list.push_back("PASS");
@@ -253,7 +253,6 @@ void	Server::acceptUser()
 			msg.errorMsg("accept");
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
-		
 		this->_list_client[new_user]->set_fd(new_user);
 
 		std::cout << std::endl;
@@ -283,6 +282,7 @@ int		Server::received(char *buffer, int user_talk)
 
 void	Server::clientDisconnected() 
 {
+	
 	for (std::vector<int>::iterator it = this->_fd_users_dc.begin(); it != this->_fd_users_dc.end(); it++) {
 		close(this->_list_client.find(*it)->first);
 		delete this->_list_client.find(*it)->second;
@@ -292,6 +292,7 @@ void	Server::clientDisconnected()
 }
 
 
+
 void	Server::channDisconnected()
 {
 	std::map<std::string, Channel*> map = this->_list_chan;
@@ -299,7 +300,7 @@ void	Server::channDisconnected()
 	
 	while (it != map.end())
 	{
-		if ((it->second->getListUserCo().size() == 0))
+		if (it->second->getListUserCo().size() == 0)
 		{
 			this->_list_chan.erase(it->first);
 			delete it->second;
@@ -308,7 +309,7 @@ void	Server::channDisconnected()
 	}
 }
 
-/*---------------------------------------------------*/
+/*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {

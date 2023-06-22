@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:29 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 13:43:04 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/22 08:03:58 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Channel
 		bool						_i_only;
 		bool						_topicProtected; //topic
 		std::vector<std::string>	_list_inv;
+		Client*						_bot;
 		
 	public:
 		Channel(std::string name, Client* c);
@@ -56,6 +57,7 @@ class Channel
 		int		nbUserInChan();
 		bool	isInv(std::string nickname);
 		bool	containBanWord(std::string str);
+
 
 		std::string					getName();
 		void						setName(std::string name);
@@ -91,4 +93,9 @@ class Channel
 		std::vector<std::string>	getListUserBanned() const;
 
 		Client*						getCreator();
+		
+		//========================BOT==================//
+		void						setBot();
+		bool						isBot();
+
 };

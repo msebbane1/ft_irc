@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   modeUserCmd.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:22 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/12 11:26:49 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/22 10:48:21 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	Commands::modeOnUser(){
 		switch (option)
 		{
 			case 'i': //+i : invisible, on ne te verra pas en faisant un /NAMES ou un /WHO sur un channel.
-				setChanInviteOnlyMode();
+				setInvisibleMode();
 				break;
 
 			default:
