@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:56:31 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 13:50:46 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 08:21:00 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 	RPL_NAMREPLY (353)
 	RPL_ENDOFNAMES (366)
 */
-
+// /connect localhost 8080 oui
 //---------------------JOIN-------------------//
 
 void	Commands::create_oa_join(std::string name_chann, std::string key)
@@ -37,12 +37,12 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	if (!chanExist)
 	{
 		Channel	*chan;
+		
 		if (!key.empty())
 			chan = new Channel(name_chann, this->_user, key);
 		else
 			chan = new Channel(name_chann, this->_user);
 		this->_s->addListChan(chan);
-		std::cout << " >> " << YELLOW << "Be careful John Wick is here..." << Color << std::endl;
 		std::cout << " >> " << YELLOW << "Channel named " << name_chann << " has been created by " << this->_s->getChannel(name_chann)->getCreator()->getNickname() << Color << std::endl;
 	}
 	else
@@ -66,12 +66,6 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	Channel*	c = this->_s->getChannel(name_chann);
 	
 	this->_msg->RPL_JOIN(this->_user->getNickname(), this->_user->getUser(), name_chann, c);
-	/*
-	if(_s->getChannel(this->_line_cmd[1])->topicIsSet())
- 		this->_msg->RPL_TOPIC(_s->getChannel(this->_line_cmd[1]));
-	else
- 		this->_msg->RPL_NOTOPIC(_s->getChannel(this->_line_cmd[1]));
-	*/
 	if (!c->topicIsSet())
 		this->_msg->RPL_NOTOPIC(c);
 	else
@@ -79,6 +73,7 @@ void	Commands::create_oa_join(std::string name_chann, std::string key)
 	this->_msg->RPL_NAMREPLY(c, this->_user->get_fd());
 	this->_msg->RPL_ENDOFNAMES(c, this->_user->get_fd(), this->_user->getNickname());
 }
+
 
 void	Commands::joinCmd()
 {

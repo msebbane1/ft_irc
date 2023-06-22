@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 12:54:12 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 12:58:48 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 07:37:28 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ std::string	Commands::joinMessages(int line)
 		msg += " ";
 		it++;
 	}
-	//std::cout << msg << std::endl;
 	return(msg);
 }
 
@@ -53,15 +52,14 @@ void	Commands::privMsgCmd()
 				&& this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_user->getNickname()) == false)
 			{
 				std::string msg = joinMessages(2);
-				/*
-				if (bot->containBanWord(msg))
+				
+				if (this->_s->getChannel(this->_line_cmd[1])->containBanWord(msg))
 				{
 					this->_s->getChannel(this->_line_cmd[1])->banUser(this->_user->getNickname());
-					std::cout << " >> " << RED << this->_user->getNickname() << " is banned from the bot John Wick :) " << std::endl;
+					std::cout << " >> " << RED << "User " << this->_user->getNickname() << " has been ban from the channel " << this->_line_cmd[1] << Color << std::endl;
 					return ;
 				}
-				*/
-				if (joinMessages(2) == ": ")
+				if (msg == ": ")
 				{
 					this->_msg->ERR_NOTEXTTOSEND(this->_fd_user);
 					return ;

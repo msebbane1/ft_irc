@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 14:47:41 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 12:21:30 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 07:34:23 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,3 +127,4 @@ char	Commands::getIndice(){
 void	Commands::setIndice(char operand){
 	this->_indice = operand;
 }
+

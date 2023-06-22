@@ -6,13 +6,13 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 14:50:54 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 14:08:10 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/21 14:44:55 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-bool	Client::containBanWord(std::string str)
+bool	Channel::containBanWord(std::string str)
 {
 	std::vector<std::string>	banWords;
 	std::string					tmp;

@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 13:49:09 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 08:12:34 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,11 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_list_banned(), _password(), _size_max(10),
 											_i_only(false), _list_inv()
 {
+	setBot();
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
+	this->addUser(this->_bot, this->_bot->get_fd());
+	this->addOperator(this->_bot, this->_bot->get_fd());
 }
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
@@ -26,12 +29,16 @@ Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _c
 																_list_banned(), _password(), _size_max(10),
 																_i_only(false), _list_inv()
 {
+	setBot();
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
+	this->addUser(this->_bot, this->_bot->get_fd());
+	this->addOperator(this->_bot, this->_bot->get_fd());
 }
 
 Channel::~Channel()
 {
+	delete this->_bot;
 }
 
 Channel*	Channel::operator=(Channel const *c)
@@ -46,7 +53,26 @@ Channel*	Channel::operator=(Channel const *c)
 	this->_password = c->_password;
 	return (this);
 }
+//===============BOT==========//
+void						Channel::setBot()
+{
+	this->_bot = new Client();
+	
+	this->_bot->setNickname("iroBot");
+	this->_bot->setUser("Bot");
+	this->_bot->setRealname("Boti Bot");
+	this->_bot->setPassword();
+	this->_bot->set_fd(0);
 
+}
+
+bool						Channel::isBot()
+{
+	if(this->_bot)
+		return true;
+	return false;
+
+}
 void	Channel::banUser(std::string username)
 {
 	for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)

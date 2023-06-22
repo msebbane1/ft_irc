@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 14:11:23 by msebbane          #+#    #+#             */
-/*   Updated: 2023/06/21 11:44:26 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 08:20:49 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	Commands::operCmd()
 		}
 		else
 		{
-			if(this->_s->getClient(this->_line_cmd[1])->getIRCOperator() == false) // ajout aussi du mod o ?
+			if(this->_s->getClient(this->_line_cmd[1])->getIRCOperator() == false)
 				this->_s->getClient(this->_line_cmd[1])->setIRCOperator(true);
 			this->_msg->RPL_YOUREOPER(_user->getNickname(), this->_fd_user);
 			std::cout << " >> " << GREEN << _user->getNickname() << " is Operator " << Color << std::endl;
