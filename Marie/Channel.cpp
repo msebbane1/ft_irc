@@ -6,7 +6,7 @@
 /*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 08:12:34 by msebbane         ###   ########.fr       */
+/*   Updated: 2023/06/22 09:00:12 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,9 +206,11 @@ void					Channel::removeUser(std::string username)
 	{
 		if (it->second->getUser() == username || it->second->getNickname() == username)
 		{
-			this->_list_user_co.erase(it->first);
 			if (isInv(it->second->getNickname()))
+			{
 				this->removeListInv(username);
+			}
+			this->_list_user_co.erase(it->first);
 			return ;
 		}
 	}
@@ -223,18 +225,28 @@ std::map<int, Client*>	Channel::getListOp()
 
 void					Channel::addOperator(Client *cl, int fd_cl)
 {
-	for (unsigned long i = 0; i < this->_list_banned.size(); i++)
+	if(this->isBanned(cl->getNickname()) == true)
 	{
-		if (this->_list_banned[i] == cl->getUser())
+		std::cout << "dans verif ban" << std::endl;
+		for (unsigned long i = 0; i < this->_list_banned.size(); i++)
 		{
-			std::cout << "User has been banned. Can't join " << this->_name << std::endl;
-			// envoyer un message comme quoi il est ban
-			// il faut d'abord le deban pur l'add
-			return ;
+			if (this->_list_banned[i] == cl->getUser())
+			{
+				std::cout << "User has been banned. Can't join " << this->_name << std::endl;
+				return ;
+			}
 		}
 	}
-	this->_list_operators.insert(std::pair<int, Client*>(fd_cl, cl));
-	// user added like operator
+	else
+	{
+		std::cout << "else" << std::endl;
+		this->_list_operators.insert(std::pair<int, Client*>(fd_cl, cl));
+	}
+	std::map<int, Client *>::iterator it = this->_list_operators.begin();
+	for(; it != this->_list_operators.end(); it++)
+	{
+		std::cout << "DANS CHANNEL||" << "fd" << it->first << "nickname:" << it->second->getNickname() << "||" << std::endl;
+	}
 }
 
 void					Channel::removeOperator(std::string username)
