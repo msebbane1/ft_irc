@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: student <student@student.42.fr>            +#+  +:+       +#+        */
+/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/19 16:45:09 by student          ###   ########.fr       */
+/*   Updated: 2023/06/22 18:16:20 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ std::map<int, Client*>	Server::getListClient()
 }
 
 Client *Server::getClient(std::string nick) 
-{
-	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
+{	for (std::map<int, Client *>::iterator it = _list_client.begin(); it != _list_client.end(); it++) 
 	{
 		if (it->second->getNickname() == nick)
 			return (it->second);
 	}
 	return (NULL);
 }
+
 
 void		Server::setListClient(int fd, Client *user)
 {
@@ -99,28 +99,6 @@ bool Server::clientExist(std::string nick)
 	}
 	return (false);
 }
-/*--------------------------------------------------------*/
-void	Server::setConfig(std::string param) 
-{
-	
-	std::ifstream	ifs(param.c_str());
-	std::string		temp;
-	size_t			pos;
-
-	if (!ifs.is_open())
-	{
-		std::cout << "Error: cannot open file conf" << std::endl;
-		exit(1);
-	}
-	while (std::getline(ifs, temp))
-	{
-		if (temp.compare("password") == 0)
-			break;
-	}
-	pos = temp.find("=");
-	this->_passwordOper = temp.substr(pos + 2, temp.length());
-}
-
 
 /*--------------------------------------------------------*/
 
@@ -216,22 +194,23 @@ std::vector<std::string>	Server::splitCustom(std::string buf, char charset)
 
 /*--------------------------------------------------------*/
 
-void	Server::connectToClients(int user_talk, std::string buf, Client *bot)
+void	Server::connectToClients(int user_talk, std::string buf)
 {
 	Messages msg;
 	if (buf.find("\r\n") != std::string::npos)
-        buf = buf.substr(0, buf.length() - 1);
-    buf = buf.substr(0, buf.length() - 1);
+		buf = buf.substr(0, buf.length() - 1);
+	if (buf.length() > 1) 
+		buf = buf.substr(0, buf.length() - 1);
 	std::vector<std::string>	line = splitCustom(buf, ' ');
 	
 	Commands *cmd = new Commands(this, _list_client[user_talk], user_talk, line, msg);
-	cmd->exec_cmd(bot);
+	cmd->exec_cmd();
 	delete cmd;
 }
 
 /*--------------------------------------------------------*/
 
-void Server::connect(int user_talk, std::string buf, Client *bot)
+void Server::connect(int user_talk, std::string buf)
 {
 	std::string msg;
 	
@@ -243,7 +222,7 @@ void Server::connect(int user_talk, std::string buf, Client *bot)
 	}
 	if (buf[0] == '\n' || buf[0] == '\t')
 		return ;
-	connectToClients(user_talk, buf, bot);
+	connectToClients(user_talk, buf);
 }
 
 /*--------------------------------------------------------*/
@@ -263,10 +242,9 @@ void	Server::acceptUser()
 	{
 		fd_user = it->first;
 		FD_SET(fd_user, &this->_fds);
-		fcntl(fd_user, O_NONBLOCK);
+		fcntl(fd_user, F_SETFL, O_NONBLOCK);
 		max_fd = std::max(max_fd, fd_user);
 	}
-	
 	if (select(max_fd + 1, &this->_fds, NULL, NULL, NULL) < 0)
 		msg.errorMsg("select");
 	if (FD_ISSET(this->_fd_server, &this->_fds))
@@ -275,12 +253,10 @@ void	Server::acceptUser()
 			msg.errorMsg("accept");
 		Client *cl = new Client();
 		this->_list_client.insert(std::pair<int, Client*>(new_user, cl));
-		
 		this->_list_client[new_user]->set_fd(new_user);
-
 		std::cout << std::endl;
 		std::cout << " >> " << GREEN << " [~New client connected~] [ID: "<< new_user << "]" << Color << std::endl;
-		}
+	}
 }
 
 /*--------------------------------------------------------*/
@@ -305,6 +281,7 @@ int		Server::received(char *buffer, int user_talk)
 
 void	Server::clientDisconnected() 
 {
+	
 	for (std::vector<int>::iterator it = this->_fd_users_dc.begin(); it != this->_fd_users_dc.end(); it++) {
 		close(this->_list_client.find(*it)->first);
 		delete this->_list_client.find(*it)->second;
@@ -312,6 +289,7 @@ void	Server::clientDisconnected()
 	}
 	this->_fd_users_dc.clear();
 }
+
 
 
 void	Server::channDisconnected()
@@ -330,40 +308,10 @@ void	Server::channDisconnected()
 	}
 }
 
-void	Server::setBot(Client *bot)
-{
-	bot->setNickname("John_Wick(bot)");
-	bot->setRealname("John Wick");
-	bot->setUser("BOT");
-	bot->setPassword();
-	bot->set_fd(100);
-}
-
-void	Server::addIfBotNotIn(Client *bot)
-{
-	std::map<std::string, Channel*>				list_c = this->_list_chan;
-	std::map<std::string, Channel*>::iterator	it = list_c.begin();
-	std::string									msg;
-
-	while (it != list_c.end())
-	{
-		if (!it->second->userIsInChann(bot->get_fd()))
-		{
-			it->second->addUser(bot, bot->get_fd());
-			it->second->addOperator(bot, bot ->get_fd());
-			msg = ":" + bot->getNickname() + " JOIN " + it->second->getName() + "\r\n";
-			it->second->sendMsg(-1, msg);
-		}
-		it++;
-	}
-}
 /*--------------------------------------------------------*/
 
 void	Server::serverIrc()
 {
-
-	Client*	bot = new Client();
-	setBot(bot);
 	while (true)
 	{
 		Messages msg;
@@ -388,33 +336,28 @@ void	Server::serverIrc()
 				if (strncmp(buffer, "", 1) != 0)
 				{
 					int	nb;
-					 
 					msg.displayMsgOnServer(buffer, user_talk);
 					nb = countCharInString(buffer, '\n');
 					if (nb > 1)
 					{
 						std::vector<std::string>	line;
 						int							i = 0;
-
 						line = splitCustom(buffer, '\n');
 						while (i < nb)
 						{
 							msg.displayMsgOnServer(line[i], user_talk);
-							connect(user_talk, line[i], bot);
+							connect(user_talk, line[i]);
 							i++;
 						}
 					}
 					else
-						connect(user_talk, buffer, bot);
+						connect(user_talk, buffer);
 				}
 			}
 		}
-		if (!this->_list_chan.empty())
-			addIfBotNotIn(bot);
 		if (!this->_fd_users_dc.empty())
 			clientDisconnected();
 		if (!this->_list_chan.empty())
 			channDisconnected();
 	}
-	delete bot;
 }

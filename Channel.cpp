@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: msebbane <msebbane@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 16:05:43 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/21 16:44:30 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/22 14:20:27 by msebbane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,11 @@ Channel::Channel(std::string name, Client* c): _name(name), _creator(c), _key(),
 											_list_banned(), _password(), _size_max(10),
 											_i_only(false), _list_inv()
 {
+	setBot();
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
+	this->addUser(this->_bot, this->_bot->get_fd());
+	this->addOperator(this->_bot, this->_bot->get_fd());
 }
 
 Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _creator(c), _key(key),
@@ -26,12 +29,16 @@ Channel::Channel(std::string name,  Client* c, std::string key): _name(name), _c
 																_list_banned(), _password(), _size_max(10),
 																_i_only(false), _list_inv()
 {
+	setBot();
 	this->addUser(c, c->get_fd());
 	this->addOperator(c, c->get_fd());
+	this->addUser(this->_bot, this->_bot->get_fd());
+	this->addOperator(this->_bot, this->_bot->get_fd());
 }
 
 Channel::~Channel()
 {
+	delete this->_bot;
 }
 
 Channel*	Channel::operator=(Channel const *c)
@@ -46,9 +53,26 @@ Channel*	Channel::operator=(Channel const *c)
 	this->_password = c->_password;
 	return (this);
 }
+//===============BOT==========//
+void						Channel::setBot()
+{
+	this->_bot = new Client();
+	
+	this->_bot->setNickname("iroBot");
+	this->_bot->setUser("Bot");
+	this->_bot->setRealname("Boti Bot");
+	this->_bot->setPassword();
+	this->_bot->set_fd(0);
+
+}
 
 void	Channel::banUser(std::string username)
 {
+	if (username == this->_creator->getNickname())
+	{
+		std::cout << " >> " << YELLOW << "Can't ban the channel's owner" << Color << std::endl;
+		return ;
+	}
 	for (std::map<int, Client *>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
 	{
 		if (it->second->getNickname() == username)
@@ -90,7 +114,7 @@ bool	Channel::userIsInChann(int user)
 void	Channel::sendMsg(int user_talk, std::string msg)
 {
 	for (std::map<int, Client*>::iterator it = this->_list_user_co.begin(); it != this->_list_user_co.end(); it++)
-		if (it->first != user_talk)
+		if (it->first != user_talk && it->first != 0)
 			send(it->first, msg.c_str(), msg.size(), 0);
 }
 
@@ -207,8 +231,6 @@ void					Channel::addOperator(Client *cl, int fd_cl)
 			if (this->_list_banned[i] == cl->getUser())
 			{
 				std::cout << "User has been banned. Can't join " << this->_name << std::endl;
-				// envoyer un message comme quoi il est ban
-				// il faut d'abord le deban pur l'add
 				return ;
 			}
 		}
@@ -221,19 +243,16 @@ void					Channel::addOperator(Client *cl, int fd_cl)
 	std::map<int, Client *>::iterator it = this->_list_operators.begin();
 	for(; it != this->_list_operators.end(); it++)
 	{
-		std::cout << "||" << "fd" << it->first << "nickname:" << it->second->getNickname() << "||" << std::endl;
+		std::cout << "DANS CHANNEL||" << "fd" << it->first << "nickname:" << it->second->getNickname() << "||" << std::endl;
 	}
-	// user added like operator
 }
 
 void					Channel::removeOperator(std::string username)
 {
 	for (std::map<int, Client *>::iterator it = this->_list_operators.begin(); it != this->_list_operators.end(); it++)
 	{
-		std::cout << "it in remove operator= " << it->first << std::endl;
 		if (it->second->getUser() == username || it->second->getNickname() == username)
 		{
-			std::cout << "if it = nickname" << std::endl;
 			this->_list_operators.erase(it->first);
 			return ;
 		}

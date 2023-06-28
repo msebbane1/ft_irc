@@ -6,7 +6,7 @@
 /*   By: clecat <clecat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 14:30:56 by clecat            #+#    #+#             */
-/*   Updated: 2023/06/21 16:50:48 by clecat           ###   ########.fr       */
+/*   Updated: 2023/06/22 16:26:25 by clecat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 // id a gerer: i, t, k, o, l; + to do the action, - to undo
 // gerer les multiple mode: /mode #chan +tns(channel en mode +t, +n, +s), cas possible : -b+i
 //
-void	Commands::modeOnChannel(){
-
+void	Commands::modeOnChannel()
+{
 	if(verifModeParam() == 1)
 		return;
 	if(getIndice() == '\0')
@@ -44,20 +44,19 @@ void	Commands::modeOnChannel(){
 		char option = *it;
 		switch (option)
 		{
-			case 'i': // OK
+			case 'i':
 				setChanInviteOnlyMode();
 				break;
 
-			case 't' : // OK
+			case 't' :
 				setChanRestrictTopic();
 				break;
 
-			case 'k' : // OK
+			case 'k' :
 				setChanKey();
 				break;
 
 			case 'o' :
-				std::cout << "switch o" << std::endl;
 				setChanOperator();
 				break;
 			
@@ -110,6 +109,11 @@ int		Commands::verifUser()
 				else
 					return 1;
 			}
+			else if (getIndice() == '+' && this->_s->getChannel(this->_line_cmd[1])->getCreator()->getNickname() == this->_line_cmd[3])
+			{
+				std::cout << " >> " << YELLOW << "Can't ban the channel's owner" << Color << std::endl;
+				return (1);
+			}
 			else if(this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]) && getIndice() == '+')
 				return 1;
 			else if(getIndice() == '-' && this->_s->getChannel(this->_line_cmd[1])->isBanned(this->_line_cmd[3]) == false)
@@ -126,11 +130,30 @@ int		Commands::verifUser()
 }
 
 // i : Set/remove Invite-only channel(no param needed)
-void	Commands::setChanInviteOnlyMode(){
+void	Commands::setChanInviteOnlyMode()
+{
 	if(this->getIndice() == '+')
-		this->_s->getChannel(this->_line_cmd[1])->setInviteOnly(true);
+	{
+		if (this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == false)
+		{
+			this->_msg->ERR_CHANOPRIVSNEEDED(_user->getNickname(), this->_line_cmd[1], this->_fd_user);
+			std::cout << " >> " << RED << this->_s->getClient(this->_line_cmd[3])->getNickname() << " not operator channel " << Color << std::endl;
+			return ;
+		}
+		else
+			this->_s->getChannel(this->_line_cmd[1])->setInviteOnly(true);
+	}
 	else if (this->getIndice() == '-')
-		this->_s->getChannel(this->_line_cmd[1])->setInviteOnly(false);
+	{
+		if (this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == false)
+		{
+			this->_msg->ERR_CHANOPRIVSNEEDED(_user->getNickname(), this->_line_cmd[1], this->_fd_user);
+			std::cout << " >> " << RED << this->_s->getClient(this->_line_cmd[3])->getNickname() << " not operator channel " << Color << std::endl;
+			return ;
+		}
+		else
+			this->_s->getChannel(this->_line_cmd[1])->setInviteOnly(false);
+	}
 }
 
 // topic protection, seuls les ChannelOperator peuvent changer le topic.
@@ -144,7 +167,8 @@ void	Commands::setChanRestrictTopic(){
 }
 
 // k : Set/remove the channel key (password) (param needed) /mode #cool +k COOLKEY (protège le channel par le mot de passe COOLKEY)
-void	Commands::setChanKey(){
+void	Commands::setChanKey()
+{
 	if(this->getIndice() == '+')
 		this->_s->getChannel(this->_line_cmd[1])->setKey(this->_line_cmd[3]);
 	else if (this->getIndice() == '-')
@@ -152,38 +176,18 @@ void	Commands::setChanKey(){
 }
 
 // o : Give/take channel operator privilege (param needed) /mode #cool +o MEAT (MEAT devient opérateur sur #cool)
-void	Commands::setChanOperator(){
-	// faire fonction pour verifier si le userr is in chan
-	if(this->getIndice() == '+')
-		this->_s->getChannel(this->_line_cmd[1])->addOperator(this->_s->getClient(this->_line_cmd[3]), this->_s->getClient(this->_line_cmd[3])->get_fd());// donner le Client et son fd;
-	std::map<int, Client *>::iterator it = this->_s->getChannel(this->_line_cmd[1])->getListOp().begin();
-	std::cout << "fd: " << this->_s->getClient(this->_line_cmd[3])->get_fd() << "nickname: " << this->_s->getClient(this->_line_cmd[3])->getNickname() << std::endl;
-	for(; it != this->_s->getChannel(this->_line_cmd[1])->getListOp().end(); it++)
+void	Commands::setChanOperator()
+{
+	if (this->getIndice() == '+')
 	{
-		std::cout << "||" << "fd" << it->first << "nickname:" << it->second->getNickname() << "||" << std::endl;
+		this->_s->getChannel(this->_line_cmd[1])->addOperator(this->_s->getClient(this->_line_cmd[3]), this->_s->getClient(this->_line_cmd[3])->get_fd());// donner le Client et son fd;
+		std::cout << " >> " << GREEN << this->_s->getClient(this->_line_cmd[3])->getNickname() << " is now operator of channel " << Color << std::endl;
 	}
-	// else if (this->getIndice() == '-'){
-	// 	std::cout << "in get indice == -" << std::endl;
-	// 	if(this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == false) // ERR_CHANOPRIVSNEEDED 482
-	// 		this->_msg->ERR_CHANOPRIVSNEEDED(this->_line_cmd[0], this->_fd_user);
-	// 	else if(this->_s->getChannel(this->_line_cmd[1])->isOperator(this->_fd_user) == true)
-	// 	{
-	// 		std::map<int, Client *>::iterator it = this->_s->getChannel(this->_line_cmd[1])->getListOp().begin();
-	// 		for(; it != this->_s->getChannel(this->_line_cmd[1])->getListOp().end(); it++)
-	// 		{
-	// 			std::cout << "||" << it->first << "||" << std::endl;
-	// 		}
-	// 		std::cout << "1" << std::endl;
-	// 		this->_s->getChannel(this->_line_cmd[1])->removeOperator(this->_line_cmd[3]);
-	// 		std::cout << "2" << std::endl;
-	// 		it = this->_s->getChannel(this->_line_cmd[1])->getListOp().begin();
-	// 		for(; it != this->_s->getChannel(this->_line_cmd[1])->getListOp().begin(); it++)
-	// 		{
-	// 			std::cout << "||" << it->first << "||" << std::endl;
-	// 		}
-	// 	}
-		
-	//}
+	else if (this->getIndice() == '-')
+	{
+		this->_s->getChannel(this->_line_cmd[1])->removeOperator(this->_line_cmd[3]);
+		std::cout << " >> " << RED << this->_s->getClient(this->_line_cmd[3])->getNickname() << " is remove of operators " << Color << std::endl;
+	}
 }
 
 // l : Set/remove the user limit to channel (param needed) /mode #cool +l 20 (limite le channel #cool à 20 utilisateurs)

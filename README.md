@@ -44,3 +44,5 @@
 		htons, htonl, ntohs, ntohl, inet_addr, inet_ntoa,
 		send, recv, signal, lseek, fstat, fcntl, poll (ou
 		équivalent)
+
+	Commade pour obtenir un logfile: /RAWLOG OPEN debug.log
