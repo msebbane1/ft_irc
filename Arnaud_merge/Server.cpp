@@ -6,7 +6,7 @@
 /*   By: asahonet <asahonet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 16:41:57 by asahonet          #+#    #+#             */
-/*   Updated: 2023/06/22 17:46:22 by asahonet         ###   ########.fr       */
+/*   Updated: 2023/06/26 10:30:07 by asahonet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,6 @@ void	Server::acceptUser()
 	{
 		fd_user = it->first;
 		FD_SET(fd_user, &this->_fds);
-		fcntl(fd_user, O_NONBLOCK);
 		max_fd = std::max(max_fd, fd_user);
 	}
 	
